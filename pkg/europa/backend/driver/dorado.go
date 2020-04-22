@@ -3,6 +3,10 @@ package driver
 import (
 	"context"
 
+	"github.com/whywaita/satelit/internal/logger"
+
+	"go.uber.org/zap"
+
 	"github.com/whywaita/satelit/internal/config"
 
 	uuid "github.com/satori/go.uuid"
@@ -29,7 +33,7 @@ func NewDoradoBackend(doradoConfig config.Dorado) (*DoradoBackend, error) {
 		doradoConfig.Username,
 		doradoConfig.Password,
 		doradoConfig.PortGroupName,
-		nil,
+		zap.NewStdLog(logger.Logger),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create dorado backend Client")
