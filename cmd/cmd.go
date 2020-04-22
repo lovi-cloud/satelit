@@ -4,7 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
+
+	"github.com/whywaita/satelit/internal/logger"
 
 	"github.com/pkg/errors"
 
@@ -23,6 +24,7 @@ type Satelit struct {
 func init() {
 	flag.Parse()
 	config.Load(conf)
+	logger.New(config.GetValue().LogLevel)
 }
 
 func NewSatelit() (*Satelit, error) {
@@ -40,7 +42,7 @@ func (s *Satelit) Run() int {
 	// TODO: implement Serve
 	vs, err := s.Europa.ListVolume(context.Background())
 	if err != nil {
-		log.Println(err)
+		logger.Logger.Error(err.Error())
 		return 1
 	}
 

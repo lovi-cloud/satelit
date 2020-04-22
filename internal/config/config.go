@@ -18,7 +18,8 @@ type Dorado struct {
 }
 
 type yml struct {
-	Dorado Dorado `yaml:"dorado"`
+	Dorado   Dorado `yaml:"dorado"`
+	LogLevel string `yaml:"log_level"`
 }
 
 var configContent yml
