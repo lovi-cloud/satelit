@@ -1,14 +1,16 @@
-package drivers
+package driver
 
 import (
 	"context"
+
+	"github.com/whywaita/satelit/internal/config"
 
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/pkg/errors"
 
 	"github.com/whywaita/go-dorado-sdk/dorado"
-	"github.com/whywaita/satelit/europa"
+	"github.com/whywaita/satelit/pkg/europa"
 )
 
 type DoradoBackend struct {
@@ -18,10 +20,17 @@ type DoradoBackend struct {
 	hyperMetroDomainId string
 }
 
-func NewDoradoBackend(ctx context.Context) (*DoradoBackend, error) {
+func NewDoradoBackend(doradoConfig config.Dorado) (*DoradoBackend, error) {
 	db := &DoradoBackend{}
 
-	client, err := dorado.NewClient()
+	client, err := dorado.NewClient(
+		doradoConfig.LocalIps[0],
+		doradoConfig.RemoteIps[0],
+		doradoConfig.Username,
+		doradoConfig.Password,
+		doradoConfig.PortGroupName,
+		nil,
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create dorado backend Client")
 	}

@@ -3,17 +3,14 @@ package europa
 import (
 	"context"
 
-	"github.com/whywaita/satelit/pkg/europa/backend"
+	uuid "github.com/satori/go.uuid"
 )
 
-type Europa struct {
-	backend backend.Backend
+type Europa interface {
+	CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*Volume, error)
+	ListVolume(ctx context.Context) ([]Volume, error)
 }
 
-func NewEuropa(b backend.Backend) *Europa {
-	return &Europa{b}
-}
-
-func (e *Europa) ListVolume(ctx context.Context) ([]Volume, error) {
-	return e.backend.ListVolume()
+type Volume struct {
+	ID string
 }
