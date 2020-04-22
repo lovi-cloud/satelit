@@ -10,8 +10,12 @@ type Europa interface {
 	CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*Volume, error)
 	DeleteVolume(ctx context.Context, name uuid.UUID) error
 	ListVolume(ctx context.Context) ([]Volume, error)
+	AttachVolume(ctx context.Context, name uuid.UUID, hostname string) error
 }
 
 type Volume struct {
-	ID string
+	ID       string
+	Attached bool
+	HostName string
+	Capacity int // is GB
 }
