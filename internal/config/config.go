@@ -10,11 +10,13 @@ import (
 )
 
 type Dorado struct {
-	Username      string   `yaml:"username"`
-	Password      string   `yaml:"password"`
-	LocalIps      []string `yaml:"local_ip"`
-	RemoteIps     []string `yaml:"remote_ip"`
-	PortGroupName string   `yaml:"portgroup_name"`
+	Username             string   `yaml:"username"`
+	Password             string   `yaml:"password"`
+	LocalIps             []string `yaml:"local_ip"`
+	RemoteIps            []string `yaml:"remote_ip"`
+	PortGroupName        string   `yaml:"portgroup_name"`
+	StoragePoolName      string   `yaml:"storagepool_name"`
+	HyperMetroDomainName string   `yaml:"hypermetrodomain_name"`
 }
 
 type yml struct {

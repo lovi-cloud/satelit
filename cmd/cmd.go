@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/whywaita/satelit/internal/logger"
 
@@ -23,7 +24,11 @@ type Satelit struct {
 
 func init() {
 	flag.Parse()
-	config.Load(conf)
+	err := config.Load(conf)
+	if err != nil {
+		logger.Logger.Error(err.Error())
+		os.Exit(1)
+	}
 	logger.New(config.GetValue().LogLevel)
 }
 
