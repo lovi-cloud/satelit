@@ -3,6 +3,7 @@ package driver
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
@@ -54,7 +55,12 @@ func (d *DoradoBackend) CreateVolume(ctx context.Context, name uuid.UUID, capaci
 		return nil, errors.Wrap(err, "failed to create volume")
 	}
 
-	return d.toVolume(hmp), nil
+	volume, err := d.toVolume(hmp)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", hmp.ID))
+	}
+
+	return volume, nil
 }
 
 func (d *DoradoBackend) ListVolume(ctx context.Context) ([]europa.Volume, error) {
@@ -65,30 +71,77 @@ func (d *DoradoBackend) ListVolume(ctx context.Context) ([]europa.Volume, error)
 
 	var vs []europa.Volume
 	for _, hmp := range hmps {
-		vs = append(vs, *d.toVolume(&hmp))
+		v, err := d.toVolume(&hmp)
+		if err != nil {
+			return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", hmp.ID))
+		}
+		vs = append(vs, *v)
 	}
 
 	return vs, nil
 }
 
 func (d *DoradoBackend) DeleteVolume(ctx context.Context, name uuid.UUID) error {
-	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
+	volume, err := d.getVolumeByName(ctx, name)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to get volume. name: %s", name.String()))
+		return errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
 	}
-	if len(hmps) != 1 {
-		return errors.New(fmt.Sprintf("found multiple volume in same name. name: %s", name.String()))
-	}
-	err = d.client.DeleteVolume(ctx, hmps[0].ID)
+
+	err = d.client.DeleteVolume(ctx, volume.ID)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to delete volume. id: %s", hmps[0].ID))
+		return errors.Wrap(err, fmt.Sprintf("failed to delete volume. id: %s", volume.ID))
 	}
 
 	return nil
 }
 
-func (d *DoradoBackend) toVolume(hmp *dorado.HyperMetroPair) *europa.Volume {
-	return &europa.Volume{
-		ID: hmp.ID,
+func (d *DoradoBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
+	volume, err := d.getVolumeByName(ctx, name)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
 	}
+
+	iqn, err := TODO_GET_IQN_FROM_TELESKOP()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get iqn from teleskop")
+	}
+
+	err = d.client.AttachVolume(ctx, volume.ID, hostname, iqn)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to delete volume. id: %s", volume.ID))
+	}
+
+	v, err := d.toVolume(volume)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", volume.ID))
+	}
+	v.Attached = true
+	v.HostName = hostname
+
+	return v, nil
+}
+
+func (d *DoradoBackend) getVolumeByName(ctx context.Context, name uuid.UUID) (*dorado.HyperMetroPair, error) {
+	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get volume. name: %s", name.String()))
+	}
+	if len(hmps) != 1 {
+		return nil, errors.New(fmt.Sprintf("found multiple volume in same name. name: %s", name.String()))
+	}
+
+	return &hmps[0], nil
+}
+
+func (d *DoradoBackend) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
+	v := &europa.Volume{}
+	v.ID = hmp.ID
+
+	c, err := strconv.Atoi(hmp.CAPACITYBYTE)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to parse CAPACITYBYTE. Volume.ID: %s", hmp.ID))
+	}
+
+	v.Capacity = c / dorado.CAPACITY_UNIT
+	return v, nil
 }
