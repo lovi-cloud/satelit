@@ -2,7 +2,6 @@ package driver
 
 import (
 	"context"
-	"strings"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -11,16 +10,18 @@ import (
 )
 
 type MemoryBackend struct {
-	Values   []europa.Volume
+	Volumes  map[string]europa.Volume
 	Attached map[string]bool
 	Mu       sync.RWMutex
 }
 
 func NewMemoryBackend() (*MemoryBackend, error) {
-	var vs []europa.Volume
+	var vs map[string]europa.Volume
+	var attached map[string]bool
 	m := MemoryBackend{
-		Values: vs,
-		Mu:     sync.RWMutex{},
+		Volumes:  vs,
+		Attached: attached,
+		Mu:       sync.RWMutex{},
 	}
 
 	return &m, nil
@@ -29,69 +30,62 @@ func NewMemoryBackend() (*MemoryBackend, error) {
 func (m *MemoryBackend) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
 	v := europa.Volume{
 		ID:       name.String(),
-		Attached: false,
 		HostName: "",
 		Capacity: capacity,
 	}
 
 	m.Mu.Lock()
-	m.Values = append(m.Values, v)
+	m.Volumes[v.ID] = v
 	m.Mu.Unlock()
 
 	return &v, nil
 }
 func (m *MemoryBackend) DeleteVolume(ctx context.Context, name uuid.UUID) error {
-	i, _ := m.getVolumeByName(ctx, name)
-	if i == -1 {
-		return errors.New("not found")
-	}
-
-	s := append(m.Values[:i], m.Values[i+1:]...)
-
 	m.Mu.Lock()
-	m.Values = s
+	delete(m.Volumes, "name")
 	m.Mu.Unlock()
 
 	return nil
 }
 func (m *MemoryBackend) ListVolume(ctx context.Context) ([]europa.Volume, error) {
-	return m.Values, nil
+	var vs []europa.Volume
+
+	m.Mu.RLock()
+	for _, v := range m.Volumes {
+		vs = append(vs, v)
+	}
+
+	return vs, nil
 }
 
 func (m *MemoryBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
-	i, v := m.getVolumeByName(ctx, name)
-	if i == -1 {
+	m.Mu.RLock()
+	v, ok := m.Volumes[name.String()]
+	if ok == false {
 		return nil, errors.New("not found")
 	}
-	if v.Attached == true {
+
+	attached, ok := m.Attached[name.String()]
+	if attached == true {
 		return nil, errors.New("already attached")
 	}
-
-	newV := v
-	newV.Attached = true
-	newV.HostName = hostname
+	m.Mu.RUnlock()
 
 	m.Mu.Lock()
-	m.Values[i] = *newV
+	m.Attached[name.String()] = true
+	v.HostName = hostname
+	m.Volumes[name.String()] = v
 	m.Mu.Unlock()
 
-	return newV, nil
+	return &v, nil
 }
 
 func (m *MemoryBackend) IsAttached(ctx context.Context, name uuid.UUID) (bool, error) {
-	i, v := m.getVolumeByName(ctx, name)
-	if i == -1 {
-		return false, errors.New("not found")
+	m.Mu.RLock()
+	defer m.Mu.RUnlock()
+	attached, ok := m.Attached[name.String()]
+	if ok == true && attached == true {
+		return true, nil
 	}
-	return v.Attached, nil
-}
-
-func (m *MemoryBackend) getVolumeByName(ctx context.Context, name uuid.UUID) (index int, volume *europa.Volume) {
-	for i, v := range m.Values {
-		if strings.EqualFold(v.ID, name.String()) {
-			return i, &v
-		}
-	}
-
-	return -1, nil
+	return false, nil
 }
