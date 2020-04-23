@@ -11,11 +11,11 @@ type Europa interface {
 	DeleteVolume(ctx context.Context, name uuid.UUID) error
 	ListVolume(ctx context.Context) ([]Volume, error)
 	AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*Volume, error)
-	IsAttached(ctx context.Context, name uuid.UUID) (bool, error)
 }
 
 type Volume struct {
 	ID       string
+	Attached bool
 	HostName string
 	Capacity int // is GB
 }

@@ -121,26 +121,6 @@ func (d *DoradoBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostna
 	return v, nil
 }
 
-func (d *DoradoBackend) IsAttached(ctx context.Context, name uuid.UUID) (bool, error) {
-	volume, err := d.getVolumeByName(ctx, name)
-	if err != nil {
-		return false, errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
-	}
-
-	localLun, err := d.client.LocalDevice.GetLUN(ctx, volume.LOCALOBJID)
-	if err != nil {
-		return false, errors.Wrap(err, fmt.Sprintf("failed to get local lun info. volume name: %s", name))
-	}
-
-	strIsAttached := localLun.ISADD2LUNGROUP
-	b, err := strconv.ParseBool(strIsAttached)
-	if err != nil {
-		return false, errors.Wrap(err, fmt.Sprintf("failed to parse attached info. volume name: %s", name))
-	}
-
-	return b, nil
-}
-
 func (d *DoradoBackend) getVolumeByName(ctx context.Context, name uuid.UUID) (*dorado.HyperMetroPair, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
 	if err != nil {
