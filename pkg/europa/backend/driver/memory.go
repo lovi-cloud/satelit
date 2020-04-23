@@ -10,18 +10,15 @@ import (
 )
 
 type MemoryBackend struct {
-	Volumes  map[string]europa.Volume
-	Attached map[string]bool
-	Mu       sync.RWMutex
+	Volumes map[string]europa.Volume
+	Mu      sync.RWMutex
 }
 
 func NewMemoryBackend() (*MemoryBackend, error) {
 	var vs map[string]europa.Volume
-	var attached map[string]bool
 	m := MemoryBackend{
-		Volumes:  vs,
-		Attached: attached,
-		Mu:       sync.RWMutex{},
+		Volumes: vs,
+		Mu:      sync.RWMutex{},
 	}
 
 	return &m, nil
@@ -65,27 +62,17 @@ func (m *MemoryBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostna
 		return nil, errors.New("not found")
 	}
 
-	attached, ok := m.Attached[name.String()]
-	if attached == true {
+	if v.Attached == true {
 		return nil, errors.New("already attached")
 	}
 	m.Mu.RUnlock()
 
 	m.Mu.Lock()
-	m.Attached[name.String()] = true
-	v.HostName = hostname
+	newV := v
+	newV.Attached = true
+	newV.HostName = hostname
 	m.Volumes[name.String()] = v
 	m.Mu.Unlock()
 
 	return &v, nil
-}
-
-func (m *MemoryBackend) IsAttached(ctx context.Context, name uuid.UUID) (bool, error) {
-	m.Mu.RLock()
-	defer m.Mu.RUnlock()
-	attached, ok := m.Attached[name.String()]
-	if ok == true && attached == true {
-		return true, nil
-	}
-	return false, nil
 }
