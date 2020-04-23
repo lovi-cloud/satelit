@@ -14,8 +14,8 @@ type Europa interface {
 }
 
 type Volume struct {
-	ID       string
-	Attached bool
-	HostName string
-	Capacity int // is GB
+	ID         string
+	Attached   bool
+	HostName   string
+	CapacityGB int
 }

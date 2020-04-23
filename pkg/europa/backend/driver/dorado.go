@@ -142,6 +142,6 @@ func (d *DoradoBackend) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, er
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to parse CAPACITYBYTE. Volume.ID: %s", hmp.ID))
 	}
 
-	v.Capacity = c / dorado.CapacityUnit
+	v.CapacityGB = c / dorado.CapacityUnit
 	return v, nil
 }
