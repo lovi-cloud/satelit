@@ -26,9 +26,9 @@ func NewMemoryBackend() (*MemoryBackend, error) {
 
 func (m *MemoryBackend) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
 	v := europa.Volume{
-		ID:       name.String(),
-		HostName: "",
-		Capacity: capacity,
+		ID:         name.String(),
+		HostName:   "",
+		CapacityGB: capacity,
 	}
 
 	m.Mu.Lock()
