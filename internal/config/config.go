@@ -25,7 +25,7 @@ type API struct {
 }
 
 type Teleskop struct {
-	Endpoint string `yaml:"endpoint"`
+	Endpoints []string `yaml:"endpoint"`
 }
 
 type yml struct {
