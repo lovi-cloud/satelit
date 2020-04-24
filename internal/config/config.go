@@ -10,6 +10,20 @@ import (
 	"github.com/pkg/errors"
 )
 
+type API struct {
+	Listern net.Addr `yaml:"listern"`
+}
+
+type MySQLConfig struct {
+	DSN                   string `yaml:"dsn"`
+	MaxIdleConn           int    `yaml:"max_idle_conn"`
+	ConnMaxLifetimeSecond int    `yaml:"conn_max_lifetime_second"`
+}
+
+type Teleskop struct {
+	Endpoints map[string]string `yaml:"endpoint"`
+}
+
 type Dorado struct {
 	Username             string   `yaml:"username"`
 	Password             string   `yaml:"password"`
@@ -20,19 +34,12 @@ type Dorado struct {
 	HyperMetroDomainName string   `yaml:"hypermetrodomain_name"`
 }
 
-type API struct {
-	Listern net.Addr `yaml:"listern"`
-}
-
-type Teleskop struct {
-	Endpoints []string `yaml:"endpoint"`
-}
-
 type yml struct {
-	API      API      `yaml:"api"`
-	Teleskop Teleskop `yaml:"teleskop"`
-	Dorado   Dorado   `yaml:"dorado"`
-	LogLevel string   `yaml:"log_level"`
+	API         API         `yaml:"api"`
+	MySQLConfig MySQLConfig `yaml:"mysql"`
+	Teleskop    Teleskop    `yaml:"teleskop"`
+	Dorado      Dorado      `yaml:"dorado"`
+	LogLevel    string      `yaml:"log_level"`
 }
 
 var configContent yml

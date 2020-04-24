@@ -3,6 +3,7 @@ module github.com/whywaita/satelit
 go 1.13
 
 require (
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/goccy/go-yaml v1.4.3
 	github.com/golang/protobuf v1.4.0
 	github.com/google/uuid v1.1.1 // indirect

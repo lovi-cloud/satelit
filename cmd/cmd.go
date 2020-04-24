@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/whywaita/satelit/pkg/datastore/mysql"
+
 	pb "github.com/whywaita/satelit/api"
 
 	"github.com/pkg/errors"
@@ -34,7 +36,13 @@ func init() {
 }
 
 func NewSatelit() (*Satelit, error) {
-	doradoBackend, err := dorado.New(config.GetValue().Dorado)
+	c := config.GetValue().MySQLConfig
+	ds, err := mysql.New(&c)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create mysql connection")
+	}
+
+	doradoBackend, err := dorado.New(config.GetValue().Dorado, ds)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create Dorado Backend")
 	}
@@ -58,7 +66,12 @@ func (s *Satelit) Run() int {
 	}
 	fmt.Printf("%+v\n", vs)
 
-	resp, err := teleskop.GetClient(config.GetValue().Teleskop.Endpoints[0]).GetISCSIQualifiedName(context.Background(), &pb.GetISCSIQualifiedNameRequest{})
+	var hostname string
+	for h, _ := range config.GetValue().Teleskop.Endpoints {
+		hostname = h
+	}
+
+	resp, err := teleskop.GetClient(config.GetValue().Teleskop.Endpoints[hostname]).GetISCSIQualifiedName(context.Background(), &pb.GetISCSIQualifiedNameRequest{})
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return 1

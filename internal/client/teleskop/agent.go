@@ -13,10 +13,10 @@ var (
 	mu     sync.RWMutex
 )
 
-func New(endpoints []string) error {
+func New(endpoints map[string]string) error {
 	c := make(map[string]pb.AgentClient)
 
-	for _, endpoint := range endpoints {
+	for hostname, endpoint := range endpoints {
 		conn, err := grpc.Dial(
 			endpoint,
 			grpc.WithInsecure(),
@@ -26,7 +26,7 @@ func New(endpoints []string) error {
 		}
 
 		mu.Lock()
-		c[endpoint] = pb.NewAgentClient(conn)
+		c[hostname] = pb.NewAgentClient(conn)
 		mu.Unlock()
 	}
 
@@ -34,9 +34,9 @@ func New(endpoints []string) error {
 	return nil
 }
 
-func GetClient(endpoint string) pb.AgentClient {
+func GetClient(hostname string) pb.AgentClient {
 	mu.RLock()
-	c := client[endpoint]
+	c := client[hostname]
 	mu.RUnlock()
 
 	return c
