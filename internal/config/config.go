@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
+	"net"
 
 	"github.com/goccy/go-yaml"
 
@@ -19,9 +20,19 @@ type Dorado struct {
 	HyperMetroDomainName string   `yaml:"hypermetrodomain_name"`
 }
 
+type API struct {
+	Listern net.Addr `yaml:"listern"`
+}
+
+type Teleskop struct {
+	Endpoint string `yaml:"endpoint"`
+}
+
 type yml struct {
-	Dorado   Dorado `yaml:"dorado"`
-	LogLevel string `yaml:"log_level"`
+	API      API      `yaml:"api"`
+	Teleskop Teleskop `yaml:"teleskop"`
+	Dorado   Dorado   `yaml:"dorado"`
+	LogLevel string   `yaml:"log_level"`
 }
 
 var configContent yml

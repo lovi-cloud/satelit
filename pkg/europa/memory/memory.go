@@ -1,4 +1,4 @@
-package driver
+package memory
 
 import (
 	"context"
@@ -9,14 +9,14 @@ import (
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
-type MemoryBackend struct {
+type Memory struct {
 	Volumes map[string]europa.Volume
 	Mu      sync.RWMutex
 }
 
-func NewMemoryBackend() (*MemoryBackend, error) {
+func New() (*Memory, error) {
 	var vs map[string]europa.Volume
-	m := MemoryBackend{
+	m := Memory{
 		Volumes: vs,
 		Mu:      sync.RWMutex{},
 	}
@@ -24,7 +24,7 @@ func NewMemoryBackend() (*MemoryBackend, error) {
 	return &m, nil
 }
 
-func (m *MemoryBackend) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
+func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
 	v := europa.Volume{
 		ID:         name.String(),
 		HostName:   "",
@@ -37,14 +37,14 @@ func (m *MemoryBackend) CreateVolume(ctx context.Context, name uuid.UUID, capaci
 
 	return &v, nil
 }
-func (m *MemoryBackend) DeleteVolume(ctx context.Context, name uuid.UUID) error {
+func (m *Memory) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 	m.Mu.Lock()
 	delete(m.Volumes, "name")
 	m.Mu.Unlock()
 
 	return nil
 }
-func (m *MemoryBackend) ListVolume(ctx context.Context) ([]europa.Volume, error) {
+func (m *Memory) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	var vs []europa.Volume
 
 	m.Mu.RLock()
@@ -55,7 +55,7 @@ func (m *MemoryBackend) ListVolume(ctx context.Context) ([]europa.Volume, error)
 	return vs, nil
 }
 
-func (m *MemoryBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
+func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
 	m.Mu.RLock()
 	v, ok := m.Volumes[name.String()]
 	if ok == false {
