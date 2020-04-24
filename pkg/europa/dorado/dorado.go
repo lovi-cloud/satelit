@@ -24,7 +24,7 @@ type Dorado struct {
 	hyperMetroDomainId string
 }
 
-func New(doradoConfig config.Dorado) (*Dorado, error) {
+func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, error) {
 	client, err := dorado.NewClient(
 		doradoConfig.LocalIps[0],
 		doradoConfig.RemoteIps[0],
@@ -47,6 +47,7 @@ func New(doradoConfig config.Dorado) (*Dorado, error) {
 
 	return &Dorado{
 		client:             client,
+		datastore:          datastore,
 		storagePoolName:    doradoConfig.StoragePoolName,
 		hyperMetroDomainId: hmds[0].ID,
 	}, nil
