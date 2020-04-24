@@ -1,8 +1,9 @@
-package driver
+package dorado
 
 import (
 	"context"
 	"fmt"
+
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -10,18 +11,20 @@ import (
 	"github.com/whywaita/go-dorado-sdk/dorado"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/pkg/datastore"
 	"github.com/whywaita/satelit/pkg/europa"
 	"go.uber.org/zap"
 )
 
-type DoradoBackend struct {
-	client *dorado.Client
+type Dorado struct {
+	client    *dorado.Client
+	datastore datastore.Datastore
 
 	storagePoolName    string
 	hyperMetroDomainId string
 }
 
-func NewDoradoBackend(doradoConfig config.Dorado) (*DoradoBackend, error) {
+func New(doradoConfig config.Dorado) (*Dorado, error) {
 	client, err := dorado.NewClient(
 		doradoConfig.LocalIps[0],
 		doradoConfig.RemoteIps[0],
@@ -42,14 +45,14 @@ func NewDoradoBackend(doradoConfig config.Dorado) (*DoradoBackend, error) {
 		return nil, errors.New(fmt.Sprintf("founf multiple HyperMetro Domain in same name. name: %s", doradoConfig.HyperMetroDomainName))
 	}
 
-	return &DoradoBackend{
+	return &Dorado{
 		client:             client,
 		storagePoolName:    doradoConfig.StoragePoolName,
 		hyperMetroDomainId: hmds[0].ID,
 	}, nil
 }
 
-func (d *DoradoBackend) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
+func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
 	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create volume")
@@ -63,7 +66,7 @@ func (d *DoradoBackend) CreateVolume(ctx context.Context, name uuid.UUID, capaci
 	return volume, nil
 }
 
-func (d *DoradoBackend) ListVolume(ctx context.Context) ([]europa.Volume, error) {
+func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get volume list")
@@ -81,7 +84,7 @@ func (d *DoradoBackend) ListVolume(ctx context.Context) ([]europa.Volume, error)
 	return vs, nil
 }
 
-func (d *DoradoBackend) DeleteVolume(ctx context.Context, name uuid.UUID) error {
+func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 	volume, err := d.getVolumeByName(ctx, name)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
@@ -95,15 +98,15 @@ func (d *DoradoBackend) DeleteVolume(ctx context.Context, name uuid.UUID) error 
 	return nil
 }
 
-func (d *DoradoBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
+func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
 	volume, err := d.getVolumeByName(ctx, name)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
 	}
 
-	iqn, err := TODO_GET_IQN_FROM_TELESKOP()
+	iqn, err := d.datastore.GetIQN(ctx, hostname)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get iqn from teleskop")
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get iqn. hostname: %s", hostname))
 	}
 
 	err = d.client.AttachVolume(ctx, volume.ID, hostname, iqn)
@@ -121,7 +124,7 @@ func (d *DoradoBackend) AttachVolume(ctx context.Context, name uuid.UUID, hostna
 	return v, nil
 }
 
-func (d *DoradoBackend) getVolumeByName(ctx context.Context, name uuid.UUID) (*dorado.HyperMetroPair, error) {
+func (d *Dorado) getVolumeByName(ctx context.Context, name uuid.UUID) (*dorado.HyperMetroPair, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to get volume. name: %s", name.String()))
@@ -133,7 +136,7 @@ func (d *DoradoBackend) getVolumeByName(ctx context.Context, name uuid.UUID) (*d
 	return &hmps[0], nil
 }
 
-func (d *DoradoBackend) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
+func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
 	v := &europa.Volume{}
 	v.ID = hmp.ID
 
