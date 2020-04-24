@@ -39,7 +39,7 @@ func NewSatelit() (*Satelit, error) {
 		return nil, errors.Wrap(err, "failed to create Dorado Backend")
 	}
 
-	err = teleskop.New(config.GetValue().Teleskop.Endpoint)
+	err = teleskop.New(config.GetValue().Teleskop.Endpoints)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create teleskop agent")
 	}
@@ -58,7 +58,7 @@ func (s *Satelit) Run() int {
 	}
 	fmt.Printf("%+v\n", vs)
 
-	resp, err := teleskop.GetClient(config.GetValue().Teleskop.Endpoint).GetISCSIQualifiedName(context.Background(), &pb.GetISCSIQualifiedNameRequest{})
+	resp, err := teleskop.GetClient(config.GetValue().Teleskop.Endpoints[0]).GetISCSIQualifiedName(context.Background(), &pb.GetISCSIQualifiedNameRequest{})
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return 1

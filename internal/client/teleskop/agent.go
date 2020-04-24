@@ -5,7 +5,6 @@ import (
 
 	"github.com/pkg/errors"
 	pb "github.com/whywaita/satelit/api"
-	"github.com/whywaita/satelit/internal/config"
 	"google.golang.org/grpc"
 )
 
@@ -14,20 +13,22 @@ var (
 	mu     sync.RWMutex
 )
 
-func New(endpoint string) error {
+func New(endpoints []string) error {
 	c := make(map[string]pb.AgentClient)
 
-	conn, err := grpc.Dial(
-		config.GetValue().Teleskop.Endpoint,
-		grpc.WithInsecure(),
-	)
-	if err != nil {
-		return errors.Wrap(err, "failed to connect teleskop endpoint")
-	}
+	for _, endpoint := range endpoints {
+		conn, err := grpc.Dial(
+			endpoint,
+			grpc.WithInsecure(),
+		)
+		if err != nil {
+			return errors.Wrap(err, "failed to connect teleskop endpoint")
+		}
 
-	mu.Lock()
-	c[endpoint] = pb.NewAgentClient(conn)
-	mu.Unlock()
+		mu.Lock()
+		c[endpoint] = pb.NewAgentClient(conn)
+		mu.Unlock()
+	}
 
 	client = c
 	return nil
