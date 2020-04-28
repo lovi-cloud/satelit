@@ -13,6 +13,7 @@ require (
 	github.com/whywaita/go-dorado-sdk v0.0.0-20200414010248-c2270c6866aa
 	go.uber.org/zap v1.14.1
 	google.golang.org/grpc v1.29.0
+	google.golang.org/protobuf v1.21.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	grpc.go4.org v0.0.0-20170609214715-11d0a25b4919 // indirect
 )

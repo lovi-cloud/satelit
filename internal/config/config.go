@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
-	"net"
 
 	"github.com/goccy/go-yaml"
 
@@ -11,7 +10,7 @@ import (
 )
 
 type API struct {
-	Listern net.Addr `yaml:"listern"`
+	Listen string `yaml:"listen"`
 }
 
 type MySQLConfig struct {

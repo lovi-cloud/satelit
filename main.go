@@ -7,6 +7,10 @@ import (
 	"github.com/whywaita/satelit/cmd"
 )
 
+var (
+	revision string
+)
+
 func main() {
 	app, err := cmd.NewSatelit()
 	if err != nil {
