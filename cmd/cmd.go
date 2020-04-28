@@ -1,29 +1,22 @@
 package cmd
 
 import (
-	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
-	"github.com/whywaita/satelit/pkg/datastore/mysql"
+	"github.com/whywaita/satelit/pkg/datastore/memory"
 
-	pb "github.com/whywaita/satelit/api"
+	"github.com/whywaita/satelit/pkg/api"
 
 	"github.com/pkg/errors"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
-	"github.com/whywaita/satelit/pkg/europa"
 	"github.com/whywaita/satelit/pkg/europa/dorado"
 )
 
 var conf = flag.String("conf", "./configs/satelit.yaml", "set gateway config")
-
-type Satelit struct {
-	Europa europa.Europa
-}
 
 func init() {
 	flag.Parse()
@@ -35,12 +28,13 @@ func init() {
 	logger.New(config.GetValue().LogLevel)
 }
 
-func NewSatelit() (*Satelit, error) {
-	c := config.GetValue().MySQLConfig
-	ds, err := mysql.New(&c)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create mysql connection")
-	}
+func NewSatelit() (*api.SatelitServer, error) {
+	//c := config.GetValue().MySQLConfig
+	//ds, err := mysql.New(&c)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "failed to create mysql connection")
+	//}
+	ds := memory.New() // For development
 
 	doradoBackend, err := dorado.New(config.GetValue().Dorado, ds)
 	if err != nil {
@@ -52,31 +46,7 @@ func NewSatelit() (*Satelit, error) {
 		return nil, errors.Wrap(err, "failed to create teleskop agent")
 	}
 
-	return &Satelit{
+	return &api.SatelitServer{
 		Europa: doradoBackend,
 	}, nil
-}
-
-func (s *Satelit) Run() int {
-	// TODO: implement Serve
-	vs, err := s.Europa.ListVolume(context.Background())
-	if err != nil {
-		logger.Logger.Error(err.Error())
-		return 1
-	}
-	fmt.Printf("%+v\n", vs)
-
-	var hostname string
-	for h, _ := range config.GetValue().Teleskop.Endpoints {
-		hostname = h
-	}
-
-	resp, err := teleskop.GetClient(config.GetValue().Teleskop.Endpoints[hostname]).GetISCSIQualifiedName(context.Background(), &pb.GetISCSIQualifiedNameRequest{})
-	if err != nil {
-		logger.Logger.Error(err.Error())
-		return 1
-	}
-	fmt.Printf("%+v\n", resp.Iqn)
-
-	return 0
 }

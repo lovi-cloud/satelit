@@ -3,6 +3,8 @@ package europa
 import (
 	"context"
 
+	pb "github.com/whywaita/satelit/api/satelit"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -18,4 +20,9 @@ type Volume struct {
 	Attached   bool
 	HostName   string
 	CapacityGB int
+}
+
+func (v *Volume) ToPb() *pb.Volume {
+	pv := &pb.Volume{Id: v.ID}
+	return pv
 }

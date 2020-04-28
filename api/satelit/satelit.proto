@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package satelit;
+option go_package = ".;satelit";
+
+service Satelit {
+    rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
+}
+
+// type
+message Volume {
+    string id = 1;
+}
+
+// Request / Response
+message GetVolumesRequest {}
+
+message GetVolumesResponse {
+    repeated Volume volumes = 1;
+}
+
+message AddVolumeRequest {}
+
+message AddVolumeResponse {}
+
+message DeleteVolumeRequest {}
+
+message DeleteVolumeResponse {}
