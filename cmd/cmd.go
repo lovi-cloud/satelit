@@ -5,9 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/whywaita/satelit/pkg/datastore/memory"
-
 	"github.com/whywaita/satelit/pkg/api"
+	"github.com/whywaita/satelit/pkg/datastore/mysql"
 
 	"github.com/pkg/errors"
 	"github.com/whywaita/satelit/internal/client/teleskop"
@@ -29,12 +28,11 @@ func init() {
 }
 
 func NewSatelit() (*api.SatelitServer, error) {
-	//c := config.GetValue().MySQLConfig
-	//ds, err := mysql.New(&c)
-	//if err != nil {
-	//	return nil, errors.Wrap(err, "failed to create mysql connection")
-	//}
-	ds := memory.New() // For development
+	c := config.GetValue().MySQLConfig
+	ds, err := mysql.New(&c)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create mysql connection")
+	}
 
 	doradoBackend, err := dorado.New(config.GetValue().Dorado, ds)
 	if err != nil {

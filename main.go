@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,6 +11,10 @@ import (
 var (
 	revision string
 )
+
+func init() {
+	fmt.Println(fmt.Sprintf("satelit revision: %s", revision))
+}
 
 func main() {
 	app, err := cmd.NewSatelit()

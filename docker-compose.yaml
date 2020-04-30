@@ -1,0 +1,13 @@
+version: '3'
+services:
+  api:
+    image: debian:buster
+    volumes:
+      - ./satelit:/satelit
+      - ./configs/satelit.yaml:/satelit.yaml
+    command:
+      - /satelit
+      - -conf
+      - /satelit.yaml
+    ports:
+      - "9262:9262"
