@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net"
 
 	"github.com/pkg/errors"
@@ -36,7 +37,7 @@ func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesReques
 }
 
 func (s *SatelitServer) Run() int {
-	logger.Logger.Info("Run satelit server...")
+	logger.Logger.Info(fmt.Sprintf("Run satelit server, listen on %s", config.GetValue().API.Listen))
 	lis, err := net.Listen("tcp", config.GetValue().API.Listen)
 	if err != nil {
 		logger.Logger.Error(err.Error())
