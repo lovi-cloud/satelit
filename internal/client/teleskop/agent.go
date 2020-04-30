@@ -4,17 +4,17 @@ import (
 	"sync"
 
 	"github.com/pkg/errors"
-	pb "github.com/whywaita/satelit/api"
+	agentpb "github.com/whywaita/satelit/api"
 	"google.golang.org/grpc"
 )
 
 var (
-	client map[string]pb.AgentClient
+	client map[string]agentpb.AgentClient
 	mu     sync.RWMutex
 )
 
 func New(endpoints map[string]string) error {
-	c := make(map[string]pb.AgentClient)
+	c := make(map[string]agentpb.AgentClient)
 
 	for hostname, endpoint := range endpoints {
 		conn, err := grpc.Dial(
@@ -26,7 +26,7 @@ func New(endpoints map[string]string) error {
 		}
 
 		mu.Lock()
-		c[hostname] = pb.NewAgentClient(conn)
+		c[hostname] = agentpb.NewAgentClient(conn)
 		mu.Unlock()
 	}
 
@@ -34,7 +34,7 @@ func New(endpoints map[string]string) error {
 	return nil
 }
 
-func GetClient(hostname string) pb.AgentClient {
+func GetClient(hostname string) agentpb.AgentClient {
 	mu.RLock()
 	c := client[hostname]
 	mu.RUnlock()
