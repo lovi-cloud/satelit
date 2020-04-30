@@ -16,7 +16,7 @@ import (
 	"github.com/whywaita/satelit/pkg/europa/dorado"
 )
 
-var conf = flag.String("conf", "./configs/satelit.yaml", "set gateway config")
+var conf = flag.String("conf", "./configs/satelit.yaml", "set satelit config")
 
 func init() {
 	flag.Parse()

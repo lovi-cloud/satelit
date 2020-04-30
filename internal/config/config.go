@@ -20,7 +20,7 @@ type MySQLConfig struct {
 }
 
 type Teleskop struct {
-	Endpoints map[string]string `yaml:"endpoint"`
+	Endpoints map[string]string `yaml:"endpoints"`
 }
 
 type Dorado struct {
