@@ -15,6 +15,9 @@ build-proto: ## Build proto file
 	mkdir -p ./api/satelit
 	protoc -I ./api/satelit --go_out=plugins=grpc:./api/satelit ./api/satelit/satelit.proto
 
+test:
+	go test -v ./...
+
 up-dev: ## Run application for development
 	GOOS=linux GOARCH=amd64 make build
 	docker-compose up
