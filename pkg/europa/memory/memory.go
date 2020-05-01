@@ -15,7 +15,7 @@ type Memory struct {
 }
 
 func New() (*Memory, error) {
-	var vs map[string]europa.Volume
+	vs := map[string]europa.Volume{}
 	m := Memory{
 		Volumes: vs,
 		Mu:      sync.RWMutex{},
@@ -51,6 +51,7 @@ func (m *Memory) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	for _, v := range m.Volumes {
 		vs = append(vs, v)
 	}
+	m.Mu.RUnlock()
 
 	return vs, nil
 }

@@ -46,12 +46,12 @@ var configContent yml
 func Load(filepath *string) error {
 	d, err := ioutil.ReadFile(*filepath)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to read config file: %s", filepath))
+		return errors.Wrap(err, fmt.Sprintf("failed to read config file: %s", *filepath))
 	}
 
 	y := &yml{}
 	if err := yaml.Unmarshal(d, y); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to parse config file: %s", filepath))
+		return errors.Wrap(err, fmt.Sprintf("failed to parse config file: %s", *filepath))
 	}
 
 	configContent = *y

@@ -20,7 +20,7 @@ type MySQL struct {
 }
 
 func New(c *config.MySQLConfig) (*MySQL, error) {
-	dsn := c.DSN + "?charset=utf8mb4&collation=utf8mb4_unicode_ci"
+	dsn := c.DSN + "?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci"
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect ")
