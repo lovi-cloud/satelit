@@ -15,6 +15,7 @@ type Europa interface {
 	ListVolume(ctx context.Context) ([]Volume, error)
 	GetVolume(ctx context.Context, name uuid.UUID) (*Volume, error)
 	AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*Volume, error)
+	DetachVolume(ctx context.Context, name uuid.UUID) error
 }
 
 // A Volume is volume information

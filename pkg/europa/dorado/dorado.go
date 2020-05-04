@@ -109,7 +109,7 @@ func (d *Dorado) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume,
 
 // DeleteVolume delete volume by Dorado
 func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
-	volume, err := d.getVolumeByName(ctx, name)
+	volume, err := d.GetVolume(ctx, name)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
 	}
@@ -124,7 +124,7 @@ func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 
 // AttachVolume attach to hostname by Dorado
 func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
-	volume, err := d.getVolumeByName(ctx, name)
+	volume, err := d.GetVolume(ctx, name)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
 	}
@@ -139,9 +139,9 @@ func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname stri
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to delete volume. id: %s", volume.ID))
 	}
 
-	v, err := d.toVolume(volume)
+	v, err := d.GetVolume(ctx, name)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", volume.ID))
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", v.ID))
 	}
 	v.Attached = true
 	v.HostName = hostname
@@ -149,16 +149,19 @@ func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname stri
 	return v, nil
 }
 
-func (d *Dorado) getVolumeByName(ctx context.Context, name uuid.UUID) (*dorado.HyperMetroPair, error) {
-	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
+// DetachVolume detach volume by Dorado
+func (d *Dorado) DetachVolume(ctx context.Context, name uuid.UUID) error {
+	volume, err := d.GetVolume(ctx, name)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get volume. name: %s", name.String()))
-	}
-	if len(hmps) != 1 {
-		return nil, errors.New(fmt.Sprintf("found multiple volume in same name. name: %s", name.String()))
+		return errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
 	}
 
-	return &hmps[0], nil
+	err = d.client.DetachVolume(ctx, volume.ID)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("failed to detach volume. name: %s", name.String()))
+	}
+
+	return nil
 }
 
 func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
