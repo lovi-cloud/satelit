@@ -5,8 +5,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// Logger is instance for logging
 var Logger *zap.Logger
 
+// New create Logger instance.
 func New(logLevel string) {
 	loglevel := map[string]zapcore.Level{
 		"debug": zap.DebugLevel,

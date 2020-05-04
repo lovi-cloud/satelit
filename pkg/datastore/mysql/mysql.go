@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	// mysql driver
 	_ "github.com/go-sql-driver/mysql"
 	pb "github.com/whywaita/satelit/api"
 
@@ -15,10 +16,12 @@ import (
 	"github.com/whywaita/satelit/internal/logger"
 )
 
+// A MySQL is backend of datastore by MySQL Server
 type MySQL struct {
 	Conn *sql.DB
 }
 
+// New create MySQL datastore
 func New(c *config.MySQLConfig) (*MySQL, error) {
 	dsn := c.DSN + "?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci"
 	conn, err := sql.Open("mysql", dsn)
@@ -34,6 +37,7 @@ func New(c *config.MySQLConfig) (*MySQL, error) {
 	}, nil
 }
 
+// GetIQN get IQN from MySQL
 func (m *MySQL) GetIQN(ctx context.Context, hostname string) (string, error) {
 	row, err := m.Conn.Query("SELECT iqn FROM hypervisor WHERE hostname = ?", hostname)
 	if err != nil {

@@ -13,6 +13,7 @@ var (
 	mu     sync.RWMutex
 )
 
+// New create teleskop map
 func New(endpoints map[string]string) error {
 	c := make(map[string]agentpb.AgentClient)
 
@@ -34,6 +35,7 @@ func New(endpoints map[string]string) error {
 	return nil
 }
 
+// GetClient return teleskop Client
 func GetClient(hostname string) agentpb.AgentClient {
 	mu.RLock()
 	c := client[hostname]

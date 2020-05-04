@@ -14,12 +14,14 @@ import (
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
+// A SatelitServer is definition of Satlite API Server
 type SatelitServer struct {
 	pb.UnimplementedSatelitServer
 
 	Europa europa.Europa
 }
 
+// GetVolumes response volumes to pb
 func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesRequest) (*pb.GetVolumesResponse, error) {
 	volumes, err := s.Europa.ListVolume(ctx)
 	if err != nil {
@@ -36,6 +38,7 @@ func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesReques
 	}, nil
 }
 
+// Run start gRPC Server
 func (s *SatelitServer) Run() int {
 	logger.Logger.Info(fmt.Sprintf("Run satelit server, listen on %s", config.GetValue().API.Listen))
 	lis, err := net.Listen("tcp", config.GetValue().API.Listen)

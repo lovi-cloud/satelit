@@ -16,14 +16,16 @@ import (
 	"go.uber.org/zap"
 )
 
+// A Dorado is backend of europa by Dorado
 type Dorado struct {
 	client    *dorado.Client
 	datastore datastore.Datastore
 
 	storagePoolName    string
-	hyperMetroDomainId string
+	hyperMetroDomainID string
 }
 
+// New create Dorado backend
 func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, error) {
 	client, err := dorado.NewClient(
 		doradoConfig.LocalIps[0],
@@ -49,12 +51,13 @@ func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, er
 		client:             client,
 		datastore:          datastore,
 		storagePoolName:    doradoConfig.StoragePoolName,
-		hyperMetroDomainId: hmds[0].ID,
+		hyperMetroDomainID: hmds[0].ID,
 	}, nil
 }
 
+// CreateVolume create volume by Dorado
 func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
-	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainId)
+	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create volume")
 	}
@@ -67,6 +70,7 @@ func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int)
 	return volume, nil
 }
 
+// ListVolume return list of volume by Dorado
 func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, nil)
 	if err != nil {
@@ -85,6 +89,7 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	return vs, nil
 }
 
+// GetVolume get volume from Dorado
 func (d *Dorado) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
 	if err != nil {
@@ -102,6 +107,7 @@ func (d *Dorado) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume,
 	return v, nil
 }
 
+// DeleteVolume delete volume by Dorado
 func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 	volume, err := d.getVolumeByName(ctx, name)
 	if err != nil {
@@ -116,6 +122,7 @@ func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 	return nil
 }
 
+// AttachVolume attach to hostname by Dorado
 func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
 	volume, err := d.getVolumeByName(ctx, name)
 	if err != nil {
