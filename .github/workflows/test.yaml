@@ -19,8 +19,8 @@ jobs:
         with:
           fetch-depth: 1
       - name: Granting private modules access
-          run: |
-            git config --global url."https://${{ secrets.GITHUB_TOKRN }}:x-oauth-basic@github.com/whywaita".insteadOf "https://github.com/whywaita"
+        run: |
+          git config --global url."https://${{ secrets.GITHUB_TOKRN }}:x-oauth-basic@github.com/whywaita".insteadOf "https://github.com/whywaita"
       - name: lint
         run: |
           GO111MODULE=off GOBIN=$(pwd)/bin go get golang.org/x/lint/golint
