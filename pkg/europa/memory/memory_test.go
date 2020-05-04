@@ -43,7 +43,7 @@ func TestMemoryVolumeOperation(t *testing.T) {
 		t.Error("Unexpected volume id")
 	}
 
-	_, err = m.AttachVolume(ctx, u, testHostname)
+	err = m.AttachVolume(ctx, u, testHostname)
 	if err != nil {
 		t.Error(err)
 	}
