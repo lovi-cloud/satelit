@@ -85,6 +85,23 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	return vs, nil
 }
 
+func (d *Dorado) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume, error) {
+	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get volumes")
+	}
+	if len(hmps) != 1 {
+		return nil, errors.New("found multiple volumes in same name")
+	}
+
+	volume := hmps[0]
+	v, err := d.toVolume(&volume)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", volume.ID))
+	}
+	return v, nil
+}
+
 func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 	volume, err := d.getVolumeByName(ctx, name)
 	if err != nil {
