@@ -24,5 +24,4 @@ jobs:
           bin/golint -set_exit_status ./...
       - name: test
         run: |
-          sudo apt install -y make
           make test
