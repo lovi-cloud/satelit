@@ -54,7 +54,21 @@ func TestMemoryVolumeOperation(t *testing.T) {
 	}
 
 	if v.Attached != true || v.HostName != testHostname {
-		t.Error("Unexpected volume attachment info")
+		t.Error("Unexpected volume attachment info after AttachVolume")
+	}
+
+	err = m.DetachVolume(ctx, u)
+	if err != nil {
+		t.Error(err)
+	}
+
+	v, err = m.GetVolume(ctx, u)
+	if err != nil {
+		t.Error("Can't get volume")
+	}
+
+	if v.Attached != false || v.HostName != "" {
+		t.Error("Unexpected volume attachment info after DetachVolume")
 	}
 
 }

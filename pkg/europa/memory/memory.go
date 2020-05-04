@@ -95,3 +95,20 @@ func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname stri
 
 	return newV, nil
 }
+
+// DetachVolume delete attach information on memory
+func (m *Memory) DetachVolume(ctx context.Context, name uuid.UUID) error {
+	v, err := m.GetVolume(ctx, name)
+	if err != nil {
+		return errors.Wrap(err, "failed to get volume")
+	}
+
+	newV := v
+	newV.Attached = false
+	newV.HostName = ""
+
+	m.Mu.Lock()
+	m.Volumes[name.String()] = *newV
+	m.Mu.Unlock()
+	return nil
+}
