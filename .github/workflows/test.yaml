@@ -23,4 +23,9 @@ jobs:
           GO111MODULE=off GOBIN=$(pwd)/bin go get golang.org/x/lint/golint
           bin/golint -set_exit_status ./...
       - name: test
-        run: make test
+        run: |
+          which make
+          if [ ! $? -eq ]; then
+            sudo apt install make
+          fi
+          make test
