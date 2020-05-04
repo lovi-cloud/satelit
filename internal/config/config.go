@@ -9,20 +9,25 @@ import (
 	"github.com/pkg/errors"
 )
 
+// A API is config of Satelit API Server
 type API struct {
 	Listen string `yaml:"listen"`
 }
 
+// A MySQLConfig is config of MySQL
 type MySQLConfig struct {
 	DSN                   string `yaml:"dsn"`
 	MaxIdleConn           int    `yaml:"max_idle_conn"`
 	ConnMaxLifetimeSecond int    `yaml:"conn_max_lifetime_second"`
 }
 
+// A Teleskop is endpoints of Teleskop
+// example: host1: "teleskop_ip_and_port"
 type Teleskop struct {
 	Endpoints map[string]string `yaml:"endpoints"`
 }
 
+// A Dorado is config for Dorado
 type Dorado struct {
 	Username             string   `yaml:"username"`
 	Password             string   `yaml:"password"`
@@ -33,7 +38,8 @@ type Dorado struct {
 	HyperMetroDomainName string   `yaml:"hypermetrodomain_name"`
 }
 
-type yml struct {
+// A YAML is top element of config.yaml
+type YAML struct {
 	API         API         `yaml:"api"`
 	MySQLConfig MySQLConfig `yaml:"mysql"`
 	Teleskop    Teleskop    `yaml:"teleskop"`
@@ -41,15 +47,16 @@ type yml struct {
 	LogLevel    string      `yaml:"log_level"`
 }
 
-var configContent yml
+var configContent YAML
 
+// Load is to load yaml file
 func Load(filepath *string) error {
 	d, err := ioutil.ReadFile(*filepath)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to read config file: %s", *filepath))
 	}
 
-	y := &yml{}
+	y := &YAML{}
 	if err := yaml.Unmarshal(d, y); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to parse config file: %s", *filepath))
 	}
@@ -59,6 +66,7 @@ func Load(filepath *string) error {
 	return nil
 }
 
-func GetValue() yml {
+// GetValue return config values
+func GetValue() YAML {
 	return configContent
 }

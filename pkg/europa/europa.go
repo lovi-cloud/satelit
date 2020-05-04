@@ -8,6 +8,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// Europa is interface of volume operation.
 type Europa interface {
 	CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*Volume, error)
 	DeleteVolume(ctx context.Context, name uuid.UUID) error
@@ -16,6 +17,7 @@ type Europa interface {
 	AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*Volume, error)
 }
 
+// A Volume is volume information
 type Volume struct {
 	ID         string
 	Attached   bool
@@ -23,6 +25,7 @@ type Volume struct {
 	CapacityGB int
 }
 
+// ToPb parse to Satelit APi Server pb.Volume
 func (v *Volume) ToPb() *pb.Volume {
 	pv := &pb.Volume{Id: v.ID}
 	return pv

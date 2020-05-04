@@ -27,6 +27,7 @@ func init() {
 	logger.New(config.GetValue().LogLevel)
 }
 
+// NewSatelit create SatelitServer instance.
 func NewSatelit() (*api.SatelitServer, error) {
 	c := config.GetValue().MySQLConfig
 	ds, err := mysql.New(&c)
