@@ -25,11 +25,8 @@ jobs:
         run: |
           GO111MODULE=off GOBIN=$(pwd)/bin go get golang.org/x/lint/golint
           bin/golint -set_exit_status ./...
-      - name: setup go modules
-        run: |
-          go mod download
-        env:
-          GOPRIVATE: "github.com/whywaita/go-dorado-sdk"
       - name: test
         run: |
           make test
+        env:
+          GOPRIVATE: "github.com/whywaita/go-dorado-sdk"
