@@ -20,7 +20,9 @@ func TestMemoryVolumeOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	_, err = m.CreateVolume(ctx, uuid.FromStringOrNil(testUUID), testCapacity)
+	u := uuid.FromStringOrNil(testUUID)
+
+	_, err = m.CreateVolume(ctx, u, testCapacity)
 	if err != nil {
 		t.Error(err)
 	}
@@ -41,8 +43,18 @@ func TestMemoryVolumeOperation(t *testing.T) {
 		t.Error("Unexpected volume id")
 	}
 
-	_, err = m.AttachVolume(ctx, uuid.FromStringOrNil(testUUID), testHostname)
+	_, err = m.AttachVolume(ctx, u, testHostname)
 	if err != nil {
 		t.Error(err)
 	}
+
+	v, err := m.GetVolume(ctx, u)
+	if err != nil {
+		t.Error("Can't get volume")
+	}
+
+	if v.Attached != true || v.HostName != testHostname {
+		t.Error("Unexpected volume attachment info")
+	}
+
 }
