@@ -1,9 +1,9 @@
 package teleskop
 
 import (
+	"fmt"
 	"sync"
 
-	"github.com/pkg/errors"
 	agentpb "github.com/whywaita/satelit/api"
 	"google.golang.org/grpc"
 )
@@ -23,7 +23,7 @@ func New(endpoints map[string]string) error {
 			grpc.WithInsecure(),
 		)
 		if err != nil {
-			return errors.Wrap(err, "failed to connect teleskop endpoint")
+			return fmt.Errorf("failed to connect teleskop endpoint: %w", err)
 		}
 
 		mu.Lock()

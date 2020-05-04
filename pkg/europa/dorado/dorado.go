@@ -36,15 +36,15 @@ func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, er
 		zap.NewStdLog(logger.Logger),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create dorado backend Client")
+		return nil, fmt.Errorf("failed to create dorado backend Client: %w", err)
 	}
 
 	hmds, err := client.GetHyperMetroDomains(context.Background(), dorado.NewSearchQueryName(doradoConfig.HyperMetroDomainName))
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get hypermetrodomain. name: %s", doradoConfig.HyperMetroDomainName))
+		return nil, fmt.Errorf("failed to get hyper metro domain (name: %s): %w", doradoConfig.HyperMetroDomainName, err)
 	}
 	if len(hmds) != 1 {
-		return nil, errors.New(fmt.Sprintf("founf multiple HyperMetro Domain in same name. name: %s", doradoConfig.HyperMetroDomainName))
+		return nil, errors.New(fmt.Sprintf("founf multiple HyperMetro Domain in same name (name: %s)", doradoConfig.HyperMetroDomainName))
 	}
 
 	return &Dorado{
@@ -59,12 +59,12 @@ func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, er
 func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
 	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create volume")
+		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
 	}
 
 	volume, err := d.toVolume(hmp)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", hmp.ID))
+		return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
 	}
 
 	return volume, nil
@@ -74,14 +74,14 @@ func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int)
 func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get volume list")
+		return nil, fmt.Errorf("failed to get volume list: %w", err)
 	}
 
 	var vs []europa.Volume
 	for _, hmp := range hmps {
 		v, err := d.toVolume(&hmp)
 		if err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", hmp.ID))
+			return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
 		}
 		vs = append(vs, *v)
 	}
@@ -93,16 +93,16 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 func (d *Dorado) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume, error) {
 	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryName(name.String()))
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get volumes")
+		return nil, fmt.Errorf("failed to get volumes (name: %s): %w", name.String(), err)
 	}
 	if len(hmps) != 1 {
-		return nil, errors.New("found multiple volumes in same name")
+		return nil, fmt.Errorf("found multiple volumes in same name (name: %s)", name.String())
 	}
 
 	volume := hmps[0]
 	v, err := d.toVolume(&volume)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", volume.ID))
+		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", volume.ID, err)
 	}
 	return v, nil
 }
@@ -111,54 +111,47 @@ func (d *Dorado) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume,
 func (d *Dorado) DeleteVolume(ctx context.Context, name uuid.UUID) error {
 	volume, err := d.GetVolume(ctx, name)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
+		return fmt.Errorf("failed to get volume info (name: %s): %w", name.String(), err)
 	}
 
 	err = d.client.DeleteVolume(ctx, volume.ID)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to delete volume. id: %s", volume.ID))
+		return fmt.Errorf("failed to delete volume (ID: %s): %w", volume.ID, err)
 	}
 
 	return nil
 }
 
 // AttachVolume attach to hostname by Dorado
-func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
+func (d *Dorado) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) error {
 	volume, err := d.GetVolume(ctx, name)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
+		return fmt.Errorf("failed to get volume info (name: %s): %w", name.String(), err)
 	}
 
 	iqn, err := d.datastore.GetIQN(ctx, hostname)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get iqn. hostname: %s", hostname))
+		return fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
 	}
 
 	err = d.client.AttachVolume(ctx, volume.ID, hostname, iqn)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to delete volume. id: %s", volume.ID))
+		return fmt.Errorf("failed to attach volume (name: %s): %w", name.String(), err)
 	}
 
-	v, err := d.GetVolume(ctx, name)
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to get europa.Volume. ID: %s", v.ID))
-	}
-	v.Attached = true
-	v.HostName = hostname
-
-	return v, nil
+	return nil
 }
 
 // DetachVolume detach volume by Dorado
 func (d *Dorado) DetachVolume(ctx context.Context, name uuid.UUID) error {
 	volume, err := d.GetVolume(ctx, name)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to get Volume info. name: %s", name.String()))
+		return fmt.Errorf("failed to get volume info (name: %s): %w", name.String(), err)
 	}
 
 	err = d.client.DetachVolume(ctx, volume.ID)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to detach volume. name: %s", name.String()))
+		return fmt.Errorf("failed to detach volume (name: %s): %w", name.String(), err)
 	}
 
 	return nil
@@ -170,7 +163,7 @@ func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
 
 	c, err := strconv.Atoi(hmp.CAPACITYBYTE)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to parse CAPACITYBYTE. Volume.ID: %s", hmp.ID))
+		return nil, fmt.Errorf("failed to parse CAPACITYBYTE (ID: %s): %w", hmp.ID, err)
 	}
 
 	v.CapacityGB = c / dorado.CapacityUnit

@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/whywaita/satelit/pkg/api"
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
 
-	"github.com/pkg/errors"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
@@ -32,17 +32,17 @@ func NewSatelit() (*api.SatelitServer, error) {
 	c := config.GetValue().MySQLConfig
 	ds, err := mysql.New(&c)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create mysql connection")
+		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
 	doradoBackend, err := dorado.New(config.GetValue().Dorado, ds)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create Dorado Backend")
+		return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
 	}
 
 	err = teleskop.New(config.GetValue().Teleskop.Endpoints)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create teleskop agent")
+		return nil, fmt.Errorf("failed to create teleskop agent: %w", err)
 	}
 
 	return &api.SatelitServer{
