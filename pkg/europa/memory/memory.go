@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -76,14 +77,14 @@ func (m *Memory) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume,
 }
 
 // AttachVolume write attach information on memory
-func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) (*europa.Volume, error) {
+func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) error {
 	v, err := m.GetVolume(ctx, name)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get volume")
+		return fmt.Errorf("failed to get volume: %w", err)
 	}
 
 	if v.Attached == true {
-		return nil, errors.New("already attached")
+		return errors.New("already attached")
 	}
 
 	m.Mu.Lock()
@@ -93,14 +94,14 @@ func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname stri
 	m.Volumes[name.String()] = *newV
 	m.Mu.Unlock()
 
-	return newV, nil
+	return nil
 }
 
 // DetachVolume delete attach information on memory
 func (m *Memory) DetachVolume(ctx context.Context, name uuid.UUID) error {
 	v, err := m.GetVolume(ctx, name)
 	if err != nil {
-		return errors.Wrap(err, "failed to get volume")
+		return fmt.Errorf("failed to get volume: %w", err)
 	}
 
 	newV := v

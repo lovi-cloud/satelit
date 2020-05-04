@@ -10,7 +10,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	pb "github.com/whywaita/satelit/api"
 
-	"github.com/pkg/errors"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
@@ -26,7 +25,7 @@ func New(c *config.MySQLConfig) (*MySQL, error) {
 	dsn := c.DSN + "?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci"
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to connect ")
+		return nil, fmt.Errorf("failed to connect : %w", err)
 	}
 
 	conn.SetMaxIdleConns(c.MaxIdleConn)
@@ -41,7 +40,7 @@ func New(c *config.MySQLConfig) (*MySQL, error) {
 func (m *MySQL) GetIQN(ctx context.Context, hostname string) (string, error) {
 	row, err := m.Conn.Query("SELECT iqn FROM hypervisor WHERE hostname = ?", hostname)
 	if err != nil {
-		return "", errors.Wrap(err, fmt.Sprintf("failed to exec query. hostname: %s", hostname))
+		return "", fmt.Errorf("failed to exec query (host: %v): %w", hostname, err)
 	}
 	defer func() {
 		if row != nil {
@@ -57,14 +56,14 @@ func (m *MySQL) GetIQN(ctx context.Context, hostname string) (string, error) {
 		// not found
 		iqn, err := teleskop.GetClient(hostname).GetISCSIQualifiedName(ctx, &pb.GetISCSIQualifiedNameRequest{})
 		if err != nil {
-			return "", errors.Wrap(err, fmt.Sprintf("failed to get iqn from Teleskop. hostname: %s", hostname))
+			return "", fmt.Errorf("failed to get qin from Teleskop (host: %v): %w", hostname, err)
 		}
 		return iqn.Iqn, nil
 	}
 
 	var iqn string
 	if err := row.Scan(iqn); err != nil {
-		return "", errors.Wrap(err, "failed to scan MySQL response")
+		return "", fmt.Errorf("failed to scan MySQL response: %w", err)
 	}
 
 	return iqn, nil

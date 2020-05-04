@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
 	pb "github.com/whywaita/satelit/api/satelit"
@@ -25,7 +24,7 @@ type SatelitServer struct {
 func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesRequest) (*pb.GetVolumesResponse, error) {
 	volumes, err := s.Europa.ListVolume(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get list of volume")
+		return nil, fmt.Errorf("failed to get list of volume: %w", err)
 	}
 
 	var pvs []*pb.Volume

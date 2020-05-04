@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 
 	"github.com/goccy/go-yaml"
-
-	"github.com/pkg/errors"
 )
 
 // A API is config of Satelit API Server
@@ -53,12 +51,12 @@ var configContent YAML
 func Load(filepath *string) error {
 	d, err := ioutil.ReadFile(*filepath)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to read config file: %s", *filepath))
+		return fmt.Errorf("failed to read config file %v: %w", *filepath, err)
 	}
 
 	y := &YAML{}
 	if err := yaml.Unmarshal(d, y); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to parse config file: %s", *filepath))
+		return fmt.Errorf("failed to parse config file %v: %w", *filepath, err)
 	}
 
 	configContent = *y
