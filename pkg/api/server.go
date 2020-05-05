@@ -61,14 +61,14 @@ func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesReques
 
 // AddVolume call CreateVolume to Europa backend
 func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest) (*pb.AddVolumeResponse, error) {
-	u, err := s.parseRequestUUID(req.Id)
+	u, err := s.parseRequestUUID(req.Name)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Id, err)
+		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
 	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityByte))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Id, err)
+		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Name, err)
 	}
 
 	return &pb.AddVolumeResponse{
@@ -87,10 +87,10 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 }
 
 // parseRequestUUID return uuid.UUID from gRPC request string
-func (s *SatelitServer) parseRequestUUID(reqID string) (uuid.UUID, error) {
-	u := uuid.FromStringOrNil(reqID)
+func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
+	u := uuid.FromStringOrNil(reqName)
 	if u == uuid.Nil {
-		return uuid.Nil, fmt.Errorf("failed to parse uuid from string (ID: %s)", reqID)
+		return uuid.Nil, fmt.Errorf("failed to parse uuid from string (name: %s)", reqName)
 	}
 
 	return u, nil
