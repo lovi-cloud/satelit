@@ -12,7 +12,7 @@ import (
 
 // A Memory is backend of europa by on memory for testing.
 type Memory struct {
-	Volumes map[string]europa.Volume
+	Volumes map[string]europa.Volume // ID: Volume
 	Mu      sync.RWMutex
 }
 
@@ -29,10 +29,12 @@ func New() (*Memory, error) {
 
 // CreateVolume write volume information to on memory
 func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
+	id := name.String()
+
 	v := europa.Volume{
-		ID:         name.String(),
+		ID:         id,
 		HostName:   "",
-		CapacityGB: capacity,
+		CapacityGB: uint32(capacity),
 	}
 
 	m.Mu.Lock()
@@ -43,7 +45,7 @@ func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacity int)
 }
 
 // DeleteVolume delete volume on memory
-func (m *Memory) DeleteVolume(ctx context.Context, name uuid.UUID) error {
+func (m *Memory) DeleteVolume(ctx context.Context, id string) error {
 	m.Mu.Lock()
 	delete(m.Volumes, "name")
 	m.Mu.Unlock()
@@ -65,9 +67,9 @@ func (m *Memory) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 }
 
 // GetVolume get volume on memory
-func (m *Memory) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume, error) {
+func (m *Memory) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
 	m.Mu.RLock()
-	v, ok := m.Volumes[name.String()]
+	v, ok := m.Volumes[id]
 	m.Mu.RUnlock()
 	if ok == false {
 		return nil, errors.New("not found")
@@ -77,8 +79,8 @@ func (m *Memory) GetVolume(ctx context.Context, name uuid.UUID) (*europa.Volume,
 }
 
 // AttachVolume write attach information on memory
-func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname string) error {
-	v, err := m.GetVolume(ctx, name)
+func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) error {
+	v, err := m.GetVolume(ctx, id)
 	if err != nil {
 		return fmt.Errorf("failed to get volume: %w", err)
 	}
@@ -91,15 +93,15 @@ func (m *Memory) AttachVolume(ctx context.Context, name uuid.UUID, hostname stri
 	newV := v
 	newV.Attached = true
 	newV.HostName = hostname
-	m.Volumes[name.String()] = *newV
+	m.Volumes[id] = *newV
 	m.Mu.Unlock()
 
 	return nil
 }
 
 // DetachVolume delete attach information on memory
-func (m *Memory) DetachVolume(ctx context.Context, name uuid.UUID) error {
-	v, err := m.GetVolume(ctx, name)
+func (m *Memory) DetachVolume(ctx context.Context, id string) error {
+	v, err := m.GetVolume(ctx, id)
 	if err != nil {
 		return fmt.Errorf("failed to get volume: %w", err)
 	}
@@ -109,7 +111,7 @@ func (m *Memory) DetachVolume(ctx context.Context, name uuid.UUID) error {
 	newV.HostName = ""
 
 	m.Mu.Lock()
-	m.Volumes[name.String()] = *newV
+	m.Volumes[id] = *newV
 	m.Mu.Unlock()
 	return nil
 }
