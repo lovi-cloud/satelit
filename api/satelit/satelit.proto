@@ -5,11 +5,16 @@ option go_package = ".;satelit";
 
 service Satelit {
     rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
+    rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
+    rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
 }
 
 // type
 message Volume {
     string id = 1;
+    bool attached = 2;
+    string hostname = 3;
+    uint32 capacity_byte = 4;
 }
 
 // Request / Response
@@ -19,9 +24,21 @@ message GetVolumesResponse {
     repeated Volume volumes = 1;
 }
 
-message AddVolumeRequest {}
+message AddVolumeRequest {
+    string name = 1;
+    uint32 capacity_byte = 2;
+}
 
-message AddVolumeResponse {}
+message AddVolumeResponse {
+    Volume volume = 1;
+}
+
+message AttachVolumeRequest {
+    string id = 1;
+    string hostname = 2;
+}
+
+message AttachVolumeResponse {}
 
 message DeleteVolumeRequest {}
 

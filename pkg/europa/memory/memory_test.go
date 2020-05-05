@@ -39,16 +39,18 @@ func TestMemoryVolumeOperation(t *testing.T) {
 	if len(vs) != 1 {
 		t.Error("Unexpected num of volumes")
 	}
-	if vs[0].ID != testUUID {
+	volume := vs[0]
+
+	if volume.ID != testUUID {
 		t.Error("Unexpected volume id")
 	}
 
-	err = m.AttachVolume(ctx, u, testHostname)
+	err = m.AttachVolume(ctx, volume.ID, testHostname)
 	if err != nil {
 		t.Error(err)
 	}
 
-	v, err := m.GetVolume(ctx, u)
+	v, err := m.GetVolume(ctx, volume.ID)
 	if err != nil {
 		t.Error("Can't get volume")
 	}
@@ -57,12 +59,12 @@ func TestMemoryVolumeOperation(t *testing.T) {
 		t.Error("Unexpected volume attachment info after AttachVolume")
 	}
 
-	err = m.DetachVolume(ctx, u)
+	err = m.DetachVolume(ctx, volume.ID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	v, err = m.GetVolume(ctx, u)
+	v, err = m.GetVolume(ctx, volume.ID)
 	if err != nil {
 		t.Error("Can't get volume")
 	}

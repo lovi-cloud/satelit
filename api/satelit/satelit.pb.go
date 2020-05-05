@@ -35,7 +35,10 @@ type Volume struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id           string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Attached     bool   `protobuf:"varint,2,opt,name=attached,proto3" json:"attached,omitempty"`
+	Hostname     string `protobuf:"bytes,3,opt,name=hostname,proto3" json:"hostname,omitempty"`
+	CapacityByte uint32 `protobuf:"varint,4,opt,name=capacity_byte,json=capacityByte,proto3" json:"capacity_byte,omitempty"`
 }
 
 func (x *Volume) Reset() {
@@ -75,6 +78,27 @@ func (x *Volume) GetId() string {
 		return x.Id
 	}
 	return ""
+}
+
+func (x *Volume) GetAttached() bool {
+	if x != nil {
+		return x.Attached
+	}
+	return false
+}
+
+func (x *Volume) GetHostname() string {
+	if x != nil {
+		return x.Hostname
+	}
+	return ""
+}
+
+func (x *Volume) GetCapacityByte() uint32 {
+	if x != nil {
+		return x.CapacityByte
+	}
+	return 0
 }
 
 // Request / Response
@@ -167,6 +191,9 @@ type AddVolumeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Id           string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CapacityByte uint32 `protobuf:"varint,2,opt,name=capacity_byte,json=capacityByte,proto3" json:"capacity_byte,omitempty"`
 }
 
 func (x *AddVolumeRequest) Reset() {
@@ -201,10 +228,26 @@ func (*AddVolumeRequest) Descriptor() ([]byte, []int) {
 	return file_satelit_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *AddVolumeRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AddVolumeRequest) GetCapacityByte() uint32 {
+	if x != nil {
+		return x.CapacityByte
+	}
+	return 0
+}
+
 type AddVolumeResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Volume *Volume `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
 }
 
 func (x *AddVolumeResponse) Reset() {
@@ -239,6 +282,106 @@ func (*AddVolumeResponse) Descriptor() ([]byte, []int) {
 	return file_satelit_proto_rawDescGZIP(), []int{4}
 }
 
+func (x *AddVolumeResponse) GetVolume() *Volume {
+	if x != nil {
+		return x.Volume
+	}
+	return nil
+}
+
+type AttachVolumeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Hostname string `protobuf:"bytes,2,opt,name=hostname,proto3" json:"hostname,omitempty"`
+}
+
+func (x *AttachVolumeRequest) Reset() {
+	*x = AttachVolumeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AttachVolumeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttachVolumeRequest) ProtoMessage() {}
+
+func (x *AttachVolumeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttachVolumeRequest.ProtoReflect.Descriptor instead.
+func (*AttachVolumeRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AttachVolumeRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AttachVolumeRequest) GetHostname() string {
+	if x != nil {
+		return x.Hostname
+	}
+	return ""
+}
+
+type AttachVolumeResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AttachVolumeResponse) Reset() {
+	*x = AttachVolumeResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AttachVolumeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttachVolumeResponse) ProtoMessage() {}
+
+func (x *AttachVolumeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttachVolumeResponse.ProtoReflect.Descriptor instead.
+func (*AttachVolumeResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{6}
+}
+
 type DeleteVolumeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -248,7 +391,7 @@ type DeleteVolumeRequest struct {
 func (x *DeleteVolumeRequest) Reset() {
 	*x = DeleteVolumeRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[5]
+		mi := &file_satelit_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -261,7 +404,7 @@ func (x *DeleteVolumeRequest) String() string {
 func (*DeleteVolumeRequest) ProtoMessage() {}
 
 func (x *DeleteVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[5]
+	mi := &file_satelit_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -274,7 +417,7 @@ func (x *DeleteVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteVolumeRequest.ProtoReflect.Descriptor instead.
 func (*DeleteVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{5}
+	return file_satelit_proto_rawDescGZIP(), []int{7}
 }
 
 type DeleteVolumeResponse struct {
@@ -286,7 +429,7 @@ type DeleteVolumeResponse struct {
 func (x *DeleteVolumeResponse) Reset() {
 	*x = DeleteVolumeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[6]
+		mi := &file_satelit_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -299,7 +442,7 @@ func (x *DeleteVolumeResponse) String() string {
 func (*DeleteVolumeResponse) ProtoMessage() {}
 
 func (x *DeleteVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[6]
+	mi := &file_satelit_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -312,33 +455,60 @@ func (x *DeleteVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteVolumeResponse.ProtoReflect.Descriptor instead.
 func (*DeleteVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{6}
+	return file_satelit_proto_rawDescGZIP(), []int{8}
 }
 
 var File_satelit_proto protoreflect.FileDescriptor
 
 var file_satelit_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
-	0x07, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x22, 0x18, 0x0a, 0x06, 0x56, 0x6f, 0x6c, 0x75,
+	0x07, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x22, 0x75, 0x0a, 0x06, 0x56, 0x6f, 0x6c, 0x75,
 	0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
-	0x69, 0x64, 0x22, 0x13, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x3f, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x56, 0x6f,
-	0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a,
-	0x07, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f,
-	0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52,
-	0x07, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x22, 0x12, 0x0a, 0x10, 0x41, 0x64, 0x64, 0x56,
-	0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x13, 0x0a, 0x11,
-	0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x15, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x56, 0x6f, 0x6c, 0x75, 0x6d,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x16, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x32, 0x52, 0x0a, 0x07, 0x53, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x12, 0x47, 0x0a, 0x0a, 0x47,
-	0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x12, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65,
-	0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e,
-	0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69,
-	0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x61, 0x74, 0x74, 0x61, 0x63, 0x68, 0x65, 0x64, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x61, 0x74, 0x74, 0x61, 0x63, 0x68, 0x65, 0x64, 0x12, 0x1a,
+	0x0a, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x23, 0x0a, 0x0d, 0x63, 0x61,
+	0x70, 0x61, 0x63, 0x69, 0x74, 0x79, 0x5f, 0x62, 0x79, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x0d, 0x52, 0x0c, 0x63, 0x61, 0x70, 0x61, 0x63, 0x69, 0x74, 0x79, 0x42, 0x79, 0x74, 0x65, 0x22,
+	0x13, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x22, 0x3f, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d,
+	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x07, 0x76, 0x6f,
+	0x6c, 0x75, 0x6d, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x73, 0x61,
+	0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x07, 0x76, 0x6f,
+	0x6c, 0x75, 0x6d, 0x65, 0x73, 0x22, 0x47, 0x0a, 0x10, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75,
+	0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x63, 0x61, 0x70,
+	0x61, 0x63, 0x69, 0x74, 0x79, 0x5f, 0x62, 0x79, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d,
+	0x52, 0x0c, 0x63, 0x61, 0x70, 0x61, 0x63, 0x69, 0x74, 0x79, 0x42, 0x79, 0x74, 0x65, 0x22, 0x3c,
+	0x0a, 0x11, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x06, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x56, 0x6f,
+	0x6c, 0x75, 0x6d, 0x65, 0x52, 0x06, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x22, 0x41, 0x0a, 0x13,
+	0x41, 0x74, 0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x02, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x22,
+	0x16, 0x0a, 0x14, 0x41, 0x74, 0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x15, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x16,
+	0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xe7, 0x01, 0x0a, 0x07, 0x53, 0x61, 0x74, 0x65, 0x6c,
+	0x69, 0x74, 0x12, 0x47, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73,
+	0x12, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f,
+	0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x73,
+	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x41,
+	0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x12, 0x19, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c,
+	0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64,
+	0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x41, 0x74, 0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d,
+	0x65, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x74, 0x74, 0x61,
+	0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x74, 0x74, 0x61, 0x63, 0x68,
+	0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
+	0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -353,25 +523,32 @@ func file_satelit_proto_rawDescGZIP() []byte {
 	return file_satelit_proto_rawDescData
 }
 
-var file_satelit_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_satelit_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_satelit_proto_goTypes = []interface{}{
 	(*Volume)(nil),               // 0: satelit.Volume
 	(*GetVolumesRequest)(nil),    // 1: satelit.GetVolumesRequest
 	(*GetVolumesResponse)(nil),   // 2: satelit.GetVolumesResponse
 	(*AddVolumeRequest)(nil),     // 3: satelit.AddVolumeRequest
 	(*AddVolumeResponse)(nil),    // 4: satelit.AddVolumeResponse
-	(*DeleteVolumeRequest)(nil),  // 5: satelit.DeleteVolumeRequest
-	(*DeleteVolumeResponse)(nil), // 6: satelit.DeleteVolumeResponse
+	(*AttachVolumeRequest)(nil),  // 5: satelit.AttachVolumeRequest
+	(*AttachVolumeResponse)(nil), // 6: satelit.AttachVolumeResponse
+	(*DeleteVolumeRequest)(nil),  // 7: satelit.DeleteVolumeRequest
+	(*DeleteVolumeResponse)(nil), // 8: satelit.DeleteVolumeResponse
 }
 var file_satelit_proto_depIdxs = []int32{
 	0, // 0: satelit.GetVolumesResponse.volumes:type_name -> satelit.Volume
-	1, // 1: satelit.Satelit.GetVolumes:input_type -> satelit.GetVolumesRequest
-	2, // 2: satelit.Satelit.GetVolumes:output_type -> satelit.GetVolumesResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 1: satelit.AddVolumeResponse.volume:type_name -> satelit.Volume
+	1, // 2: satelit.Satelit.GetVolumes:input_type -> satelit.GetVolumesRequest
+	3, // 3: satelit.Satelit.AddVolume:input_type -> satelit.AddVolumeRequest
+	5, // 4: satelit.Satelit.AttachVolume:input_type -> satelit.AttachVolumeRequest
+	2, // 5: satelit.Satelit.GetVolumes:output_type -> satelit.GetVolumesResponse
+	4, // 6: satelit.Satelit.AddVolume:output_type -> satelit.AddVolumeResponse
+	6, // 7: satelit.Satelit.AttachVolume:output_type -> satelit.AttachVolumeResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_satelit_proto_init() }
@@ -441,7 +618,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteVolumeRequest); i {
+			switch v := v.(*AttachVolumeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -453,6 +630,30 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AttachVolumeResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteVolumeRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteVolumeResponse); i {
 			case 0:
 				return &v.state
@@ -471,7 +672,7 @@ func file_satelit_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_satelit_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -498,6 +699,8 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SatelitClient interface {
 	GetVolumes(ctx context.Context, in *GetVolumesRequest, opts ...grpc.CallOption) (*GetVolumesResponse, error)
+	AddVolume(ctx context.Context, in *AddVolumeRequest, opts ...grpc.CallOption) (*AddVolumeResponse, error)
+	AttachVolume(ctx context.Context, in *AttachVolumeRequest, opts ...grpc.CallOption) (*AttachVolumeResponse, error)
 }
 
 type satelitClient struct {
@@ -517,9 +720,29 @@ func (c *satelitClient) GetVolumes(ctx context.Context, in *GetVolumesRequest, o
 	return out, nil
 }
 
+func (c *satelitClient) AddVolume(ctx context.Context, in *AddVolumeRequest, opts ...grpc.CallOption) (*AddVolumeResponse, error) {
+	out := new(AddVolumeResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/AddVolume", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) AttachVolume(ctx context.Context, in *AttachVolumeRequest, opts ...grpc.CallOption) (*AttachVolumeResponse, error) {
+	out := new(AttachVolumeResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/AttachVolume", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SatelitServer is the server API for Satelit service.
 type SatelitServer interface {
 	GetVolumes(context.Context, *GetVolumesRequest) (*GetVolumesResponse, error)
+	AddVolume(context.Context, *AddVolumeRequest) (*AddVolumeResponse, error)
+	AttachVolume(context.Context, *AttachVolumeRequest) (*AttachVolumeResponse, error)
 }
 
 // UnimplementedSatelitServer can be embedded to have forward compatible implementations.
@@ -528,6 +751,12 @@ type UnimplementedSatelitServer struct {
 
 func (*UnimplementedSatelitServer) GetVolumes(context.Context, *GetVolumesRequest) (*GetVolumesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVolumes not implemented")
+}
+func (*UnimplementedSatelitServer) AddVolume(context.Context, *AddVolumeRequest) (*AddVolumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddVolume not implemented")
+}
+func (*UnimplementedSatelitServer) AttachVolume(context.Context, *AttachVolumeRequest) (*AttachVolumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AttachVolume not implemented")
 }
 
 func RegisterSatelitServer(s *grpc.Server, srv SatelitServer) {
@@ -552,6 +781,42 @@ func _Satelit_GetVolumes_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Satelit_AddVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddVolumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).AddVolume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/AddVolume",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).AddVolume(ctx, req.(*AddVolumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_AttachVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttachVolumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).AttachVolume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/AttachVolume",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).AttachVolume(ctx, req.(*AttachVolumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Satelit_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "satelit.Satelit",
 	HandlerType: (*SatelitServer)(nil),
@@ -559,6 +824,14 @@ var _Satelit_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVolumes",
 			Handler:    _Satelit_GetVolumes_Handler,
+		},
+		{
+			MethodName: "AddVolume",
+			Handler:    _Satelit_AddVolume_Handler,
+		},
+		{
+			MethodName: "AttachVolume",
+			Handler:    _Satelit_AttachVolume_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
