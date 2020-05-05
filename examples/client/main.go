@@ -50,7 +50,7 @@ func run() error {
 
 	fmt.Println("AddVolume")
 	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
-		Id:           u.String(),
+		Name:         u.String(),
 		CapacityByte: 23,
 	})
 	if err != nil {
@@ -65,7 +65,7 @@ func run() error {
 
 	fmt.Println("AttachVolume")
 	_, err = client.AttachVolume(ctx, &pb.AttachVolumeRequest{
-		Id:       u.String(),
+		Id:       resp.Volume.Id,
 		Hostname: hostname,
 	})
 	if err != nil {
