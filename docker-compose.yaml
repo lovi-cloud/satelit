@@ -1,13 +1,16 @@
 version: '3'
 services:
   api:
-    image: debian:buster
+    build:
+      context: .
     volumes:
-      - ./satelit:/satelit
       - ./configs/satelit.yaml:/satelit.yaml
     command:
-      - /satelit
+      - /go/src/github.com/whywaita/satelit/satelit
       - -conf
       - /satelit.yaml
+    environment:
+      GO111MODULE: "on"
+      GOPROXY: "http://module_proxy:8002"
     ports:
       - "9262:9262"
