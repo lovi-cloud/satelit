@@ -1,41 +1,41 @@
 syntax = "proto3";
 
 package satelit;
-option go_package = ".;satelit";
+option  go_package = ".;satelit";
 
 service Satelit {
-    rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
-    rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
-    rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
+  rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
+  rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
+  rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
 }
 
 // type
 message Volume {
-    string id = 1;
-    bool attached = 2;
-    string hostname = 3;
-    uint32 capacity_byte = 4;
+  string id            = 1;
+  bool   attached      = 2;
+  string hostname      = 3;
+  uint32 capacity_byte = 4;
 }
 
 // Request / Response
 message GetVolumesRequest {}
 
 message GetVolumesResponse {
-    repeated Volume volumes = 1;
+  repeated Volume volumes = 1;
 }
 
 message AddVolumeRequest {
-    string name = 1;
-    uint32 capacity_byte = 2;
+  string name          = 1;
+  uint32 capacity_byte = 2;
 }
 
 message AddVolumeResponse {
-    Volume volume = 1;
+  Volume volume = 1;
 }
 
 message AttachVolumeRequest {
-    string id = 1;
-    string hostname = 2;
+  string id       = 1;
+  string hostname = 2;
 }
 
 message AttachVolumeResponse {}
