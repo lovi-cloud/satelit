@@ -6,8 +6,6 @@ import (
 
 	"strconv"
 
-	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/whywaita/go-dorado-sdk/dorado"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
@@ -21,12 +19,22 @@ type Dorado struct {
 	client    *dorado.Client
 	datastore datastore.Datastore
 
-	storagePoolName    string
 	hyperMetroDomainID string
+	storagePoolName    string
+	portGroupName      string
+	local              Device
+	remote             Device
+}
+
+// A Device is IDs of devices
+type Device struct {
+	storagePoolID int
+	portGroupID   int
 }
 
 // New create Dorado backend
 func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, error) {
+	ctx := context.Background()
 	client, err := dorado.NewClient(
 		doradoConfig.LocalIps[0],
 		doradoConfig.RemoteIps[0],
@@ -44,30 +52,59 @@ func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, er
 		return nil, fmt.Errorf("failed to get hyper metro domain (name: %s): %w", doradoConfig.HyperMetroDomainName, err)
 	}
 	if len(hmds) != 1 {
-		return nil, errors.New(fmt.Sprintf("founf multiple HyperMetro Domain in same name (name: %s)", doradoConfig.HyperMetroDomainName))
+		return nil, fmt.Errorf("not only one HyperMetro Domain in same name (name: %s)", doradoConfig.HyperMetroDomainName)
+	}
+
+	localStoragePoolIDs, err := client.LocalDevice.GetStoragePools(ctx, dorado.NewSearchQueryName(doradoConfig.StoragePoolName))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get local storage pool id: %w", err)
+	}
+	if len(localStoragePoolIDs) != 1 {
+		return nil, fmt.Errorf("not only one StoragePool ID in same name (name: %s)", doradoConfig.StoragePoolName)
+	}
+
+	localPortgroupIDs, err := client.LocalDevice.GetPortGroups(ctx, dorado.NewSearchQueryName(doradoConfig.PortGroupName))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get local port group id: %w", err)
+	}
+	if len(localPortgroupIDs) != 1 {
+		return nil, fmt.Errorf("not only one port group id: in same name (name: %s)", doradoConfig.PortGroupName)
+	}
+
+	l := Device{
+		storagePoolID: localStoragePoolIDs[0].ID,
+		portGroupID:   localPortgroupIDs[0].ID,
+	}
+
+	remoteStoragePoolIDs, err := client.RemoteDevice.GetStoragePools(ctx, dorado.NewSearchQueryName(doradoConfig.StoragePoolName))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get remote storage pool id: %w", err)
+	}
+	if len(remoteStoragePoolIDs) != 1 {
+		return nil, fmt.Errorf("found multiple StoragePool ID in same name (name: %s)", doradoConfig.StoragePoolName)
+	}
+
+	remotePortgroupIDs, err := client.RemoteDevice.GetPortGroups(ctx, dorado.NewSearchQueryName(doradoConfig.PortGroupName))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get local port group id: %w", err)
+	}
+	if len(remotePortgroupIDs) != 1 {
+		return nil, fmt.Errorf("not only one port group id: in same name (name: %s)", doradoConfig.PortGroupName)
+	}
+
+	r := Device{
+		storagePoolID: remoteStoragePoolIDs[0].ID,
+		portGroupID:   remotePortgroupIDs[0].ID,
 	}
 
 	return &Dorado{
 		client:             client,
 		datastore:          datastore,
-		storagePoolName:    doradoConfig.StoragePoolName,
 		hyperMetroDomainID: hmds[0].ID,
+
+		local:  l,
+		remote: r,
 	}, nil
-}
-
-// CreateVolume create volume by Dorado
-func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
-	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
-	}
-
-	volume, err := d.toVolume(hmp)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
-	}
-
-	return volume, nil
 }
 
 // ListVolume return list of volume by Dorado
@@ -118,7 +155,7 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-// AttachVolume attach to hostname by Dorado
+// AttachVolume create mappingview object by Dorado
 func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string) error {
 	iqn, err := d.datastore.GetIQN(ctx, hostname)
 	if err != nil {
@@ -140,6 +177,14 @@ func (d *Dorado) DetachVolume(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to detach volume (ID: %s): %w", id, err)
 	}
 
+	return nil
+}
+
+func (d *Dorado) UploadImage(ctx context.Context, image []byte, name string) (*europa.BaseImage, error) {
+	return nil, nil
+}
+
+func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
 	return nil
 }
 

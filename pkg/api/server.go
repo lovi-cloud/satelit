@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"io"
 	"net"
 
 	uuid "github.com/satori/go.uuid"
@@ -66,7 +67,7 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityByte))
+	volume, err := s.Europa.CreateVolumeRaw(ctx, u, int(req.CapacityByte))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Name, err)
 	}
@@ -83,6 +84,8 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 		return nil, fmt.Errorf("failed to attach volume to %s (ID: %s): %w", req.Hostname, req.Id, err)
 	}
 
+	// TODO: send attach call to teleskop
+
 	return &pb.AttachVolumeResponse{}, nil
 }
 
@@ -94,4 +97,38 @@ func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 	}
 
 	return u, nil
+}
+
+func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
+	// TODO: implement
+}
+
+type meta struct {
+	name string
+}
+
+func (s *SatelitServer) receiveImage(stream pb.Satelit_UploadImageServer, w io.Writer) (meta, error) {
+	m := meta{}
+
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return m, err
+		}
+
+		if mt := resp.GetMeta(); mt != nil {
+			m.name = mt.Name
+		}
+		if chunk := resp.GetChunk(); chunk != nil {
+			_, err := w.Write(chunk.Data)
+			if err != nil {
+
+			}
+		}
+	}
+
+	return m, nil
 }
