@@ -1,0 +1,26 @@
+api:
+  listen: "0.0.0.0:9262"
+
+teleskop:
+  endpoints:
+    host1: "your_teleskop_server_ip:5000"
+
+mysql:
+  dsn: "root@tcp(db:3306)/satelit"
+  max_idle_conn: 80
+  conn_max_lifetime_second: 60
+
+dorado:
+  username: "dorado_username"
+  password: "dorado_password"
+  local_ip:
+    - "dorado_local_rest_ip_1"
+    - "dorado_local_rest_ip_2"
+  remote_ip:
+    - "dorado_remote_rest_ip_1"
+    - "dorado_remote_rest_ip_2"
+  portgroup_name: "portgroup_name"
+  storagepool_name: "storagepool_name"
+  hypermetrodomain_name: "hypermetrodomain_name"
+
+log_level: "debug"

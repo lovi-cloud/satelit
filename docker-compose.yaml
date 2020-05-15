@@ -1,0 +1,15 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+    volumes:
+      - ./configs/satelit.yaml:/satelit.yaml
+    command:
+      - /go/src/github.com/whywaita/satelit/satelit
+      - -conf
+      - /satelit.yaml
+    environment:
+      GO111MODULE: "on"
+    ports:
+      - "9262:9262"
