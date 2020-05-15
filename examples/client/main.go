@@ -60,7 +60,7 @@ func run() error {
 
 	var hostname string
 	for h := range config.GetValue().Teleskop.Endpoints {
-		hostname = h
+		hostname = h // set last hostname
 	}
 
 	fmt.Println("AttachVolume")
