@@ -11,6 +11,5 @@ services:
       - /satelit.yaml
     environment:
       GO111MODULE: "on"
-      GOPROXY: "http://module_proxy:8002"
     ports:
       - "9262:9262"
