@@ -101,6 +101,7 @@ func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 
 func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 	// TODO: implement
+	return nil
 }
 
 type meta struct {
