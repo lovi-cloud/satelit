@@ -7,6 +7,7 @@ service Satelit {
   rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
+  rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {}
 }
 
 // type
@@ -15,6 +16,11 @@ message Volume {
   bool   attached      = 2;
   string hostname      = 3;
   uint32 capacity_byte = 4;
+}
+
+message Image {
+  string id        = 1;
+  string volume_id = 2;
 }
 
 // Request / Response
@@ -43,3 +49,23 @@ message AttachVolumeResponse {}
 message DeleteVolumeRequest {}
 
 message DeleteVolumeResponse {}
+
+message UploadImageRequest {
+  oneof value {
+    UploadImageRequestMeta  meta  = 1;
+    UploadImageRequestChunk chunk = 2;
+  }
+}
+
+message UploadImageRequestMeta {
+  string name = 1;
+}
+
+message UploadImageRequestChunk {
+  bytes data     = 1;
+  int64 position = 2;
+}
+
+message UploadImageResponse {
+  Image image = 1;
+}
