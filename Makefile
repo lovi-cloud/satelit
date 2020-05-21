@@ -11,6 +11,10 @@ build: ## Build All
 	make build-proto
 	go build -o satelit -ldflags $(BUILD_LDFLAGS) .
 
+build-linux: ## Build for Linux
+	make build-proto
+	GOOS=linux GOARCH=amd64 go build -o satelit-linux-amd64 -ldflags $(BUILD_LDFLAGS) .
+
 build-proto: ## Build proto file
 	mkdir -p ./api/satelit
 	protoc -I ./api/satelit --go_out=plugins=grpc:./api/satelit ./api/satelit/satelit.proto
