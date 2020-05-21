@@ -3,12 +3,17 @@ package dorado
 import (
 	"context"
 	"fmt"
-
+	"io/ioutil"
+	"os"
 	"strconv"
 
+	"github.com/whywaita/go-os-brick/osbrick"
+
+	uuid "github.com/satori/go.uuid"
 	"github.com/whywaita/go-dorado-sdk/dorado"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/internal/qcow2"
 	"github.com/whywaita/satelit/pkg/datastore"
 	"github.com/whywaita/satelit/pkg/europa"
 	"go.uber.org/zap"
@@ -167,6 +172,8 @@ func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string) e
 		return fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
 	}
 
+	// TODO: send to attach operation
+
 	return nil
 }
 
@@ -177,13 +184,70 @@ func (d *Dorado) DetachVolume(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to detach volume (ID: %s): %w", id, err)
 	}
 
+	// TODO: send to detach operation
+
 	return nil
 }
 
-func (d *Dorado) UploadImage(ctx context.Context, image []byte, name string) (*europa.BaseImage, error) {
-	return nil, nil
+// UploadImage upload to qcow2 image file
+func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
+	// image write to tmpfile
+	tmpfile, err := ioutil.TempFile("", "satelit")
+	if err != nil {
+		return nil, fmt.Errorf("failde to create temporary file: %w", err)
+	}
+	defer os.Remove(tmpfile.Name())
+	if _, err = tmpfile.Write(image); err != nil {
+		return nil, fmt.Errorf("failed to write image to temporary file: %w", err)
+	}
+	if err = tmpfile.Close(); err != nil {
+		return nil, fmt.Errorf("failed to close temporary file: %w", err)
+	}
+
+	// mount new volume
+	u := uuid.NewV4()
+	hmp, err := d.client.CreateVolume(ctx, u, imageSizeGB, d.storagePoolName, d.hyperMetroDomainID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
+	}
+	deviceName, err := d.attachVolumeLocalhost(ctx, hmp)
+	if err != nil {
+		return nil, fmt.Errorf("failed to attach volume to localhost: %w", err)
+	}
+
+	// exec qemu-img convert
+	err = qcow2.ToRaw(ctx, tmpfile.Name(), deviceName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert raw format: %w", err)
+	}
+
+	// detach volume
+	targetPortalIPs, err := d.client.GetPortalIPAddresses(ctx, d.local.portGroupID, d.remote.portGroupID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get portal ip addresses: %w", err)
+	}
+
+	hostLUNID, err := d.GetHostLUNIDLocalhost(ctx, hmp)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get host lun ID in localhost: %w", err)
+	}
+
+	err = osbrick.DisconnectVolume(ctx, targetPortalIPs, hostLUNID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to detach volume: %w", err)
+	}
+
+	bi := &europa.BaseImage{
+		ID:            u.String(),
+		Name:          name,
+		Description:   description,
+		CacheVolumeID: hmp.ID,
+	}
+
+	return bi, nil
 }
 
+// DeleteImage delete image by Dorado
 func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
 	return nil
 }
@@ -199,4 +263,21 @@ func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
 
 	v.CapacityGB = uint32(c / dorado.CapacityUnit)
 	return v, nil
+}
+
+// GetHostLUNIDLocalhost return host LUN id in localhost.
+func (d *Dorado) GetHostLUNIDLocalhost(ctx context.Context, hmp *dorado.HyperMetroPair) (int, error) {
+	_, lHost, _, _, err := d.getHostgroupLocalhost(ctx)
+	if err != nil {
+		return -1, fmt.Errorf("failed to create host group: %w", err)
+	}
+
+	// NOTE(whywaita): this code except same host lun ID between local device and remote device.
+	// if diff in local and remote, need to fix go-os-brick
+	hostLUNID, err := d.client.LocalDevice.GetHostLUNID(ctx, hmp.LOCALOBJID, lHost.ID)
+	if err != nil {
+		return -1, fmt.Errorf("failed to get host lun id: %w", err)
+	}
+
+	return hostLUNID, nil
 }

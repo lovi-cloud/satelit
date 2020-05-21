@@ -3,8 +3,9 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"log"
-	"os"
+
+	"github.com/whywaita/go-os-brick/osbrick"
+	"go.uber.org/zap"
 
 	"github.com/whywaita/satelit/pkg/api"
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
@@ -21,10 +22,14 @@ func init() {
 	flag.Parse()
 	err := config.Load(conf)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		panic(err)
 	}
 	logger.New(config.GetValue().LogLevel)
+	stdlogger, err := zap.NewStdLogAt(logger.Logger, zap.DebugLevel)
+	if err != nil {
+		panic(err)
+	}
+	osbrick.SetLogger(stdlogger)
 }
 
 // NewSatelit create SatelitServer instance.
@@ -46,6 +51,7 @@ func NewSatelit() (*api.SatelitServer, error) {
 	}
 
 	return &api.SatelitServer{
-		Europa: doradoBackend,
+		Europa:    doradoBackend,
+		Datastore: ds,
 	}, nil
 }

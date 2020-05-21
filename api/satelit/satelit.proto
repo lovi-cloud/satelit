@@ -19,8 +19,10 @@ message Volume {
 }
 
 message Image {
-  string id        = 1;
-  string volume_id = 2;
+  string id          = 1;
+  string name        = 2;
+  string volume_id   = 3;
+  string description = 4;
 }
 
 // Request / Response
@@ -58,7 +60,8 @@ message UploadImageRequest {
 }
 
 message UploadImageRequestMeta {
-  string name = 1;
+  string name        = 1;
+  string description = 2;
 }
 
 message UploadImageRequestChunk {

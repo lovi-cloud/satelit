@@ -133,11 +133,13 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-func (m *Memory) UploadImage(ctx context.Context, image []byte, name string) (*europa.BaseImage, error) {
+// UploadImage upload image to in-memory
+func (m *Memory) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
 	// TODO: implement
 	return nil, nil
 }
 
+// DeleteImage delete from in-memory
 func (m *Memory) DeleteImage(ctx context.Context, id string) error {
 	// TODO: implement
 	return nil
