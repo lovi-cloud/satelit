@@ -211,10 +211,5 @@ func (s *SatelitServer) receiveImage(stream pb.Satelit_UploadImageServer, w io.W
 		}
 	}
 
-	//err := stream.SendAndClose(&pb.UploadImageResponse{})
-	//if err != nil {
-	//	return meta{}, fmt.Errorf("failed to close stream")
-	//}
-
 	return m, nil
 }
