@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/whywaita/satelit/pkg/europa"
+
 	// mysql driver
 	_ "github.com/go-sql-driver/mysql"
 	pb "github.com/whywaita/satelit/api"
@@ -67,4 +69,19 @@ func (m *MySQL) GetIQN(ctx context.Context, hostname string) (string, error) {
 	}
 
 	return iqn, nil
+}
+
+// PutImage write image record
+func (m *MySQL) PutImage(image europa.BaseImage) error {
+	query, err := m.Conn.Prepare("INSERT INTO image(uuid, name, volume_id, description) VALUES (?, ?, ?, ?)")
+	if err != nil {
+		return fmt.Errorf("failed to prepare query: %w", err)
+	}
+
+	_, err = query.Exec(image.ID, image.Name, image.CacheVolumeID, image.Description)
+	if err != nil {
+		return fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	return nil
 }

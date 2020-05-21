@@ -7,9 +7,9 @@ require (
 	github.com/goccy/go-yaml v1.4.3
 	github.com/golang/protobuf v1.4.0
 	github.com/pkg/errors v0.9.1
-	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
-	github.com/whywaita/go-dorado-sdk v0.4.1
-	github.com/whywaita/go-os-brick v0.0.1
+	github.com/satori/go.uuid v1.2.0
+	github.com/whywaita/go-dorado-sdk v0.4.3
+	github.com/whywaita/go-os-brick v0.0.3
 	go.uber.org/zap v1.14.1
 	google.golang.org/grpc v1.29.0
 	google.golang.org/protobuf v1.21.0
