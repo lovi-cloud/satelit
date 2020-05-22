@@ -133,6 +133,19 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	return nil
 }
 
+// GetImages return image from in-memory
+func (m *Memory) GetImages() ([]europa.BaseImage, error) {
+	var images []europa.BaseImage
+
+	m.Mu.RLock()
+	for _, v := range m.Images {
+		images = append(images, v)
+	}
+	m.Mu.RUnlock()
+
+	return images, nil
+}
+
 // UploadImage upload image to in-memory
 func (m *Memory) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
 	// TODO: implement

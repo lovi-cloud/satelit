@@ -3,9 +3,11 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/whywaita/satelit/pkg/europa"
 
 	// mysql driver
@@ -14,18 +16,17 @@ import (
 
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
-	"github.com/whywaita/satelit/internal/logger"
 )
 
 // A MySQL is backend of datastore by MySQL Server
 type MySQL struct {
-	Conn *sql.DB
+	Conn *sqlx.DB
 }
 
 // New create MySQL datastore
 func New(c *config.MySQLConfig) (*MySQL, error) {
 	dsn := c.DSN + "?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci"
-	conn, err := sql.Open("mysql", dsn)
+	conn, err := sqlx.Open("mysql", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect : %w", err)
 	}
@@ -40,47 +41,72 @@ func New(c *config.MySQLConfig) (*MySQL, error) {
 
 // GetIQN get IQN from MySQL
 func (m *MySQL) GetIQN(ctx context.Context, hostname string) (string, error) {
-	row, err := m.Conn.Query("SELECT iqn FROM hypervisor WHERE hostname = ?", hostname)
-	if err != nil {
-		return "", fmt.Errorf("failed to exec query (host: %v): %w", hostname, err)
-	}
-	defer func() {
-		if row != nil {
-			errClose := row.Close()
-			if errClose != nil {
-				logger.Logger.Warn(err.Error())
-			}
-		}
-	}()
-
-	b := row.Next()
-	if b == false {
-		// not found
-		iqn, err := teleskop.GetClient(hostname).GetISCSIQualifiedName(ctx, &pb.GetISCSIQualifiedNameRequest{})
-		if err != nil {
-			return "", fmt.Errorf("failed to get qin from Teleskop (host: %v): %w", hostname, err)
-		}
-		return iqn.Iqn, nil
-	}
-
 	var iqn string
-	if err := row.Scan(iqn); err != nil {
-		return "", fmt.Errorf("failed to scan MySQL response: %w", err)
+
+	query := fmt.Sprintf(`SELECT iqn FROM hypervisor WHERE hostname = "%s"`, hostname)
+	err := m.Conn.Get(&iqn, query)
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		break
+	case err != nil:
+		return "", fmt.Errorf("failed to exec query (hostname: %v): %w", hostname, err)
 	}
 
-	return iqn, nil
+	if iqn != "" {
+		return iqn, nil
+	}
+
+	// not found in mysql
+	resp, err := teleskop.GetClient(hostname).GetISCSIQualifiedName(ctx, &pb.GetISCSIQualifiedNameRequest{})
+	if err != nil {
+		return "", fmt.Errorf("failed to get IQN from Teleskop (host: %v): %w", hostname, err)
+	}
+	return resp.Iqn, nil
+}
+
+// GetImage return image object
+func (m *MySQL) GetImage(imageID string) (*europa.BaseImage, error) {
+	var image europa.BaseImage
+
+	query := fmt.Sprintf(`SELECT * FROM image WHERE uuid = "%s"`, imageID)
+	err := m.Conn.Get(&image, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute get query: %w", err)
+	}
+
+	return &image, nil
+}
+
+// GetImages return all images
+func (m *MySQL) GetImages() ([]europa.BaseImage, error) {
+	var images []europa.BaseImage
+
+	query := fmt.Sprintf("SELECT * FROM image")
+	err := m.Conn.Select(&images, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to SELCT image table: %w", err)
+	}
+
+	return images, nil
 }
 
 // PutImage write image record
 func (m *MySQL) PutImage(image europa.BaseImage) error {
-	query, err := m.Conn.Prepare("INSERT INTO image(uuid, name, volume_id, description) VALUES (?, ?, ?, ?)")
-	if err != nil {
-		return fmt.Errorf("failed to prepare query: %w", err)
-	}
-
-	_, err = query.Exec(image.ID, image.Name, image.CacheVolumeID, image.Description)
+	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (?, ?, ?, ?)`
+	_, err := m.Conn.Exec(query, image.UUID, image.Name, image.CacheVolumeID, image.Description)
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	return nil
+}
+
+// DeleteImage delete image record
+func (m *MySQL) DeleteImage(imageID string) error {
+	query := fmt.Sprintf(`DELETE FROM image WHERE uuid = "%s"`, imageID)
+	_, err := m.Conn.Exec(query)
+	if err != nil {
+		return fmt.Errorf("failed to execute delete query: %w", err)
 	}
 
 	return nil
