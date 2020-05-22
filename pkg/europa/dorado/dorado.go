@@ -160,21 +160,33 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-// AttachVolume create mappingview object by Dorado
-func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string) error {
+// AttachVolume attach volume to hostname by Dorado
+// return (host lun id, attached device name, error)
+func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string, isTeleskop bool) (int, string, error) {
 	iqn, err := d.datastore.GetIQN(ctx, hostname)
 	if err != nil {
-		return fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
+		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
 	}
 
+	// create dorado mappingview object
 	err = d.client.AttachVolume(ctx, id, hostname, iqn)
 	if err != nil {
-		return fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
+		return 0, "", fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
+	}
+
+	if isTeleskop == false {
+		//  running satelit server (not teleskop)
+		hostLUNID, deviceName, err := d.attachVolumeSatelit(ctx, id)
+		if err != nil {
+			return 0, "", fmt.Errorf("failed to attach volume to localhost (ID: %s): %w", id, err)
+		}
+
+		return hostLUNID, deviceName, nil
 	}
 
 	// TODO: send to attach operation
 
-	return nil
+	return 0, "", nil
 }
 
 // DetachVolume detach volume by Dorado
@@ -210,10 +222,19 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
 	}
-	deviceName, err := d.attachVolumeLocalhost(ctx, hmp)
+
+	hostname, err := os.Hostname()
 	if err != nil {
-		return nil, fmt.Errorf("failed to attach volume to localhost: %w", err)
+		return nil, fmt.Errorf("failed to get hostname: %w", err)
 	}
+
+	hostLUNID, deviceName, err := d.AttachVolume(ctx, hmp.ID, hostname, false)
+	if err != nil {
+		return nil, fmt.Errorf("failed to attach volume: %w", err)
+	}
+	defer func() {
+		d.DetachVolume(ctx, hmp.ID)
+	}()
 
 	// exec qemu-img convert
 	err = qcow2.ToRaw(ctx, tmpfile.Name(), deviceName)
@@ -227,11 +248,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		return nil, fmt.Errorf("failed to get portal ip addresses: %w", err)
 	}
 
-	hostLUNID, err := d.GetHostLUNIDLocalhost(ctx, hmp)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get host lun ID in localhost: %w", err)
-	}
-
+	// TODO: move to d.DetachVolume
 	err = osbrick.DisconnectVolume(ctx, targetPortalIPs, hostLUNID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to detach volume: %w", err)

@@ -87,7 +87,7 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 
 // AttachVolume call AttachVolume to Europa backend
 func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRequest) (*pb.AttachVolumeResponse, error) {
-	err := s.Europa.AttachVolume(ctx, req.Id, req.Hostname)
+	_, _, err := s.Europa.AttachVolume(ctx, req.Id, req.Hostname, true)
 	if err != nil {
 		return nil, fmt.Errorf("failed to attach volume to %s (ID: %s): %w", req.Hostname, req.Id, err)
 	}
