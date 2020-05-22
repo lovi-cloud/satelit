@@ -6,7 +6,7 @@ on:
   pull_request: {}
 jobs:
   test:
-    runs-on: self-hosted  ## installed `make` and `gcc`
+    # runs-on: self-hosted  ## installed `make` and `gcc`
     strategy:
       fail-fast: false
     steps:
