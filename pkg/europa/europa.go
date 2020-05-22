@@ -15,6 +15,7 @@ type Europa interface {
 	GetVolume(ctx context.Context, id string) (*Volume, error)
 	AttachVolume(ctx context.Context, id string, hostname string, isTeleskop bool) (int, string, error)
 	DetachVolume(ctx context.Context, id string) error
+	GetImages() ([]BaseImage, error)
 	UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*BaseImage, error)
 	DeleteImage(ctx context.Context, id string) error
 }

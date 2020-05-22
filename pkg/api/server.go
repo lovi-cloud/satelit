@@ -105,6 +105,23 @@ func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 	return u, nil
 }
 
+// GetImages return all images
+func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest) (*pb.GetImagesResponse, error) {
+	images, err := s.Europa.GetImages()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get images: %w", err)
+	}
+
+	var pbImages []*pb.Image
+	for _, image := range images {
+		pbImages = append(pbImages, image.ToPb())
+	}
+
+	return &pb.GetImagesResponse{
+		Images: pbImages,
+	}, nil
+}
+
 // UploadImage upload to europa backend
 func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 	logger.Logger.Info("starting UploadImage")
@@ -212,4 +229,14 @@ func (s *SatelitServer) receiveImage(stream pb.Satelit_UploadImageServer, w io.W
 	}
 
 	return m, nil
+}
+
+// DeleteImage delete image
+func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequest) (*pb.DeleteImageResponse, error) {
+	err := s.Europa.DeleteImage(ctx, req.Id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete image from europa: %w", err)
+	}
+
+	return &pb.DeleteImageResponse{}, nil
 }

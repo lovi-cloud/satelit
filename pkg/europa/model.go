@@ -1,6 +1,10 @@
 package europa
 
-import pb "github.com/whywaita/satelit/api/satelit"
+import (
+	"time"
+
+	pb "github.com/whywaita/satelit/api/satelit"
+)
 
 // A Volume is volume information
 type Volume struct {
@@ -9,7 +13,9 @@ type Volume struct {
 	HostName    string
 	CapacityGB  uint32
 	BaseImageID string
-	HostLUNID   int // set when attached
+	HostLUNID   int       // set when attached
+	CreatedAt   time.Time `db:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at"`
 }
 
 // ToPb parse to Satelit API Server pb.Volume
@@ -25,16 +31,19 @@ func (v *Volume) ToPb() *pb.Volume {
 
 // BaseImage is os Image
 type BaseImage struct {
-	ID            string
-	Name          string
-	Description   string
-	CacheVolumeID string // if CacheVolumeID is blank, not have cache image
+	ID            int       `db:"id"`
+	UUID          string    `db:"uuid"`
+	Name          string    `db:"name"`
+	Description   string    `db:"description"`
+	CacheVolumeID string    `db:"volume_id"` // if CacheVolumeID is blank, not have cache image
+	CreatedAt     time.Time `db:"created_at"`
+	UpdatedAt     time.Time `db:"updated_at"`
 }
 
 // ToPb parse to Satelit API Server pb.Image
 func (bi *BaseImage) ToPb() *pb.Image {
 	i := &pb.Image{
-		Id:          bi.ID,
+		Id:          bi.UUID,
 		Name:        bi.Name,
 		VolumeId:    bi.CacheVolumeID,
 		Description: bi.Description,

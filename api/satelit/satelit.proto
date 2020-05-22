@@ -7,7 +7,9 @@ service Satelit {
   rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
+  rpc GetImages(GetImagesRequest) returns (GetImagesResponse) {}
   rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {}
+  rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse) {}
 }
 
 // type
@@ -52,6 +54,12 @@ message DeleteVolumeRequest {}
 
 message DeleteVolumeResponse {}
 
+message GetImagesRequest {}
+
+message GetImagesResponse {
+  repeated Image images = 1;
+}
+
 message UploadImageRequest {
   oneof value {
     UploadImageRequestMeta  meta  = 1;
@@ -72,3 +80,9 @@ message UploadImageRequestChunk {
 message UploadImageResponse {
   Image image = 1;
 }
+
+message DeleteImageRequest {
+  string id = 1;
+}
+
+message DeleteImageResponse {}
