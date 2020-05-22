@@ -54,7 +54,7 @@ func (m *Memory) GetImages() ([]europa.BaseImage, error) {
 // PutImage write image
 func (m *Memory) PutImage(image europa.BaseImage) error {
 	m.mutex.Lock()
-	m.images[image.ID] = image
+	m.images[string(image.ID)] = image
 	m.mutex.Unlock()
 
 	return nil
