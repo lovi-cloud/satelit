@@ -160,9 +160,9 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-// AttachVolume attach volume to hostname by Dorado
+// AttachVolumeTeleskop attach volume to hostname (running teleskop) by Dorado
 // return (host lun id, attached device name, error)
-func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string, isTeleskop bool) (int, string, error) {
+func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname string) (int, string, error) {
 	iqn, err := d.datastore.GetIQN(ctx, hostname)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
@@ -174,19 +174,32 @@ func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string, i
 		return 0, "", fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
 	}
 
-	if isTeleskop == false {
-		//  running satelit server (not teleskop)
-		hostLUNID, deviceName, err := d.attachVolumeSatelit(ctx, id)
-		if err != nil {
-			return 0, "", fmt.Errorf("failed to attach volume to localhost (ID: %s): %w", id, err)
-		}
-
-		return hostLUNID, deviceName, nil
-	}
-
 	// TODO: send to attach operation
 
 	return 0, "", nil
+}
+
+// AttachVolumeSatelit attach volume to satelit by Dorado
+// return (host lun id, attached device name, error)
+func (d *Dorado) AttachVolumeSatelit(ctx context.Context, id string, hostname string) (int, string, error) {
+	iqn, err := d.datastore.GetIQN(ctx, hostname)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
+	}
+
+	// create dorado mappingview object
+	err = d.client.AttachVolume(ctx, id, hostname, iqn)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
+	}
+
+	//  running satelit server (not teleskop)
+	hostLUNID, deviceName, err := d.attachVolumeSatelit(ctx, id)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to attach volume to localhost (ID: %s): %w", id, err)
+	}
+
+	return hostLUNID, deviceName, nil
 }
 
 // DetachVolume detach volume by Dorado
@@ -238,7 +251,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		return nil, fmt.Errorf("failed to get hostname: %w", err)
 	}
 
-	hostLUNID, deviceName, err := d.AttachVolume(ctx, hmp.ID, hostname, false)
+	hostLUNID, deviceName, err := d.AttachVolumeSatelit(ctx, hmp.ID, hostname)
 	if err != nil {
 		return nil, fmt.Errorf("failed to attach volume: %w", err)
 	}

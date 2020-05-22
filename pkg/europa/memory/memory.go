@@ -95,8 +95,18 @@ func (m *Memory) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	return &v, nil
 }
 
+// AttachVolumeTeleskop write attach information in-memory
+func (m *Memory) AttachVolumeTeleskop(ctx context.Context, id string, hostname string) (int, string, error) {
+	return m.AttachVolume(ctx, id, hostname)
+}
+
+// AttachVolumeSatelit write attach information in-memory
+func (m *Memory) AttachVolumeSatelit(ctx context.Context, id string, hostname string) (int, string, error) {
+	return m.AttachVolume(ctx, id, hostname)
+}
+
 // AttachVolume write attach information in-memory
-func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string, isTeleskop bool) (int, string, error) {
+func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) (int, string, error) {
 	v, err := m.GetVolume(ctx, id)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get volume: %w", err)
