@@ -37,10 +37,13 @@ func run() error {
 	}
 	client := pb.NewSatelitClient(conn)
 
-	fmt.Println("GetVolumes")
-	_, err = client.GetVolumes(ctx, &pb.GetVolumesRequest{})
+	fmt.Println("GetImages")
+	resp, err := client.GetImages(ctx, &pb.GetImagesRequest{})
 	if err != nil {
 		return err
+	}
+	for _, i := range resp.Images {
+		fmt.Printf("%+v\n", i)
 	}
 
 	fmt.Println("UploadImage")
@@ -57,6 +60,22 @@ func run() error {
 		return err
 	}
 	fmt.Printf("%+v\n", image)
+
+	fmt.Println("GetImages")
+	resp, err = client.GetImages(ctx, &pb.GetImagesRequest{})
+	if err != nil {
+		return err
+	}
+	for _, i := range resp.Images {
+		fmt.Printf("%+v\n", i)
+	}
+
+	fmt.Println("DeleteImage")
+	deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
+	if err != nil {
+		return err
+	}
+	fmt.Println(deleteResp)
 
 	//fmt.Println("AddVolume")
 	//resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{

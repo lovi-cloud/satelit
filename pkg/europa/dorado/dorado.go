@@ -201,6 +201,16 @@ func (d *Dorado) DetachVolume(ctx context.Context, id string) error {
 	return nil
 }
 
+// GetImages return all images
+func (d *Dorado) GetImages() ([]europa.BaseImage, error) {
+	images, err := d.datastore.GetImages()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get images from datastore: %w", err)
+	}
+
+	return images, nil
+}
+
 // UploadImage upload to qcow2 image file
 func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
 	// image write to tmpfile
@@ -255,7 +265,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	}
 
 	bi := &europa.BaseImage{
-		ID:            u.String(),
+		UUID:          u.String(),
 		Name:          name,
 		Description:   description,
 		CacheVolumeID: hmp.ID,
@@ -266,6 +276,21 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 
 // DeleteImage delete image by Dorado
 func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
+	image, err := d.datastore.GetImage(id)
+	if err != nil {
+		return fmt.Errorf("failed to get image from datastore: %w", err)
+	}
+
+	err = d.DeleteVolume(ctx, image.CacheVolumeID)
+	if err != nil {
+		return fmt.Errorf("failed to delete image cache volume: %w", err)
+	}
+
+	err = d.datastore.DeleteImage(id)
+	if err != nil {
+		return fmt.Errorf("failed to delete datastore: %w", err)
+	}
+
 	return nil
 }
 
