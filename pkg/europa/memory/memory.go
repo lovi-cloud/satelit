@@ -95,15 +95,25 @@ func (m *Memory) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	return &v, nil
 }
 
+// AttachVolumeTeleskop write attach information in-memory
+func (m *Memory) AttachVolumeTeleskop(ctx context.Context, id string, hostname string) (int, string, error) {
+	return m.AttachVolume(ctx, id, hostname)
+}
+
+// AttachVolumeSatelit write attach information in-memory
+func (m *Memory) AttachVolumeSatelit(ctx context.Context, id string, hostname string) (int, string, error) {
+	return m.AttachVolume(ctx, id, hostname)
+}
+
 // AttachVolume write attach information in-memory
-func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) error {
+func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) (int, string, error) {
 	v, err := m.GetVolume(ctx, id)
 	if err != nil {
-		return fmt.Errorf("failed to get volume: %w", err)
+		return 0, "", fmt.Errorf("failed to get volume: %w", err)
 	}
 
 	if v.Attached == true {
-		return errors.New("already attached")
+		return 0, "", errors.New("already attached")
 	}
 
 	m.Mu.Lock()
@@ -113,7 +123,7 @@ func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) e
 	m.Volumes[id] = *newV
 	m.Mu.Unlock()
 
-	return nil
+	return 1, "/dev/xxa", nil
 }
 
 // DetachVolume delete attach information in-memory
@@ -133,11 +143,26 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-func (m *Memory) UploadImage(ctx context.Context, image []byte, name string) (*europa.BaseImage, error) {
+// GetImages return image from in-memory
+func (m *Memory) GetImages() ([]europa.BaseImage, error) {
+	var images []europa.BaseImage
+
+	m.Mu.RLock()
+	for _, v := range m.Images {
+		images = append(images, v)
+	}
+	m.Mu.RUnlock()
+
+	return images, nil
+}
+
+// UploadImage upload image to in-memory
+func (m *Memory) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
 	// TODO: implement
 	return nil, nil
 }
 
+// DeleteImage delete from in-memory
 func (m *Memory) DeleteImage(ctx context.Context, id string) error {
 	// TODO: implement
 	return nil

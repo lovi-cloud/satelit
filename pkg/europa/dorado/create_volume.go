@@ -29,64 +29,34 @@ func (d *Dorado) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity i
 
 // CreateVolumeImage create volume that copied image
 func (d *Dorado) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
-	// create raw volume
-	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
-	}
-
-	hostname, err := os.Hostname()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get hostname: %w", err)
-	}
-
-	// raw device attach to localhost
-	err = d.attachVolumeLocalhost(ctx, hostname, hmp)
-	if err != nil {
-		return nil, fmt.Errorf("failed to attach volume: %w", err)
-	}
-
-	// image device attach to localhost
-
-	// exec qemu-img convert
-
-	// unmount raw device and image device
 
 	return nil, nil
 }
 
-// attachVolumeLocalhost attach volume to localhost (= running satelit host).
-// use in CreateVolumeImage.
-func (d *Dorado) attachVolumeLocalhost(ctx context.Context, hostname string, hmp *dorado.HyperMetroPair) error {
-	_, lHost, _, _, err := d.getHostgroupLocalhost(ctx)
+// attachVolumeLocalhost attach volume satelit host.
+func (d *Dorado) attachVolumeSatelit(ctx context.Context, hyperMetroPairID string) (int, string, error) {
+	hmp, err := d.client.GetHyperMetroPair(ctx, hyperMetroPairID)
 	if err != nil {
-		return fmt.Errorf("failed to create host group: %w", err)
-	}
-
-	err = d.AttachVolume(ctx, hmp.ID, hostname)
-	if err != nil {
-		return fmt.Errorf("failed to attach volume: %w", err)
-	}
-
-	// NOTE(whywaita): this code except same host lun ID between local device and remote device.
-	// if diff in local and remote, need to fix go-os-brick
-	hostLUNID, err := d.client.LocalDevice.GetHostLUNID(ctx, hmp.LOCALOBJID, lHost.ID)
-	if err != nil {
-		return fmt.Errorf("failed to get host lun id: %w", err)
+		return 0, "", fmt.Errorf("failed to get hyper metro pair: %w", err)
 	}
 
 	targetPortalIPs, err := d.client.GetPortalIPAddresses(ctx, d.local.portGroupID, d.remote.portGroupID)
 	if err != nil {
-		return fmt.Errorf("failed to get portal ip addresses: %w", err)
+		return 0, "", fmt.Errorf("failed to get portal ip addresses: %w", err)
+	}
+
+	hostLUNID, err := d.GetHostLUNIDLocalhost(ctx, hmp)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get host lun ID in localhost: %w", err)
 	}
 
 	// mount to satelit server
-	_, err = osbrick.ConnectMultipathVolume(ctx, targetPortalIPs, hostLUNID)
+	deviceName, err := osbrick.ConnectMultipathVolume(ctx, targetPortalIPs, hostLUNID)
 	if err != nil {
-		return fmt.Errorf("failed to connect device: %w", err)
+		return 0, "", fmt.Errorf("failed to connect device: %w", err)
 	}
 
-	return nil
+	return hostLUNID, deviceName, nil
 }
 
 // getHostgroupLocalhost get hostgroup and host in local device and remote device.
