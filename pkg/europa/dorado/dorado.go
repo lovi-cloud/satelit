@@ -3,12 +3,17 @@ package dorado
 import (
 	"context"
 	"fmt"
-
+	"io/ioutil"
+	"os"
 	"strconv"
 
+	"github.com/whywaita/go-os-brick/osbrick"
+
+	uuid "github.com/satori/go.uuid"
 	"github.com/whywaita/go-dorado-sdk/dorado"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/internal/qcow2"
 	"github.com/whywaita/satelit/pkg/datastore"
 	"github.com/whywaita/satelit/pkg/europa"
 	"go.uber.org/zap"
@@ -155,19 +160,46 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-// AttachVolume create mappingview object by Dorado
-func (d *Dorado) AttachVolume(ctx context.Context, id string, hostname string) error {
+// AttachVolumeTeleskop attach volume to hostname (running teleskop) by Dorado
+// return (host lun id, attached device name, error)
+func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname string) (int, string, error) {
 	iqn, err := d.datastore.GetIQN(ctx, hostname)
 	if err != nil {
-		return fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
+		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
 	}
 
+	// create dorado mappingview object
 	err = d.client.AttachVolume(ctx, id, hostname, iqn)
 	if err != nil {
-		return fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
+		return 0, "", fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
 	}
 
-	return nil
+	// TODO: send to attach operation
+
+	return 0, "", nil
+}
+
+// AttachVolumeSatelit attach volume to satelit by Dorado
+// return (host lun id, attached device name, error)
+func (d *Dorado) AttachVolumeSatelit(ctx context.Context, id string, hostname string) (int, string, error) {
+	iqn, err := d.datastore.GetIQN(ctx, hostname)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
+	}
+
+	// create dorado mappingview object
+	err = d.client.AttachVolume(ctx, id, hostname, iqn)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to attach volume (ID: %s): %w", id, err)
+	}
+
+	//  running satelit server (not teleskop)
+	hostLUNID, deviceName, err := d.attachVolumeSatelit(ctx, id)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to attach volume to localhost (ID: %s): %w", id, err)
+	}
+
+	return hostLUNID, deviceName, nil
 }
 
 // DetachVolume detach volume by Dorado
@@ -177,14 +209,101 @@ func (d *Dorado) DetachVolume(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to detach volume (ID: %s): %w", id, err)
 	}
 
+	// TODO: send to detach operation
+
 	return nil
 }
 
-func (d *Dorado) UploadImage(ctx context.Context, image []byte, name string) (*europa.BaseImage, error) {
-	return nil, nil
+// GetImages return all images
+func (d *Dorado) GetImages() ([]europa.BaseImage, error) {
+	images, err := d.datastore.GetImages()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get images from datastore: %w", err)
+	}
+
+	return images, nil
 }
 
+// UploadImage upload to qcow2 image file
+func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
+	// image write to tmpfile
+	tmpfile, err := ioutil.TempFile("", "satelit")
+	if err != nil {
+		return nil, fmt.Errorf("failde to create temporary file: %w", err)
+	}
+	defer os.Remove(tmpfile.Name())
+	if _, err = tmpfile.Write(image); err != nil {
+		return nil, fmt.Errorf("failed to write image to temporary file: %w", err)
+	}
+	if err = tmpfile.Close(); err != nil {
+		return nil, fmt.Errorf("failed to close temporary file: %w", err)
+	}
+
+	// mount new volume
+	u := uuid.NewV4()
+	hmp, err := d.client.CreateVolume(ctx, u, imageSizeGB, d.storagePoolName, d.hyperMetroDomainID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
+	}
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get hostname: %w", err)
+	}
+
+	hostLUNID, deviceName, err := d.AttachVolumeSatelit(ctx, hmp.ID, hostname)
+	if err != nil {
+		return nil, fmt.Errorf("failed to attach volume: %w", err)
+	}
+	defer func() {
+		d.DetachVolume(ctx, hmp.ID)
+	}()
+
+	// exec qemu-img convert
+	err = qcow2.ToRaw(ctx, tmpfile.Name(), deviceName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert raw format: %w", err)
+	}
+
+	// detach volume
+	targetPortalIPs, err := d.client.GetPortalIPAddresses(ctx, d.local.portGroupID, d.remote.portGroupID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get portal ip addresses: %w", err)
+	}
+
+	// TODO: move to d.DetachVolume
+	err = osbrick.DisconnectVolume(ctx, targetPortalIPs, hostLUNID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to detach volume: %w", err)
+	}
+
+	bi := &europa.BaseImage{
+		UUID:          u.String(),
+		Name:          name,
+		Description:   description,
+		CacheVolumeID: hmp.ID,
+	}
+
+	return bi, nil
+}
+
+// DeleteImage delete image by Dorado
 func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
+	image, err := d.datastore.GetImage(id)
+	if err != nil {
+		return fmt.Errorf("failed to get image from datastore: %w", err)
+	}
+
+	err = d.DeleteVolume(ctx, image.CacheVolumeID)
+	if err != nil {
+		return fmt.Errorf("failed to delete image cache volume: %w", err)
+	}
+
+	err = d.datastore.DeleteImage(id)
+	if err != nil {
+		return fmt.Errorf("failed to delete datastore: %w", err)
+	}
+
 	return nil
 }
 
@@ -199,4 +318,21 @@ func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
 
 	v.CapacityGB = uint32(c / dorado.CapacityUnit)
 	return v, nil
+}
+
+// GetHostLUNIDLocalhost return host LUN id in localhost.
+func (d *Dorado) GetHostLUNIDLocalhost(ctx context.Context, hmp *dorado.HyperMetroPair) (int, error) {
+	_, lHost, _, _, err := d.getHostgroupLocalhost(ctx)
+	if err != nil {
+		return -1, fmt.Errorf("failed to create host group: %w", err)
+	}
+
+	// NOTE(whywaita): this code except same host lun ID between local device and remote device.
+	// if diff in local and remote, need to fix go-os-brick
+	hostLUNID, err := d.client.LocalDevice.GetHostLUNID(ctx, hmp.LOCALOBJID, lHost.ID)
+	if err != nil {
+		return -1, fmt.Errorf("failed to get host lun id: %w", err)
+	}
+
+	return hostLUNID, nil
 }
