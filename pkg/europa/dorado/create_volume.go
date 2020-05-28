@@ -9,8 +9,8 @@ import (
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
-// CreateVolumeRaw create raw volume
-func (d *Dorado) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
+// CreateVolume create raw volume
+func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
 	hmp, err := d.client.CreateVolumeRaw(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
@@ -26,8 +26,8 @@ func (d *Dorado) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity i
 	return volume, nil
 }
 
-// CreateVolumeImage create volume that copied image
-func (d *Dorado) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
+// CreateVolumeFromImage create volume that copied image
+func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
 	image, err := d.GetImage(imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get image: %w", err)

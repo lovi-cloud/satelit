@@ -81,7 +81,7 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	volume, err := s.Europa.CreateVolumeRaw(ctx, u, int(req.CapacityByte))
+	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityByte))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Name, err)
 	}
@@ -98,7 +98,7 @@ func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeIma
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	v, err := s.Europa.CreateVolumeImage(ctx, u, int(req.CapacityByte), req.SourceImageId)
+	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityByte), req.SourceImageId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume from image (ID: %s): %w", req.Name, err)
 	}
@@ -269,7 +269,7 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 	logger.Logger.Info(fmt.Sprintf("AddVirtualMachine (name: %s)", req.Name))
 
 	u := uuid.NewV4()
-	volume, err := s.Europa.CreateVolumeImage(ctx, u, int(req.RootVolumeGb), req.SourceImageId)
+	volume, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), req.SourceImageId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume from image: %w", err)
 	}
