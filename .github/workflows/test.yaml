@@ -33,4 +33,4 @@ jobs:
         run: |
           make test
         env:
-          GOPRIVATE: "github.com/whywaita/go-dorado-sdk"
+          GOPRIVATE: "github.com/whywaita/*"
