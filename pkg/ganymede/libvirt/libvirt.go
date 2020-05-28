@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/whywaita/satelit/pkg/ganymede"
 
 	agentpb "github.com/whywaita/satelit/api"
@@ -36,9 +38,14 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 		return nil, fmt.Errorf("failed to add virtual machine (name: %s): %w", name, err)
 	}
 
+	u, err := uuid.FromString(resp.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse response uuid from teleskop: %w", err)
+	}
+
 	vm := &ganymede.VirtualMachine{
 		Name:           resp.Name,
-		UUID:           resp.Uuid,
+		UUID:           u,
 		Vcpus:          vcpus,
 		MemoryKiB:      memoryKiB,
 		HypervisorName: hypervisorName,
