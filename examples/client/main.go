@@ -46,77 +46,64 @@ func run() error {
 		fmt.Printf("%+v\n", i)
 	}
 
-	//resp2, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
-	//	Name:          "whywaita-cirros-boot-test",
-	//	Vcpus:         1,
-	//	MemoryKib:     2 * 1024 * 1024,
-	//	RootVolumeGb:  32,
-	//	SourceImageId: "8300f101-2000-4acb-8aba-707967cb5fc1",
-	//})
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//resp3, err := client.StartVirtualMachine(ctx, &pb.StartVirtualMachineRequest{Uuid: resp2.Uuid})
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//fmt.Printf("%+v\n", resp3)
+	return nil
+}
 
-	//fmt.Println("UploadImage")
-	//args := os.Args
-	//fmt.Printf("args: %s\n", args)
-	//imageFile := args[1]
-	//f, err := os.Open(imageFile)
-	//if err != nil {
-	//	return err
-	//}
-	//image, err := UploadImage(ctx, client, f, "whywaita-test-cirros", "cirros")
-	//if err != nil {
-	//	return err
-	//}
-	//fmt.Printf("%+v\n", image)
-	//
-	//fmt.Println("GetImages")
-	//resp, err = client.GetImages(ctx, &pb.GetImagesRequest{})
-	//if err != nil {
-	//	return err
-	//}
-	//for _, i := range resp.Images {
-	//	fmt.Printf("%+v\n", i)
-	//}
-	//
-	//fmt.Println("DeleteImage")
-	//deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
-	//if err != nil {
-	//	return err
-	//}
-	//fmt.Println(deleteResp)
+// SampleStartVirtualMachine is sample of AddVirtualMachine / StartVirtualMachine
+func SampleStartVirtualMachine(ctx context.Context, client pb.SatelitClient, imageUUID string) error {
+	resp1, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
+		Name:          "cirros-boot-test",
+		Vcpus:         1,
+		MemoryKib:     2 * 1024 * 1024,
+		RootVolumeGb:  32,
+		SourceImageId: imageUUID,
+	})
+	if err != nil {
+		return err
+	}
+	vmUUID := resp1.Uuid
 
-	//fmt.Println("AddVolume")
-	//resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
-	//	Name:         u.String(),
-	//	CapacityByte: 23,
-	//})
-	//if err != nil {
-	//	return err
-	//}
-	//fmt.Printf("%+v\n", resp.Volume)
-	//
-	//var hostname string
-	//for h := range config.GetValue().Teleskop.Endpoints {
-	//	hostname = h // set last hostname
-	//}
-	//
-	//fmt.Println("AttachVolume")
-	//_, err = client.AttachVolume(ctx, &pb.AttachVolumeRequest{
-	//	Id:       resp.Volume.Id,
-	//	Hostname: hostname,
-	//})
-	//if err != nil {
-	//	return err
-	//}
+	resp2, err := client.StartVirtualMachine(ctx, &pb.StartVirtualMachineRequest{Uuid: vmUUID})
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", resp2)
+
+	return nil
+}
+
+// SampleUploadImage is sample of UploadImage / GetImages / DeleteImage
+func SampleUploadImage(ctx context.Context, client pb.SatelitClient) error {
+	fmt.Println("UploadImage")
+	args := os.Args
+	fmt.Printf("args: %s\n", args)
+	imageFile := args[1]
+	f, err := os.Open(imageFile)
+	if err != nil {
+		return err
+	}
+	image, err := UploadImage(ctx, client, f, "test-cirros", "cirros")
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%+v\n", image)
+
+	fmt.Println("GetImages")
+	resp, err := client.GetImages(ctx, &pb.GetImagesRequest{})
+	if err != nil {
+		return err
+	}
+	for _, i := range resp.Images {
+		fmt.Printf("%+v\n", i)
+	}
+
+	fmt.Println("DeleteImage")
+	deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
+	if err != nil {
+		return err
+	}
+	fmt.Println(deleteResp)
 
 	return nil
 }
