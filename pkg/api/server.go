@@ -10,6 +10,11 @@ import (
 	"net"
 	"sync"
 
+	"github.com/whywaita/satelit/pkg/ganymede"
+
+	agentpb "github.com/whywaita/satelit/api"
+	"github.com/whywaita/satelit/internal/client/teleskop"
+
 	"github.com/whywaita/satelit/pkg/datastore"
 
 	uuid "github.com/satori/go.uuid"
@@ -29,6 +34,7 @@ type SatelitServer struct {
 
 	Europa    europa.Europa
 	Datastore datastore.Datastore
+	Ganymede  ganymede.Ganymede
 }
 
 // Run start gRPC Server
@@ -82,6 +88,23 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 
 	return &pb.AddVolumeResponse{
 		Volume: volume.ToPb(),
+	}, nil
+}
+
+// AddVolumeImage call CreateVolumeImage to Europa backend
+func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeImageRequest) (*pb.AddVolumeImageResponse, error) {
+	u, err := s.parseRequestUUID(req.Name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
+	}
+
+	v, err := s.Europa.CreateVolumeImage(ctx, u, int(req.CapacityByte), req.SourceImageId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume from image (ID: %s): %w", req.Name, err)
+	}
+
+	return &pb.AddVolumeImageResponse{
+		Volume: v.ToPb(),
 	}, nil
 }
 
@@ -239,4 +262,49 @@ func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequ
 	}
 
 	return &pb.DeleteImageResponse{}, nil
+}
+
+// AddVirtualMachine create virtual machine.
+func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtualMachineRequest) (*pb.AddVirtualMachineResponse, error) {
+	logger.Logger.Info(fmt.Sprintf("AddVirtualMachine (name: %s)", req.Name))
+
+	u := uuid.NewV4()
+	volume, err := s.Europa.CreateVolumeImage(ctx, u, int(req.RootVolumeGb), req.SourceImageId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume from image: %w", err)
+	}
+
+	_, deviceName, err := s.Europa.AttachVolumeTeleskop(ctx, volume.ID, req.HypervisorName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to attach volume: %w", err)
+	}
+
+	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create virtual machine: %w", err)
+	}
+
+	return &pb.AddVirtualMachineResponse{
+		Name: vm.Name,
+		Uuid: vm.UUID,
+	}, nil
+}
+
+// StartVirtualMachine start virtual machine
+func (s *SatelitServer) StartVirtualMachine(ctx context.Context, req *pb.StartVirtualMachineRequest) (*pb.StartVirtualMachineResponse, error) {
+	logger.Logger.Info(fmt.Sprintf("StartVirtualMachine (UUID: %s)", req.Uuid))
+	vm, err := s.Datastore.GetVirtualMachine(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get virtual machine: %w", err)
+	}
+
+	resp, err := teleskop.GetClient(vm.HypervisorName).StartVirtualMachine(ctx, &agentpb.StartVirtualMachineRequest{Uuid: req.Uuid})
+	if err != nil {
+		return nil, fmt.Errorf("failed to start virtual machine: %w", err)
+	}
+
+	return &pb.StartVirtualMachineResponse{
+		Uuid: resp.Uuid,
+		Name: resp.Name,
+	}, nil
 }
