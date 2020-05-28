@@ -6,9 +6,13 @@ on:
   pull_request: {}
 jobs:
   test:
-    # runs-on: self-hosted  ## installed `make` and `gcc`
+    runs-on: ${{ matric.os }}
     strategy:
       fail-fast: false
+      matrix:
+        os
+        - ubuntu-latest
+        - ubuntu-18.04
     steps:
       - name: setup go
         uses: actions/setup-go@v1
