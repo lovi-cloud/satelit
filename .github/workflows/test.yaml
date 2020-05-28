@@ -6,7 +6,7 @@ on:
   pull_request: {}
 jobs:
   test:
-    runs-on: ${{ matric.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
