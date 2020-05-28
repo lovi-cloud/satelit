@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/whywaita/satelit/pkg/ganymede/libvirt"
+
 	"github.com/whywaita/go-os-brick/osbrick"
 	"go.uber.org/zap"
 
@@ -50,8 +52,11 @@ func NewSatelit() (*api.SatelitServer, error) {
 		return nil, fmt.Errorf("failed to create teleskop agent: %w", err)
 	}
 
+	libvirtBackend := libvirt.New(ds)
+
 	return &api.SatelitServer{
 		Europa:    doradoBackend,
 		Datastore: ds,
+		Ganymede:  libvirtBackend,
 	}, nil
 }

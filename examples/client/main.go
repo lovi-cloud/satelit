@@ -31,7 +31,7 @@ func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, "127.0.0.1:9262", grpc.WithBlock(), grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, "10.197.32.54:9262", grpc.WithBlock(), grpc.WithInsecure())
 	if err != nil {
 		return err
 	}
@@ -46,36 +46,53 @@ func run() error {
 		fmt.Printf("%+v\n", i)
 	}
 
-	fmt.Println("UploadImage")
-	args := os.Args
-	fmt.Printf("args: %s\n", args)
-	imageFile := args[1]
-	f, err := os.Open(imageFile)
-	if err != nil {
-		return err
-	}
+	//resp2, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
+	//	Name:          "whywaita-cirros-boot-test",
+	//	Vcpus:         1,
+	//	MemoryKib:     2 * 1024 * 1024,
+	//	RootVolumeGb:  32,
+	//	SourceImageId: "8300f101-2000-4acb-8aba-707967cb5fc1",
+	//})
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//resp3, err := client.StartVirtualMachine(ctx, &pb.StartVirtualMachineRequest{Uuid: resp2.Uuid})
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//fmt.Printf("%+v\n", resp3)
 
-	image, err := UploadImage(ctx, client, f, "whywaita-test-cirros", "cirros")
-	if err != nil {
-		return err
-	}
-	fmt.Printf("%+v\n", image)
-
-	fmt.Println("GetImages")
-	resp, err = client.GetImages(ctx, &pb.GetImagesRequest{})
-	if err != nil {
-		return err
-	}
-	for _, i := range resp.Images {
-		fmt.Printf("%+v\n", i)
-	}
-
-	fmt.Println("DeleteImage")
-	deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
-	if err != nil {
-		return err
-	}
-	fmt.Println(deleteResp)
+	//fmt.Println("UploadImage")
+	//args := os.Args
+	//fmt.Printf("args: %s\n", args)
+	//imageFile := args[1]
+	//f, err := os.Open(imageFile)
+	//if err != nil {
+	//	return err
+	//}
+	//image, err := UploadImage(ctx, client, f, "whywaita-test-cirros", "cirros")
+	//if err != nil {
+	//	return err
+	//}
+	//fmt.Printf("%+v\n", image)
+	//
+	//fmt.Println("GetImages")
+	//resp, err = client.GetImages(ctx, &pb.GetImagesRequest{})
+	//if err != nil {
+	//	return err
+	//}
+	//for _, i := range resp.Images {
+	//	fmt.Printf("%+v\n", i)
+	//}
+	//
+	//fmt.Println("DeleteImage")
+	//deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
+	//if err != nil {
+	//	return err
+	//}
+	//fmt.Println(deleteResp)
 
 	//fmt.Println("AddVolume")
 	//resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{

@@ -108,6 +108,7 @@ message AddVirtualMachineRequest {
   uint64 memory_kib      = 3;
   uint32 root_volume_gb  = 4;
   string source_image_id = 5;
+  string hypervisor_name = 6;
 }
 
 message AddVirtualMachineResponse {
