@@ -31,7 +31,7 @@ func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, "10.197.32.54:9262", grpc.WithBlock(), grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, "127.0.0.1:9262", grpc.WithBlock(), grpc.WithInsecure())
 	if err != nil {
 		return err
 	}

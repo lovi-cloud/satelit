@@ -328,7 +328,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	}
 
 	bi := &europa.BaseImage{
-		UUID:          u.String(),
+		UUID:          u,
 		Name:          name,
 		Description:   description,
 		CacheVolumeID: hmp.ID,

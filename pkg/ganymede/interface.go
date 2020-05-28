@@ -1,6 +1,11 @@
 package ganymede
 
-import "context"
+import (
+	"context"
+	"time"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 // A Ganymede is type definition of Virtual Machine.
 type Ganymede interface {
@@ -9,10 +14,11 @@ type Ganymede interface {
 
 // VirtualMachine is virtual machine.
 type VirtualMachine struct {
-	ID             int    `db:"id"`
-	Name           string `db:"name"`
-	UUID           string `db:"uuid"`
-	Vcpus          uint32 `db:"vcpus"`
-	MemoryKiB      uint64 `db:"memory_kib"`
-	HypervisorName string `db:"hypervisor_name"`
+	UUID           uuid.UUID `db:"uuid"`
+	Name           string    `db:"name"`
+	Vcpus          uint32    `db:"vcpus"`
+	MemoryKiB      uint64    `db:"memory_kib"`
+	HypervisorName string    `db:"hypervisor_name"`
+	CreatedAt      time.Time `db:"created_at"`
+	UpdatedAt      time.Time `db:"updated_at"`
 }

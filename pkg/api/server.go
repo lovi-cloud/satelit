@@ -130,6 +130,7 @@ func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 
 // GetImages return all images
 func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest) (*pb.GetImagesResponse, error) {
+	logger.Logger.Info(fmt.Sprintf("GetImages"))
 	images, err := s.Europa.GetImages()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get images: %w", err)
@@ -147,7 +148,7 @@ func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest)
 
 // UploadImage upload to europa backend
 func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
-	logger.Logger.Info("starting UploadImage")
+	logger.Logger.Info("UploadImage")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -286,7 +287,7 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 
 	return &pb.AddVirtualMachineResponse{
 		Name: vm.Name,
-		Uuid: vm.UUID,
+		Uuid: vm.UUID.String(),
 	}, nil
 }
 

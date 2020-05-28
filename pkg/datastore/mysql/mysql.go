@@ -94,7 +94,7 @@ func (m *MySQL) GetImages() ([]europa.BaseImage, error) {
 
 // PutImage write image record
 func (m *MySQL) PutImage(image europa.BaseImage) error {
-	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (UUID_TO_BIN(?), ?, ?, ?)`
 	_, err := m.Conn.Exec(query, image.UUID, image.Name, image.CacheVolumeID, image.Description)
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
@@ -118,9 +118,8 @@ func (m *MySQL) DeleteImage(imageID string) error {
 func (m *MySQL) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error) {
 	var vm ganymede.VirtualMachine
 	query := fmt.Sprintf(`SELECT 
-id,
-name,
 BIN_TO_UUID(uuid),
+name,
 vcpus,
 memory_kib,
 hypervisor_name WHERE uuid = %s`, vmUUID)
