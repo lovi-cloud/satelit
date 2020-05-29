@@ -5,6 +5,9 @@ import (
 	"errors"
 	"sync"
 
+	uuid "github.com/satori/go.uuid"
+	"github.com/whywaita/satelit/pkg/ganymede"
+
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
@@ -13,6 +16,7 @@ type Memory struct {
 	mutex *sync.Mutex
 
 	images map[string]europa.BaseImage
+	vms    map[uuid.UUID]ganymede.VirtualMachine
 }
 
 // New create Memory
@@ -64,6 +68,33 @@ func (m *Memory) PutImage(image europa.BaseImage) error {
 func (m *Memory) DeleteImage(imageID string) error {
 	m.mutex.Lock()
 	delete(m.images, imageID)
+	m.mutex.Unlock()
+
+	return nil
+}
+
+// GetVirtualMachine is
+func (m *Memory) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error) {
+	u, err := uuid.FromString(vmUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	m.mutex.Lock()
+	vm, ok := m.vms[u]
+	m.mutex.Unlock()
+
+	if ok == false {
+		return nil, errors.New("not found")
+	}
+
+	return &vm, nil
+}
+
+// PutVirtualMachine is
+func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
+	m.mutex.Lock()
+	m.vms[vm.UUID] = vm
 	m.mutex.Unlock()
 
 	return nil
