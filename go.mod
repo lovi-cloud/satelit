@@ -7,6 +7,7 @@ require (
 	github.com/goccy/go-yaml v1.4.3
 	github.com/golang/protobuf v1.4.0
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/whywaita/go-dorado-sdk v0.5.3

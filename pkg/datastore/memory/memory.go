@@ -73,7 +73,7 @@ func (m *Memory) DeleteImage(imageID string) error {
 	return nil
 }
 
-// GetVirtualMachine is
+// GetVirtualMachine get Virtual machine.
 func (m *Memory) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error) {
 	u, err := uuid.FromString(vmUUID)
 	if err != nil {
@@ -91,7 +91,7 @@ func (m *Memory) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, err
 	return &vm, nil
 }
 
-// PutVirtualMachine is
+// PutVirtualMachine write virtual machine record.
 func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
 	m.mutex.Lock()
 	m.vms[vm.UUID] = vm
