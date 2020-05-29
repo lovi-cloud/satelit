@@ -3,18 +3,15 @@ package dorado
 import (
 	"context"
 	"fmt"
-	"os"
-
-	"github.com/whywaita/go-dorado-sdk/dorado"
 
 	uuid "github.com/satori/go.uuid"
 	"github.com/whywaita/go-os-brick/osbrick"
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
-// CreateVolumeRaw create raw volume
-func (d *Dorado) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
-	hmp, err := d.client.CreateVolume(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
+// CreateVolume create raw volume
+func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
+	hmp, err := d.client.CreateVolumeRaw(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
 	}
@@ -24,13 +21,31 @@ func (d *Dorado) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity i
 		return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
 	}
 
+	// TODO: update datastore
+
 	return volume, nil
 }
 
-// CreateVolumeImage create volume that copied image
-func (d *Dorado) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
+// CreateVolumeFromImage create volume that copied image
+func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
+	image, err := d.GetImage(imageID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get image: %w", err)
+	}
 
-	return nil, nil
+	hmp, err := d.client.CreateVolumeFromSource(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID, image.CacheVolumeID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume from source: %w", err)
+	}
+
+	volume, err := d.toVolume(hmp)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert europa.Volume: %w", err)
+	}
+
+	// TODO: update datastore
+
+	return volume, nil
 }
 
 // attachVolumeLocalhost attach volume satelit host.
@@ -57,24 +72,4 @@ func (d *Dorado) attachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 	}
 
 	return hostLUNID, deviceName, nil
-}
-
-// getHostgroupLocalhost get hostgroup and host in local device and remote device.
-// if not exist in device, then create host / hostgroup object.
-func (d *Dorado) getHostgroupLocalhost(ctx context.Context) (*dorado.HostGroup, *dorado.Host, *dorado.HostGroup, *dorado.Host, error) {
-	hostname, err := os.Hostname()
-	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("failed to get hostname: %w", err)
-	}
-
-	lHostgroup, lHost, err := d.client.LocalDevice.GetHostGroupForce(ctx, hostname)
-	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("failed to get local host group: %w", err)
-	}
-	rHostgroup, rHost, err := d.client.RemoteDevice.GetHostGroupForce(ctx, hostname)
-	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("failed to get remote host group: %w", err)
-	}
-
-	return lHostgroup, lHost, rHostgroup, rHost, nil
 }

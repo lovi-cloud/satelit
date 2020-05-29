@@ -6,9 +6,13 @@ on:
   pull_request: {}
 jobs:
   test:
-    # runs-on: self-hosted  ## installed `make` and `gcc`
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      matrix:
+        os:
+        - ubuntu-latest
+        - ubuntu-18.04
     steps:
       - name: setup go
         uses: actions/setup-go@v1
@@ -29,4 +33,4 @@ jobs:
         run: |
           make test
         env:
-          GOPRIVATE: "github.com/whywaita/go-dorado-sdk"
+          GOPRIVATE: "github.com/whywaita/*"
