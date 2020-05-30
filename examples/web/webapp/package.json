@@ -1,0 +1,34 @@
+{
+  "name": "satelit-web",
+  "version": "1.0.0",
+  "repository": "https://github.com/whywaita/satelit",
+  "author": "whywaita",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^14.0.5",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "babel-plugin-named-asset-import": "^0.3.6",
+    "google-protobuf": "^3.12.2",
+    "grpc-web": "^1.1.0-rc.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "typescript": "^3.9.3"
+  },
+  "scripts": {
+    "start": "react-scripts start"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

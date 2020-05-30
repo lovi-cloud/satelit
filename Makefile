@@ -17,7 +17,11 @@ build-linux: ## Build for Linux
 
 build-proto: ## Build proto file
 	mkdir -p ./api/satelit
-	protoc -I ./api/satelit --go_out=plugins=grpc:./api/satelit ./api/satelit/satelit.proto
+	protoc -I ./api/satelit \
+           --go_out=plugins=grpc:./api/satelit \
+           --js_out=import_style=commonjs:./examples/web/clients \
+           --grpc-web_out=import_style=typescript,mode=grpcwebtext:./examples/web/clients \
+           ./api/satelit/satelit.proto
 
 test:
 	go test -v ./...
