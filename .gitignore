@@ -1,5 +1,5 @@
 configs/satelit.yaml
-./satelit
+satelit*
 
 
 # Created by https://www.gitignore.io/api/go,vim,node,react,intellij

@@ -3,12 +3,13 @@ package europa
 import (
 	"time"
 
+	uuid "github.com/satori/go.uuid"
 	pb "github.com/whywaita/satelit/api/satelit"
 )
 
 // A Volume is volume information
 type Volume struct {
-	ID          string
+	ID          string // equal HyperMetroPair ID
 	Attached    bool
 	HostName    string
 	CapacityGB  uint32
@@ -31,8 +32,7 @@ func (v *Volume) ToPb() *pb.Volume {
 
 // BaseImage is os Image
 type BaseImage struct {
-	ID            int       `db:"id"`
-	UUID          string    `db:"uuid"`
+	UUID          uuid.UUID `db:"uuid"`
 	Name          string    `db:"name"`
 	Description   string    `db:"description"`
 	CacheVolumeID string    `db:"volume_id"` // if CacheVolumeID is blank, not have cache image
@@ -43,7 +43,7 @@ type BaseImage struct {
 // ToPb parse to Satelit API Server pb.Image
 func (bi *BaseImage) ToPb() *pb.Image {
 	i := &pb.Image{
-		Id:          bi.UUID,
+		Id:          bi.UUID.String(),
 		Name:        bi.Name,
 		VolumeId:    bi.CacheVolumeID,
 		Description: bi.Description,
