@@ -10,6 +10,15 @@ service Satelit {
   rpc GetImages(GetImagesRequest) returns (GetImagesResponse) {}
   rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {}
   rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse) {}
+
+  rpc CreateSubnet(CreateSubnetRequest) returns (CreateSubnetResponse) {}
+  rpc GetSubnet(GetSubnetRequest) returns (GetSubnetResponse) {}
+  rpc ListSubnet(ListSubnetRequest) returns (ListSubnetResponse) {}
+  rpc DeleteSubnet(DeleteSubnetRequest) returns (DeleteSubnetResponse) {}
+  rpc CreateAddress(CreateAddressRequest) returns (CreateAddressResponse) {}
+  rpc GetAddress(GetAddressRequest) returns (GetAddressResponse) {}
+  rpc ListAddress(ListAddressRequest) returns (ListAddressResponse) {}
+  rpc DeleteAddress(DeleteAddressRequest) returns (DeleteAddressResponse) {}
 }
 
 // type
@@ -25,6 +34,20 @@ message Image {
   string name        = 2;
   string volume_id   = 3;
   string description = 4;
+}
+
+message Subnet {
+  string uuid    = 1;
+  string name    = 2;
+  string network = 3;
+  string start   = 4;
+  string end     = 5;
+}
+
+message Address {
+  string uuid      = 1;
+  string ip        = 2;
+  string subnet_id = 3;
 }
 
 // Request / Response
@@ -86,3 +109,64 @@ message DeleteImageRequest {
 }
 
 message DeleteImageResponse {}
+
+message CreateSubnetRequest {
+  string name    = 1;
+  string network = 2;
+  string start   = 3;
+  string end     = 4;
+}
+
+message CreateSubnetResponse {
+  string uuid = 1;
+}
+
+message GetSubnetRequest {
+  string uuid = 1;
+}
+
+message GetSubnetResponse {
+  Subnet subnet = 1;
+}
+
+message ListSubnetRequest {}
+
+message ListSubnetResponse {
+  repeated Subnet subnets = 1;
+}
+
+message DeleteSubnetRequest {
+  string uuid = 1;
+}
+
+message DeleteSubnetResponse {}
+
+message CreateAddressRequest {
+  string subnet_id = 1;
+}
+
+message CreateAddressResponse {
+  string uuid = 1;
+}
+
+message GetAddressRequest {
+  string uuid = 1;
+}
+
+message GetAddressResponse {
+  Address address = 1;
+}
+
+message ListAddressRequest {
+  string subnet_id = 1;
+}
+
+message ListAddressResponse {
+  repeated Address addresses = 1;
+}
+
+message DeleteAddressRequest {
+  string uuid = 1;
+}
+
+message DeleteAddressResponse {}
