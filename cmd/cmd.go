@@ -4,16 +4,16 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/whywaita/go-os-brick/osbrick"
 	"go.uber.org/zap"
 
-	"github.com/whywaita/satelit/pkg/api"
-	"github.com/whywaita/satelit/pkg/datastore/mysql"
-
+	"github.com/whywaita/go-os-brick/osbrick"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/pkg/api"
+	"github.com/whywaita/satelit/pkg/datastore/mysql"
 	"github.com/whywaita/satelit/pkg/europa/dorado"
+	"github.com/whywaita/satelit/pkg/ipam/ipam"
 )
 
 var conf = flag.String("conf", "./configs/satelit.yaml", "set satelit config")
@@ -45,6 +45,8 @@ func NewSatelit() (*api.SatelitServer, error) {
 		return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
 	}
 
+	ipamBackend := ipam.New(ds)
+
 	err = teleskop.New(config.GetValue().Teleskop.Endpoints)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create teleskop agent: %w", err)
@@ -52,6 +54,7 @@ func NewSatelit() (*api.SatelitServer, error) {
 
 	return &api.SatelitServer{
 		Europa:    doradoBackend,
+		IPAM:      ipamBackend,
 		Datastore: ds,
 	}, nil
 }

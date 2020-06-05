@@ -12,6 +12,8 @@ import (
 
 	"github.com/whywaita/satelit/pkg/datastore"
 
+	"github.com/whywaita/satelit/pkg/ipam"
+
 	uuid "github.com/satori/go.uuid"
 
 	"google.golang.org/grpc"
@@ -27,7 +29,9 @@ import (
 type SatelitServer struct {
 	pb.UnimplementedSatelitServer
 
-	Europa    europa.Europa
+	Europa europa.Europa
+	IPAM   ipam.IPAM
+
 	Datastore datastore.Datastore
 }
 
@@ -239,4 +243,148 @@ func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequ
 	}
 
 	return &pb.DeleteImageResponse{}, nil
+}
+
+// CreateSubnet create a subnet
+func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRequest) (*pb.CreateSubnetResponse, error) {
+	subnet, err := s.IPAM.CreateSubnet(ctx, req.Name, req.Network, req.Start, req.End)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create subnet: %w", err)
+	}
+
+	return &pb.CreateSubnetResponse{
+		Uuid: subnet.UUID.String(),
+	}, nil
+}
+
+// GetSubnet retrieves address according to the parameters given
+func (s *SatelitServer) GetSubnet(ctx context.Context, req *pb.GetSubnetRequest) (*pb.GetSubnetResponse, error) {
+	u, err := uuid.FromString(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+	}
+	subnet, err := s.IPAM.GetSubnet(ctx, u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get subnet: %w", err)
+	}
+
+	return &pb.GetSubnetResponse{
+		Subnet: &pb.Subnet{
+			Uuid:    subnet.UUID.String(),
+			Name:    subnet.Name,
+			Network: subnet.Network.String(),
+			Start:   subnet.Start.String(),
+			End:     subnet.End.String(),
+		},
+	}, nil
+}
+
+// ListSubnet retrieves all subnets
+func (s *SatelitServer) ListSubnet(ctx context.Context, req *pb.ListSubnetRequest) (*pb.ListSubnetResponse, error) {
+	subnets, err := s.IPAM.ListSubnet(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list subnet: %w", err)
+	}
+
+	tmp := make([]*pb.Subnet, len(subnets))
+	for i, subnet := range subnets {
+		tmp[i] = &pb.Subnet{
+			Uuid:    subnet.UUID.String(),
+			Name:    subnet.Name,
+			Network: subnet.Network.String(),
+			Start:   subnet.Start.String(),
+			End:     subnet.End.String(),
+		}
+	}
+
+	return &pb.ListSubnetResponse{
+		Subnets: tmp,
+	}, nil
+}
+
+// DeleteSubnet deletes a subnet
+func (s *SatelitServer) DeleteSubnet(ctx context.Context, req *pb.DeleteSubnetRequest) (*pb.DeleteSubnetResponse, error) {
+	u, err := uuid.FromString(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+	}
+	if err := s.IPAM.DeleteSubnet(ctx, u); err != nil {
+		return nil, fmt.Errorf("failed to delete subnet: %w", err)
+	}
+
+	return &pb.DeleteSubnetResponse{}, nil
+}
+
+// CreateAddress create a address
+func (s *SatelitServer) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
+	u, err := uuid.FromString(req.SubnetId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request subnet id: %w", err)
+	}
+	address, err := s.IPAM.CreateAddress(ctx, u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get address: %w", err)
+	}
+
+	return &pb.CreateAddressResponse{
+		Uuid: address.UUID.String(),
+	}, nil
+}
+
+// GetAddress retrieves address according to the parameters given
+func (s *SatelitServer) GetAddress(ctx context.Context, req *pb.GetAddressRequest) (*pb.GetAddressResponse, error) {
+	u, err := uuid.FromString(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+	}
+	address, err := s.IPAM.GetAddress(ctx, u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get address: %w", err)
+	}
+
+	return &pb.GetAddressResponse{
+		Address: &pb.Address{
+			Uuid:     address.UUID.String(),
+			Ip:       address.IP.String(),
+			SubnetId: address.SubnetID.String(),
+		},
+	}, nil
+}
+
+// ListAddress retrieves all address according to the parameters given.
+func (s *SatelitServer) ListAddress(ctx context.Context, req *pb.ListAddressRequest) (*pb.ListAddressResponse, error) {
+	u, err := uuid.FromString(req.SubnetId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request subnet id: %w", err)
+	}
+	addresses, err := s.IPAM.ListAddressBySubnetID(ctx, u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list address: %w", err)
+	}
+
+	tmp := make([]*pb.Address, len(addresses))
+	for i, address := range addresses {
+		tmp[i] = &pb.Address{
+			Uuid:     address.UUID.String(),
+			Ip:       address.IP.String(),
+			SubnetId: address.SubnetID.String(),
+		}
+	}
+
+	return &pb.ListAddressResponse{
+		Addresses: tmp,
+	}, nil
+}
+
+// DeleteAddress deletes address
+func (s *SatelitServer) DeleteAddress(ctx context.Context, req *pb.DeleteAddressRequest) (*pb.DeleteAddressResponse, error) {
+	u, err := uuid.FromString(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+	}
+	if err := s.IPAM.DeleteAddress(ctx, u); err != nil {
+		return nil, fmt.Errorf("failed to delete address: %w", err)
+	}
+
+	return &pb.DeleteAddressResponse{}, nil
 }
