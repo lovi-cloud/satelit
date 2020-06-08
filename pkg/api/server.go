@@ -10,6 +10,11 @@ import (
 	"net"
 	"sync"
 
+	"github.com/whywaita/satelit/pkg/ganymede"
+
+	agentpb "github.com/whywaita/satelit/api"
+	"github.com/whywaita/satelit/internal/client/teleskop"
+
 	"github.com/whywaita/satelit/pkg/datastore"
 
 	"github.com/whywaita/satelit/pkg/ipam"
@@ -33,6 +38,7 @@ type SatelitServer struct {
 	IPAM   ipam.IPAM
 
 	Datastore datastore.Datastore
+	Ganymede  ganymede.Ganymede
 }
 
 // Run start gRPC Server
@@ -79,13 +85,30 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	volume, err := s.Europa.CreateVolumeRaw(ctx, u, int(req.CapacityByte))
+	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityByte))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Name, err)
 	}
 
 	return &pb.AddVolumeResponse{
 		Volume: volume.ToPb(),
+	}, nil
+}
+
+// AddVolumeImage call CreateVolumeImage to Europa backend
+func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeImageRequest) (*pb.AddVolumeImageResponse, error) {
+	u, err := s.parseRequestUUID(req.Name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
+	}
+
+	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityByte), req.SourceImageId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume from image (ID: %s): %w", req.Name, err)
+	}
+
+	return &pb.AddVolumeImageResponse{
+		Volume: v.ToPb(),
 	}, nil
 }
 
@@ -111,6 +134,7 @@ func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 
 // GetImages return all images
 func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest) (*pb.GetImagesResponse, error) {
+	logger.Logger.Info(fmt.Sprintf("GetImages"))
 	images, err := s.Europa.GetImages()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get images: %w", err)
@@ -128,7 +152,7 @@ func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest)
 
 // UploadImage upload to europa backend
 func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
-	logger.Logger.Info("starting UploadImage")
+	logger.Logger.Info("UploadImage")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -387,4 +411,49 @@ func (s *SatelitServer) DeleteAddress(ctx context.Context, req *pb.DeleteAddress
 	}
 
 	return &pb.DeleteAddressResponse{}, nil
+}
+
+// AddVirtualMachine create virtual machine.
+func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtualMachineRequest) (*pb.AddVirtualMachineResponse, error) {
+	logger.Logger.Info(fmt.Sprintf("AddVirtualMachine (name: %s)", req.Name))
+
+	u := uuid.NewV4()
+	volume, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), req.SourceImageId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume from image: %w", err)
+	}
+
+	_, deviceName, err := s.Europa.AttachVolumeTeleskop(ctx, volume.ID, req.HypervisorName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to attach volume: %w", err)
+	}
+
+	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create virtual machine: %w", err)
+	}
+
+	return &pb.AddVirtualMachineResponse{
+		Name: vm.Name,
+		Uuid: vm.UUID.String(),
+	}, nil
+}
+
+// StartVirtualMachine start virtual machine
+func (s *SatelitServer) StartVirtualMachine(ctx context.Context, req *pb.StartVirtualMachineRequest) (*pb.StartVirtualMachineResponse, error) {
+	logger.Logger.Info(fmt.Sprintf("StartVirtualMachine (UUID: %s)", req.Uuid))
+	vm, err := s.Datastore.GetVirtualMachine(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get virtual machine: %w", err)
+	}
+
+	resp, err := teleskop.GetClient(vm.HypervisorName).StartVirtualMachine(ctx, &agentpb.StartVirtualMachineRequest{Uuid: req.Uuid})
+	if err != nil {
+		return nil, fmt.Errorf("failed to start virtual machine: %w", err)
+	}
+
+	return &pb.StartVirtualMachineResponse{
+		Uuid: resp.Uuid,
+		Name: resp.Name,
+	}, nil
 }

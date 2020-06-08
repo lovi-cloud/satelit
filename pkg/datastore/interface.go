@@ -6,6 +6,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/whywaita/satelit/pkg/ganymede"
 	"github.com/whywaita/satelit/pkg/ipam"
 )
 
@@ -27,4 +28,7 @@ type Datastore interface {
 	GetAddressByID(ctx context.Context, uuid uuid.UUID) (*ipam.Address, error)
 	ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) ([]ipam.Address, error)
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
+
+	GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error)
+	PutVirtualMachine(vm ganymede.VirtualMachine) error
 }

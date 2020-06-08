@@ -6,6 +6,7 @@ option  go_package = ".;satelit";
 service Satelit {
   rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
+  rpc AddVolumeImage(AddVolumeImageRequest) returns (AddVolumeImageResponse) {}
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
   rpc GetImages(GetImagesRequest) returns (GetImagesResponse) {}
   rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {}
@@ -19,6 +20,11 @@ service Satelit {
   rpc GetAddress(GetAddressRequest) returns (GetAddressResponse) {}
   rpc ListAddress(ListAddressRequest) returns (ListAddressResponse) {}
   rpc DeleteAddress(DeleteAddressRequest) returns (DeleteAddressResponse) {}
+
+  rpc AddVirtualMachine(AddVirtualMachineRequest)
+      returns (AddVirtualMachineResponse) {}
+  rpc StartVirtualMachine(StartVirtualMachineRequest)
+      returns (StartVirtualMachineResponse) {}
 }
 
 // type
@@ -63,6 +69,16 @@ message AddVolumeRequest {
 }
 
 message AddVolumeResponse {
+  Volume volume = 1;
+}
+
+message AddVolumeImageRequest {
+  string name            = 1;
+  uint32 capacity_byte   = 2;
+  string source_image_id = 3;
+}
+
+message AddVolumeImageResponse {
   Volume volume = 1;
 }
 
@@ -170,3 +186,26 @@ message DeleteAddressRequest {
 }
 
 message DeleteAddressResponse {}
+
+message AddVirtualMachineRequest {
+  string name            = 1;
+  uint32 vcpus           = 2;
+  uint64 memory_kib      = 3;
+  uint32 root_volume_gb  = 4;
+  string source_image_id = 5;
+  string hypervisor_name = 6;
+}
+
+message AddVirtualMachineResponse {
+  string uuid = 1;
+  string name = 2;
+}
+
+message StartVirtualMachineRequest {
+  string uuid = 1;
+}
+
+message StartVirtualMachineResponse {
+  string uuid = 1;
+  string name = 2;
+}
