@@ -70,10 +70,10 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
-github.com/whywaita/go-dorado-sdk v0.4.3 h1:qiQ9ami7yzsQI7dNWRfR+BFez/kThrjqiDUZwXxTgZc=
-github.com/whywaita/go-dorado-sdk v0.4.3/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
-github.com/whywaita/go-os-brick v0.0.3 h1:sDngNC8Or9/Ut0Z668or4Ucqr7ADgubNcoPO+JIwFtw=
-github.com/whywaita/go-os-brick v0.0.3/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
+github.com/whywaita/go-dorado-sdk v0.5.3 h1:No5kfF9O8fS6t52RjFf3Gtjc71zcjMCMsqcp3EGe+jQ=
+github.com/whywaita/go-dorado-sdk v0.5.3/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
+github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
+github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
 go.uber.org/atomic v1.6.0 h1:Ezj3JGmsOnG1MoRWQkPBsKLe9DwWD9QeXzTRzzldNVk=
 go.uber.org/atomic v1.6.0/go.mod h1:sABNBOSYdrvTF6hTgEIbc7YasKWGhgEQZyfxyTvoXHQ=
 go.uber.org/multierr v1.5.0 h1:KCa4XfM8CWFCpxXRGok+Q0SS/0XBhMDbHHGABQLvD2A=

@@ -13,6 +13,7 @@ import (
 	"github.com/whywaita/satelit/pkg/api"
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
 	"github.com/whywaita/satelit/pkg/europa/dorado"
+	"github.com/whywaita/satelit/pkg/ganymede/libvirt"
 	"github.com/whywaita/satelit/pkg/ipam/ipam"
 )
 
@@ -52,9 +53,12 @@ func NewSatelit() (*api.SatelitServer, error) {
 		return nil, fmt.Errorf("failed to create teleskop agent: %w", err)
 	}
 
+	libvirtBackend := libvirt.New(ds)
+
 	return &api.SatelitServer{
 		Europa:    doradoBackend,
 		IPAM:      ipamBackend,
 		Datastore: ds,
+		Ganymede:  libvirtBackend,
 	}, nil
 }
