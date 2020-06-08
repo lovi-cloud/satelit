@@ -9,6 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/whywaita/satelit/pkg/ganymede"
 	"github.com/whywaita/satelit/pkg/ipam"
 )
 
@@ -16,17 +17,19 @@ import (
 type Memory struct {
 	mutex *sync.Mutex
 
-	images    map[string]europa.BaseImage
-	subnets   map[uuid.UUID]ipam.Subnet
-	addresses map[uuid.UUID]ipam.Address
+	images          map[string]europa.BaseImage
+	subnets         map[uuid.UUID]ipam.Subnet
+	addresses       map[uuid.UUID]ipam.Address
+	virtualMachines map[uuid.UUID]ganymede.VirtualMachine
 }
 
 // New create Memory
 func New() *Memory {
 	return &Memory{
-		mutex:     &sync.Mutex{},
-		subnets:   map[uuid.UUID]ipam.Subnet{},
-		addresses: map[uuid.UUID]ipam.Address{},
+		mutex:           &sync.Mutex{},
+		subnets:         map[uuid.UUID]ipam.Subnet{},
+		addresses:       map[uuid.UUID]ipam.Address{},
+		virtualMachines: map[uuid.UUID]ganymede.VirtualMachine{},
 	}
 }
 
@@ -178,6 +181,33 @@ func (m *Memory) DeleteAddress(ctx context.Context, uuid uuid.UUID) error {
 		return fmt.Errorf("failed to find address uuid=%s", uuid)
 	}
 	delete(m.addresses, uuid)
+
+	return nil
+}
+
+// GetVirtualMachine return virtual machine record
+func (m *Memory) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id, err := uuid.FromString(vmUUID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid input: %w", err)
+	}
+	val, ok := m.virtualMachines[id]
+	if !ok {
+		return nil, fmt.Errorf("failed to find virtual machine uuid=%s", id)
+	}
+
+	return &val, nil
+}
+
+// PutVirtualMachine write virtual machine record
+func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.virtualMachines[vm.UUID] = vm
 
 	return nil
 }
