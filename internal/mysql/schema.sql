@@ -8,6 +8,17 @@ CREATE TABLE IF NOT EXISTS hypervisor (
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
 );
 
+CREATE TABLE IF NOT EXISTS volume (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    attached BOOLEAN NOT NULL,
+    hostname VARCHAR(255),
+    capacity_gb INT NOT NULL,
+    base_image_id BINARY(16) NOT NULL,
+    host_lun_id INT,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
+);
+
 CREATE TABLE IF NOT EXISTS image (
     uuid BINARY(16) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
