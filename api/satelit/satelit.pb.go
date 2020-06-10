@@ -172,6 +172,148 @@ func (x *Image) GetDescription() string {
 	return ""
 }
 
+type Subnet struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid    string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name    string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Network string `protobuf:"bytes,3,opt,name=network,proto3" json:"network,omitempty"`
+	Start   string `protobuf:"bytes,4,opt,name=start,proto3" json:"start,omitempty"`
+	End     string `protobuf:"bytes,5,opt,name=end,proto3" json:"end,omitempty"`
+}
+
+func (x *Subnet) Reset() {
+	*x = Subnet{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Subnet) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Subnet) ProtoMessage() {}
+
+func (x *Subnet) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Subnet.ProtoReflect.Descriptor instead.
+func (*Subnet) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Subnet) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *Subnet) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Subnet) GetNetwork() string {
+	if x != nil {
+		return x.Network
+	}
+	return ""
+}
+
+func (x *Subnet) GetStart() string {
+	if x != nil {
+		return x.Start
+	}
+	return ""
+}
+
+func (x *Subnet) GetEnd() string {
+	if x != nil {
+		return x.End
+	}
+	return ""
+}
+
+type Address struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid     string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Ip       string `protobuf:"bytes,2,opt,name=ip,proto3" json:"ip,omitempty"`
+	SubnetId string `protobuf:"bytes,3,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+}
+
+func (x *Address) Reset() {
+	*x = Address{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Address) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Address) ProtoMessage() {}
+
+func (x *Address) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Address.ProtoReflect.Descriptor instead.
+func (*Address) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Address) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *Address) GetIp() string {
+	if x != nil {
+		return x.Ip
+	}
+	return ""
+}
+
+func (x *Address) GetSubnetId() string {
+	if x != nil {
+		return x.SubnetId
+	}
+	return ""
+}
+
 // Request / Response
 type GetVolumesRequest struct {
 	state         protoimpl.MessageState
@@ -182,7 +324,7 @@ type GetVolumesRequest struct {
 func (x *GetVolumesRequest) Reset() {
 	*x = GetVolumesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[2]
+		mi := &file_satelit_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -195,7 +337,7 @@ func (x *GetVolumesRequest) String() string {
 func (*GetVolumesRequest) ProtoMessage() {}
 
 func (x *GetVolumesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[2]
+	mi := &file_satelit_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -208,7 +350,7 @@ func (x *GetVolumesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetVolumesRequest.ProtoReflect.Descriptor instead.
 func (*GetVolumesRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{2}
+	return file_satelit_proto_rawDescGZIP(), []int{4}
 }
 
 type GetVolumesResponse struct {
@@ -222,7 +364,7 @@ type GetVolumesResponse struct {
 func (x *GetVolumesResponse) Reset() {
 	*x = GetVolumesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[3]
+		mi := &file_satelit_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -235,7 +377,7 @@ func (x *GetVolumesResponse) String() string {
 func (*GetVolumesResponse) ProtoMessage() {}
 
 func (x *GetVolumesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[3]
+	mi := &file_satelit_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -248,7 +390,7 @@ func (x *GetVolumesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetVolumesResponse.ProtoReflect.Descriptor instead.
 func (*GetVolumesResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{3}
+	return file_satelit_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetVolumesResponse) GetVolumes() []*Volume {
@@ -270,7 +412,7 @@ type AddVolumeRequest struct {
 func (x *AddVolumeRequest) Reset() {
 	*x = AddVolumeRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[4]
+		mi := &file_satelit_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -283,7 +425,7 @@ func (x *AddVolumeRequest) String() string {
 func (*AddVolumeRequest) ProtoMessage() {}
 
 func (x *AddVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[4]
+	mi := &file_satelit_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -296,7 +438,7 @@ func (x *AddVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddVolumeRequest.ProtoReflect.Descriptor instead.
 func (*AddVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{4}
+	return file_satelit_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *AddVolumeRequest) GetName() string {
@@ -324,7 +466,7 @@ type AddVolumeResponse struct {
 func (x *AddVolumeResponse) Reset() {
 	*x = AddVolumeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[5]
+		mi := &file_satelit_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -337,7 +479,7 @@ func (x *AddVolumeResponse) String() string {
 func (*AddVolumeResponse) ProtoMessage() {}
 
 func (x *AddVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[5]
+	mi := &file_satelit_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -350,7 +492,7 @@ func (x *AddVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddVolumeResponse.ProtoReflect.Descriptor instead.
 func (*AddVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{5}
+	return file_satelit_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *AddVolumeResponse) GetVolume() *Volume {
@@ -373,7 +515,7 @@ type AddVolumeImageRequest struct {
 func (x *AddVolumeImageRequest) Reset() {
 	*x = AddVolumeImageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[6]
+		mi := &file_satelit_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -386,7 +528,7 @@ func (x *AddVolumeImageRequest) String() string {
 func (*AddVolumeImageRequest) ProtoMessage() {}
 
 func (x *AddVolumeImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[6]
+	mi := &file_satelit_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -399,7 +541,7 @@ func (x *AddVolumeImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddVolumeImageRequest.ProtoReflect.Descriptor instead.
 func (*AddVolumeImageRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{6}
+	return file_satelit_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AddVolumeImageRequest) GetName() string {
@@ -434,7 +576,7 @@ type AddVolumeImageResponse struct {
 func (x *AddVolumeImageResponse) Reset() {
 	*x = AddVolumeImageResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[7]
+		mi := &file_satelit_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -447,7 +589,7 @@ func (x *AddVolumeImageResponse) String() string {
 func (*AddVolumeImageResponse) ProtoMessage() {}
 
 func (x *AddVolumeImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[7]
+	mi := &file_satelit_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -460,7 +602,7 @@ func (x *AddVolumeImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddVolumeImageResponse.ProtoReflect.Descriptor instead.
 func (*AddVolumeImageResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{7}
+	return file_satelit_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *AddVolumeImageResponse) GetVolume() *Volume {
@@ -482,7 +624,7 @@ type AttachVolumeRequest struct {
 func (x *AttachVolumeRequest) Reset() {
 	*x = AttachVolumeRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[8]
+		mi := &file_satelit_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -495,7 +637,7 @@ func (x *AttachVolumeRequest) String() string {
 func (*AttachVolumeRequest) ProtoMessage() {}
 
 func (x *AttachVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[8]
+	mi := &file_satelit_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -508,7 +650,7 @@ func (x *AttachVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttachVolumeRequest.ProtoReflect.Descriptor instead.
 func (*AttachVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{8}
+	return file_satelit_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AttachVolumeRequest) GetId() string {
@@ -534,7 +676,7 @@ type AttachVolumeResponse struct {
 func (x *AttachVolumeResponse) Reset() {
 	*x = AttachVolumeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[9]
+		mi := &file_satelit_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -547,7 +689,7 @@ func (x *AttachVolumeResponse) String() string {
 func (*AttachVolumeResponse) ProtoMessage() {}
 
 func (x *AttachVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[9]
+	mi := &file_satelit_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -560,7 +702,7 @@ func (x *AttachVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttachVolumeResponse.ProtoReflect.Descriptor instead.
 func (*AttachVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{9}
+	return file_satelit_proto_rawDescGZIP(), []int{11}
 }
 
 type DeleteVolumeRequest struct {
@@ -572,7 +714,7 @@ type DeleteVolumeRequest struct {
 func (x *DeleteVolumeRequest) Reset() {
 	*x = DeleteVolumeRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[10]
+		mi := &file_satelit_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -585,7 +727,7 @@ func (x *DeleteVolumeRequest) String() string {
 func (*DeleteVolumeRequest) ProtoMessage() {}
 
 func (x *DeleteVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[10]
+	mi := &file_satelit_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -598,7 +740,7 @@ func (x *DeleteVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteVolumeRequest.ProtoReflect.Descriptor instead.
 func (*DeleteVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{10}
+	return file_satelit_proto_rawDescGZIP(), []int{12}
 }
 
 type DeleteVolumeResponse struct {
@@ -610,7 +752,7 @@ type DeleteVolumeResponse struct {
 func (x *DeleteVolumeResponse) Reset() {
 	*x = DeleteVolumeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[11]
+		mi := &file_satelit_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -623,7 +765,7 @@ func (x *DeleteVolumeResponse) String() string {
 func (*DeleteVolumeResponse) ProtoMessage() {}
 
 func (x *DeleteVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[11]
+	mi := &file_satelit_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -636,7 +778,7 @@ func (x *DeleteVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteVolumeResponse.ProtoReflect.Descriptor instead.
 func (*DeleteVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{11}
+	return file_satelit_proto_rawDescGZIP(), []int{13}
 }
 
 type GetImagesRequest struct {
@@ -648,7 +790,7 @@ type GetImagesRequest struct {
 func (x *GetImagesRequest) Reset() {
 	*x = GetImagesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[12]
+		mi := &file_satelit_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -661,7 +803,7 @@ func (x *GetImagesRequest) String() string {
 func (*GetImagesRequest) ProtoMessage() {}
 
 func (x *GetImagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[12]
+	mi := &file_satelit_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -674,7 +816,7 @@ func (x *GetImagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImagesRequest.ProtoReflect.Descriptor instead.
 func (*GetImagesRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{12}
+	return file_satelit_proto_rawDescGZIP(), []int{14}
 }
 
 type GetImagesResponse struct {
@@ -688,7 +830,7 @@ type GetImagesResponse struct {
 func (x *GetImagesResponse) Reset() {
 	*x = GetImagesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[13]
+		mi := &file_satelit_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -701,7 +843,7 @@ func (x *GetImagesResponse) String() string {
 func (*GetImagesResponse) ProtoMessage() {}
 
 func (x *GetImagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[13]
+	mi := &file_satelit_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -714,7 +856,7 @@ func (x *GetImagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImagesResponse.ProtoReflect.Descriptor instead.
 func (*GetImagesResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{13}
+	return file_satelit_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetImagesResponse) GetImages() []*Image {
@@ -738,7 +880,7 @@ type UploadImageRequest struct {
 func (x *UploadImageRequest) Reset() {
 	*x = UploadImageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[14]
+		mi := &file_satelit_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -751,7 +893,7 @@ func (x *UploadImageRequest) String() string {
 func (*UploadImageRequest) ProtoMessage() {}
 
 func (x *UploadImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[14]
+	mi := &file_satelit_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -764,7 +906,7 @@ func (x *UploadImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadImageRequest.ProtoReflect.Descriptor instead.
 func (*UploadImageRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{14}
+	return file_satelit_proto_rawDescGZIP(), []int{16}
 }
 
 func (m *UploadImageRequest) GetValue() isUploadImageRequest_Value {
@@ -816,7 +958,7 @@ type UploadImageRequestMeta struct {
 func (x *UploadImageRequestMeta) Reset() {
 	*x = UploadImageRequestMeta{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[15]
+		mi := &file_satelit_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -829,7 +971,7 @@ func (x *UploadImageRequestMeta) String() string {
 func (*UploadImageRequestMeta) ProtoMessage() {}
 
 func (x *UploadImageRequestMeta) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[15]
+	mi := &file_satelit_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -842,7 +984,7 @@ func (x *UploadImageRequestMeta) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadImageRequestMeta.ProtoReflect.Descriptor instead.
 func (*UploadImageRequestMeta) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{15}
+	return file_satelit_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *UploadImageRequestMeta) GetName() string {
@@ -871,7 +1013,7 @@ type UploadImageRequestChunk struct {
 func (x *UploadImageRequestChunk) Reset() {
 	*x = UploadImageRequestChunk{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[16]
+		mi := &file_satelit_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -884,7 +1026,7 @@ func (x *UploadImageRequestChunk) String() string {
 func (*UploadImageRequestChunk) ProtoMessage() {}
 
 func (x *UploadImageRequestChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[16]
+	mi := &file_satelit_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -897,7 +1039,7 @@ func (x *UploadImageRequestChunk) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadImageRequestChunk.ProtoReflect.Descriptor instead.
 func (*UploadImageRequestChunk) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{16}
+	return file_satelit_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UploadImageRequestChunk) GetData() []byte {
@@ -925,7 +1067,7 @@ type UploadImageResponse struct {
 func (x *UploadImageResponse) Reset() {
 	*x = UploadImageResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[17]
+		mi := &file_satelit_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -938,7 +1080,7 @@ func (x *UploadImageResponse) String() string {
 func (*UploadImageResponse) ProtoMessage() {}
 
 func (x *UploadImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[17]
+	mi := &file_satelit_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -951,7 +1093,7 @@ func (x *UploadImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadImageResponse.ProtoReflect.Descriptor instead.
 func (*UploadImageResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{17}
+	return file_satelit_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UploadImageResponse) GetImage() *Image {
@@ -972,7 +1114,7 @@ type DeleteImageRequest struct {
 func (x *DeleteImageRequest) Reset() {
 	*x = DeleteImageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[18]
+		mi := &file_satelit_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -985,7 +1127,7 @@ func (x *DeleteImageRequest) String() string {
 func (*DeleteImageRequest) ProtoMessage() {}
 
 func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[18]
+	mi := &file_satelit_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -998,7 +1140,7 @@ func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageRequest.ProtoReflect.Descriptor instead.
 func (*DeleteImageRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{18}
+	return file_satelit_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *DeleteImageRequest) GetId() string {
@@ -1017,7 +1159,7 @@ type DeleteImageResponse struct {
 func (x *DeleteImageResponse) Reset() {
 	*x = DeleteImageResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[19]
+		mi := &file_satelit_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1030,7 +1172,7 @@ func (x *DeleteImageResponse) String() string {
 func (*DeleteImageResponse) ProtoMessage() {}
 
 func (x *DeleteImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[19]
+	mi := &file_satelit_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1043,7 +1185,756 @@ func (x *DeleteImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageResponse.ProtoReflect.Descriptor instead.
 func (*DeleteImageResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{19}
+	return file_satelit_proto_rawDescGZIP(), []int{21}
+}
+
+type CreateSubnetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Network string `protobuf:"bytes,2,opt,name=network,proto3" json:"network,omitempty"`
+	Start   string `protobuf:"bytes,3,opt,name=start,proto3" json:"start,omitempty"`
+	End     string `protobuf:"bytes,4,opt,name=end,proto3" json:"end,omitempty"`
+}
+
+func (x *CreateSubnetRequest) Reset() {
+	*x = CreateSubnetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[22]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateSubnetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSubnetRequest) ProtoMessage() {}
+
+func (x *CreateSubnetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[22]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSubnetRequest.ProtoReflect.Descriptor instead.
+func (*CreateSubnetRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *CreateSubnetRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateSubnetRequest) GetNetwork() string {
+	if x != nil {
+		return x.Network
+	}
+	return ""
+}
+
+func (x *CreateSubnetRequest) GetStart() string {
+	if x != nil {
+		return x.Start
+	}
+	return ""
+}
+
+func (x *CreateSubnetRequest) GetEnd() string {
+	if x != nil {
+		return x.End
+	}
+	return ""
+}
+
+type CreateSubnetResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Subnet *Subnet `protobuf:"bytes,1,opt,name=subnet,proto3" json:"subnet,omitempty"`
+}
+
+func (x *CreateSubnetResponse) Reset() {
+	*x = CreateSubnetResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[23]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateSubnetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSubnetResponse) ProtoMessage() {}
+
+func (x *CreateSubnetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[23]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSubnetResponse.ProtoReflect.Descriptor instead.
+func (*CreateSubnetResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *CreateSubnetResponse) GetSubnet() *Subnet {
+	if x != nil {
+		return x.Subnet
+	}
+	return nil
+}
+
+type GetSubnetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+}
+
+func (x *GetSubnetRequest) Reset() {
+	*x = GetSubnetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[24]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetSubnetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSubnetRequest) ProtoMessage() {}
+
+func (x *GetSubnetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[24]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSubnetRequest.ProtoReflect.Descriptor instead.
+func (*GetSubnetRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetSubnetRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type GetSubnetResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Subnet *Subnet `protobuf:"bytes,1,opt,name=subnet,proto3" json:"subnet,omitempty"`
+}
+
+func (x *GetSubnetResponse) Reset() {
+	*x = GetSubnetResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[25]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetSubnetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSubnetResponse) ProtoMessage() {}
+
+func (x *GetSubnetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[25]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSubnetResponse.ProtoReflect.Descriptor instead.
+func (*GetSubnetResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetSubnetResponse) GetSubnet() *Subnet {
+	if x != nil {
+		return x.Subnet
+	}
+	return nil
+}
+
+type ListSubnetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ListSubnetRequest) Reset() {
+	*x = ListSubnetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[26]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListSubnetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSubnetRequest) ProtoMessage() {}
+
+func (x *ListSubnetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[26]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSubnetRequest.ProtoReflect.Descriptor instead.
+func (*ListSubnetRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{26}
+}
+
+type ListSubnetResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Subnets []*Subnet `protobuf:"bytes,1,rep,name=subnets,proto3" json:"subnets,omitempty"`
+}
+
+func (x *ListSubnetResponse) Reset() {
+	*x = ListSubnetResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[27]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListSubnetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSubnetResponse) ProtoMessage() {}
+
+func (x *ListSubnetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[27]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSubnetResponse.ProtoReflect.Descriptor instead.
+func (*ListSubnetResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListSubnetResponse) GetSubnets() []*Subnet {
+	if x != nil {
+		return x.Subnets
+	}
+	return nil
+}
+
+type DeleteSubnetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+}
+
+func (x *DeleteSubnetRequest) Reset() {
+	*x = DeleteSubnetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[28]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteSubnetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSubnetRequest) ProtoMessage() {}
+
+func (x *DeleteSubnetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[28]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSubnetRequest.ProtoReflect.Descriptor instead.
+func (*DeleteSubnetRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *DeleteSubnetRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type DeleteSubnetResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DeleteSubnetResponse) Reset() {
+	*x = DeleteSubnetResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[29]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteSubnetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSubnetResponse) ProtoMessage() {}
+
+func (x *DeleteSubnetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[29]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSubnetResponse.ProtoReflect.Descriptor instead.
+func (*DeleteSubnetResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{29}
+}
+
+type CreateAddressRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SubnetId string `protobuf:"bytes,1,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+}
+
+func (x *CreateAddressRequest) Reset() {
+	*x = CreateAddressRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[30]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAddressRequest) ProtoMessage() {}
+
+func (x *CreateAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[30]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAddressRequest.ProtoReflect.Descriptor instead.
+func (*CreateAddressRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CreateAddressRequest) GetSubnetId() string {
+	if x != nil {
+		return x.SubnetId
+	}
+	return ""
+}
+
+type CreateAddressResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Address *Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (x *CreateAddressResponse) Reset() {
+	*x = CreateAddressResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[31]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAddressResponse) ProtoMessage() {}
+
+func (x *CreateAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[31]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAddressResponse.ProtoReflect.Descriptor instead.
+func (*CreateAddressResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *CreateAddressResponse) GetAddress() *Address {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+type GetAddressRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+}
+
+func (x *GetAddressRequest) Reset() {
+	*x = GetAddressRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[32]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAddressRequest) ProtoMessage() {}
+
+func (x *GetAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[32]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAddressRequest.ProtoReflect.Descriptor instead.
+func (*GetAddressRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *GetAddressRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type GetAddressResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Address *Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (x *GetAddressResponse) Reset() {
+	*x = GetAddressResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[33]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAddressResponse) ProtoMessage() {}
+
+func (x *GetAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[33]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAddressResponse.ProtoReflect.Descriptor instead.
+func (*GetAddressResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *GetAddressResponse) GetAddress() *Address {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+type ListAddressRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SubnetId string `protobuf:"bytes,1,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+}
+
+func (x *ListAddressRequest) Reset() {
+	*x = ListAddressRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[34]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAddressRequest) ProtoMessage() {}
+
+func (x *ListAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[34]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAddressRequest.ProtoReflect.Descriptor instead.
+func (*ListAddressRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *ListAddressRequest) GetSubnetId() string {
+	if x != nil {
+		return x.SubnetId
+	}
+	return ""
+}
+
+type ListAddressResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Addresses []*Address `protobuf:"bytes,1,rep,name=addresses,proto3" json:"addresses,omitempty"`
+}
+
+func (x *ListAddressResponse) Reset() {
+	*x = ListAddressResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[35]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAddressResponse) ProtoMessage() {}
+
+func (x *ListAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[35]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAddressResponse.ProtoReflect.Descriptor instead.
+func (*ListAddressResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *ListAddressResponse) GetAddresses() []*Address {
+	if x != nil {
+		return x.Addresses
+	}
+	return nil
+}
+
+type DeleteAddressRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+}
+
+func (x *DeleteAddressRequest) Reset() {
+	*x = DeleteAddressRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[36]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAddressRequest) ProtoMessage() {}
+
+func (x *DeleteAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[36]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAddressRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAddressRequest) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *DeleteAddressRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+type DeleteAddressResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DeleteAddressResponse) Reset() {
+	*x = DeleteAddressResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelit_proto_msgTypes[37]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAddressResponse) ProtoMessage() {}
+
+func (x *DeleteAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelit_proto_msgTypes[37]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAddressResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAddressResponse) Descriptor() ([]byte, []int) {
+	return file_satelit_proto_rawDescGZIP(), []int{37}
 }
 
 type AddVirtualMachineRequest struct {
@@ -1062,7 +1953,7 @@ type AddVirtualMachineRequest struct {
 func (x *AddVirtualMachineRequest) Reset() {
 	*x = AddVirtualMachineRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[20]
+		mi := &file_satelit_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1075,7 +1966,7 @@ func (x *AddVirtualMachineRequest) String() string {
 func (*AddVirtualMachineRequest) ProtoMessage() {}
 
 func (x *AddVirtualMachineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[20]
+	mi := &file_satelit_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1088,7 +1979,7 @@ func (x *AddVirtualMachineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddVirtualMachineRequest.ProtoReflect.Descriptor instead.
 func (*AddVirtualMachineRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{20}
+	return file_satelit_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *AddVirtualMachineRequest) GetName() string {
@@ -1145,7 +2036,7 @@ type AddVirtualMachineResponse struct {
 func (x *AddVirtualMachineResponse) Reset() {
 	*x = AddVirtualMachineResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[21]
+		mi := &file_satelit_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1158,7 +2049,7 @@ func (x *AddVirtualMachineResponse) String() string {
 func (*AddVirtualMachineResponse) ProtoMessage() {}
 
 func (x *AddVirtualMachineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[21]
+	mi := &file_satelit_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1171,7 +2062,7 @@ func (x *AddVirtualMachineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddVirtualMachineResponse.ProtoReflect.Descriptor instead.
 func (*AddVirtualMachineResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{21}
+	return file_satelit_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *AddVirtualMachineResponse) GetUuid() string {
@@ -1199,7 +2090,7 @@ type StartVirtualMachineRequest struct {
 func (x *StartVirtualMachineRequest) Reset() {
 	*x = StartVirtualMachineRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[22]
+		mi := &file_satelit_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1212,7 +2103,7 @@ func (x *StartVirtualMachineRequest) String() string {
 func (*StartVirtualMachineRequest) ProtoMessage() {}
 
 func (x *StartVirtualMachineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[22]
+	mi := &file_satelit_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1225,7 +2116,7 @@ func (x *StartVirtualMachineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartVirtualMachineRequest.ProtoReflect.Descriptor instead.
 func (*StartVirtualMachineRequest) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{22}
+	return file_satelit_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *StartVirtualMachineRequest) GetUuid() string {
@@ -1247,7 +2138,7 @@ type StartVirtualMachineResponse struct {
 func (x *StartVirtualMachineResponse) Reset() {
 	*x = StartVirtualMachineResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_satelit_proto_msgTypes[23]
+		mi := &file_satelit_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1260,7 +2151,7 @@ func (x *StartVirtualMachineResponse) String() string {
 func (*StartVirtualMachineResponse) ProtoMessage() {}
 
 func (x *StartVirtualMachineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_satelit_proto_msgTypes[23]
+	mi := &file_satelit_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1273,7 +2164,7 @@ func (x *StartVirtualMachineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartVirtualMachineResponse.ProtoReflect.Descriptor instead.
 func (*StartVirtualMachineResponse) Descriptor() ([]byte, []int) {
-	return file_satelit_proto_rawDescGZIP(), []int{23}
+	return file_satelit_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *StartVirtualMachineResponse) GetUuid() string {
@@ -1308,7 +2199,19 @@ var file_satelit_proto_rawDesc = []byte{
 	0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x08, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73,
 	0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
-	0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x13, 0x0a, 0x11, 0x47,
+	0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x72, 0x0a, 0x06, 0x53,
+	0x75, 0x62, 0x6e, 0x65, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a,
+	0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x74, 0x61, 0x72, 0x74,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x73, 0x74, 0x61, 0x72, 0x74, 0x12, 0x10, 0x0a,
+	0x03, 0x65, 0x6e, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x65, 0x6e, 0x64, 0x22,
+	0x4a, 0x0a, 0x07, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x70, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x70, 0x12, 0x1b,
+	0x0a, 0x09, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x49, 0x64, 0x22, 0x13, 0x0a, 0x11, 0x47,
 	0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x22, 0x3f, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x07, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65,
@@ -1374,80 +2277,172 @@ var file_satelit_proto_rawDesc = []byte{
 	0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x02, 0x69, 0x64, 0x22, 0x15, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6d, 0x61,
-	0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xda, 0x01, 0x0a, 0x18, 0x41,
+	0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x6b, 0x0a, 0x13, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x12,
+	0x14, 0x0a, 0x05, 0x73, 0x74, 0x61, 0x72, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x73, 0x74, 0x61, 0x72, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x65, 0x6e, 0x64, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x03, 0x65, 0x6e, 0x64, 0x22, 0x3f, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x27, 0x0a, 0x06, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0f, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74,
+	0x52, 0x06, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x22, 0x26, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x53,
+	0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04,
+	0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64,
+	0x22, 0x3c, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x06, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e,
+	0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x06, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x22, 0x13,
+	0x0a, 0x11, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x22, 0x3f, 0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65,
+	0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x07, 0x73, 0x75, 0x62,
+	0x6e, 0x65, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x73, 0x61, 0x74,
+	0x65, 0x6c, 0x69, 0x74, 0x2e, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x07, 0x73, 0x75, 0x62,
+	0x6e, 0x65, 0x74, 0x73, 0x22, 0x29, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x75,
+	0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75,
+	0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x22,
+	0x16, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x33, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x1b, 0x0a, 0x09, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x49, 0x64, 0x22, 0x43, 0x0a, 0x15,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2a, 0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74,
+	0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x22, 0x27, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x22, 0x40, 0x0a, 0x12, 0x47, 0x65,
+	0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x2a, 0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x10, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x22, 0x31, 0x0a, 0x12,
+	0x4c, 0x69, 0x73, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x5f, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x49, 0x64, 0x22,
+	0x45, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2e, 0x0a, 0x09, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x73, 0x61, 0x74, 0x65,
+	0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x09, 0x61, 0x64, 0x64,
+	0x72, 0x65, 0x73, 0x73, 0x65, 0x73, 0x22, 0x2a, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12,
+	0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75,
+	0x69, 0x64, 0x22, 0x17, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xda, 0x01, 0x0a, 0x18,
+	0x41, 0x64, 0x64, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05,
+	0x76, 0x63, 0x70, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x76, 0x63, 0x70,
+	0x75, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x5f, 0x6b, 0x69, 0x62,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x4b, 0x69,
+	0x62, 0x12, 0x24, 0x0a, 0x0e, 0x72, 0x6f, 0x6f, 0x74, 0x5f, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65,
+	0x5f, 0x67, 0x62, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0c, 0x72, 0x6f, 0x6f, 0x74, 0x56,
+	0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x47, 0x62, 0x12, 0x26, 0x0a, 0x0f, 0x73, 0x6f, 0x75, 0x72, 0x63,
+	0x65, 0x5f, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0d, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x64, 0x12,
+	0x27, 0x0a, 0x0f, 0x68, 0x79, 0x70, 0x65, 0x72, 0x76, 0x69, 0x73, 0x6f, 0x72, 0x5f, 0x6e, 0x61,
+	0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x68, 0x79, 0x70, 0x65, 0x72, 0x76,
+	0x69, 0x73, 0x6f, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x43, 0x0a, 0x19, 0x41, 0x64, 0x64, 0x56,
+	0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x30, 0x0a,
+	0x1a, 0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63,
+	0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75,
+	0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x22,
+	0x45, 0x0a, 0x1b, 0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d,
+	0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12,
+	0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75,
+	0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x32, 0xc4, 0x0a, 0x0a, 0x07, 0x53, 0x61, 0x74, 0x65, 0x6c,
+	0x69, 0x74, 0x12, 0x47, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73,
+	0x12, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f,
+	0x6c, 0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x73,
+	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x41,
+	0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x12, 0x19, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c,
+	0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64,
+	0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x53, 0x0a, 0x0e, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x6d,
+	0x61, 0x67, 0x65, 0x12, 0x1e, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64,
+	0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64,
+	0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x41, 0x74, 0x74, 0x61, 0x63, 0x68,
+	0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74,
+	0x2e, 0x41, 0x74, 0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41,
+	0x74, 0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67,
+	0x65, 0x73, 0x12, 0x19, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74,
+	0x49, 0x6d, 0x61, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e,
+	0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4c, 0x0a, 0x0b, 0x55,
+	0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x2e, 0x73, 0x61, 0x74,
+	0x65, 0x6c, 0x69, 0x74, 0x2e, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69,
+	0x74, 0x2e, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x12, 0x4a, 0x0a, 0x0b, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c,
+	0x69, 0x74, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e,
+	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53,
+	0x75, 0x62, 0x6e, 0x65, 0x74, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65,
+	0x74, 0x12, 0x19, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x53,
+	0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73,
+	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0a, 0x4c, 0x69,
+	0x73, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x12, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c,
+	0x69, 0x74, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x75, 0x62,
+	0x6e, 0x65, 0x74, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x50, 0x0a, 0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x12, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x12, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b,
+	0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4a, 0x0a,
+	0x0b, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x1b, 0x2e, 0x73,
+	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65,
+	0x6c, 0x69, 0x74, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x0d, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x1d, 0x2e, 0x73, 0x61, 0x74,
+	0x65, 0x6c, 0x69, 0x74, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x73, 0x61, 0x74, 0x65,
+	0x6c, 0x69, 0x74, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x11, 0x41,
 	0x64, 0x64, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76,
-	0x63, 0x70, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x76, 0x63, 0x70, 0x75,
-	0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x5f, 0x6b, 0x69, 0x62, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x4b, 0x69, 0x62,
-	0x12, 0x24, 0x0a, 0x0e, 0x72, 0x6f, 0x6f, 0x74, 0x5f, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x5f,
-	0x67, 0x62, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0c, 0x72, 0x6f, 0x6f, 0x74, 0x56, 0x6f,
-	0x6c, 0x75, 0x6d, 0x65, 0x47, 0x62, 0x12, 0x26, 0x0a, 0x0f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
-	0x5f, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0d, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x64, 0x12, 0x27,
-	0x0a, 0x0f, 0x68, 0x79, 0x70, 0x65, 0x72, 0x76, 0x69, 0x73, 0x6f, 0x72, 0x5f, 0x6e, 0x61, 0x6d,
-	0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x68, 0x79, 0x70, 0x65, 0x72, 0x76, 0x69,
-	0x73, 0x6f, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x43, 0x0a, 0x19, 0x41, 0x64, 0x64, 0x56, 0x69,
-	0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x30, 0x0a, 0x1a,
+	0x12, 0x21, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x69,
+	0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64,
+	0x64, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x62, 0x0a, 0x13, 0x53, 0x74, 0x61,
+	0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65,
+	0x12, 0x23, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x53, 0x74, 0x61, 0x72, 0x74,
+	0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x24, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e,
 	0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68,
-	0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x22, 0x45,
-	0x0a, 0x1b, 0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61,
-	0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a,
-	0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69,
-	0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x32, 0xde, 0x05, 0x0a, 0x07, 0x53, 0x61, 0x74, 0x65, 0x6c, 0x69,
-	0x74, 0x12, 0x47, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x12,
-	0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c,
-	0x75, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x73, 0x61,
-	0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x41, 0x64,
-	0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x12, 0x19, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69,
-	0x74, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64,
-	0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x12, 0x53, 0x0a, 0x0e, 0x41, 0x64, 0x64, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x6d, 0x61,
-	0x67, 0x65, 0x12, 0x1e, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64,
-	0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64,
-	0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0c, 0x41, 0x74, 0x74, 0x61, 0x63, 0x68, 0x56,
-	0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e,
-	0x41, 0x74, 0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x74,
-	0x74, 0x61, 0x63, 0x68, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65,
-	0x73, 0x12, 0x19, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x49,
-	0x6d, 0x61, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73,
-	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4c, 0x0a, 0x0b, 0x55, 0x70,
-	0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x2e, 0x73, 0x61, 0x74, 0x65,
-	0x6c, 0x69, 0x74, 0x2e, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74,
-	0x2e, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x12, 0x4a, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69,
-	0x74, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x11, 0x41, 0x64, 0x64, 0x56, 0x69, 0x72, 0x74, 0x75,
-	0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x12, 0x21, 0x2e, 0x73, 0x61, 0x74, 0x65,
-	0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61,
-	0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x73,
-	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61,
-	0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x00, 0x12, 0x62, 0x0a, 0x13, 0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75,
-	0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x12, 0x23, 0x2e, 0x73, 0x61, 0x74, 0x65,
-	0x6c, 0x69, 0x74, 0x2e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6c,
-	0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x24,
-	0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x56, 0x69,
-	0x72, 0x74, 0x75, 0x61, 0x6c, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65,
-	0x6c, 0x69, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0b, 0x5a,
+	0x09, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -1462,64 +2457,104 @@ func file_satelit_proto_rawDescGZIP() []byte {
 	return file_satelit_proto_rawDescData
 }
 
-var file_satelit_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_satelit_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_satelit_proto_goTypes = []interface{}{
 	(*Volume)(nil),                      // 0: satelit.Volume
 	(*Image)(nil),                       // 1: satelit.Image
-	(*GetVolumesRequest)(nil),           // 2: satelit.GetVolumesRequest
-	(*GetVolumesResponse)(nil),          // 3: satelit.GetVolumesResponse
-	(*AddVolumeRequest)(nil),            // 4: satelit.AddVolumeRequest
-	(*AddVolumeResponse)(nil),           // 5: satelit.AddVolumeResponse
-	(*AddVolumeImageRequest)(nil),       // 6: satelit.AddVolumeImageRequest
-	(*AddVolumeImageResponse)(nil),      // 7: satelit.AddVolumeImageResponse
-	(*AttachVolumeRequest)(nil),         // 8: satelit.AttachVolumeRequest
-	(*AttachVolumeResponse)(nil),        // 9: satelit.AttachVolumeResponse
-	(*DeleteVolumeRequest)(nil),         // 10: satelit.DeleteVolumeRequest
-	(*DeleteVolumeResponse)(nil),        // 11: satelit.DeleteVolumeResponse
-	(*GetImagesRequest)(nil),            // 12: satelit.GetImagesRequest
-	(*GetImagesResponse)(nil),           // 13: satelit.GetImagesResponse
-	(*UploadImageRequest)(nil),          // 14: satelit.UploadImageRequest
-	(*UploadImageRequestMeta)(nil),      // 15: satelit.UploadImageRequestMeta
-	(*UploadImageRequestChunk)(nil),     // 16: satelit.UploadImageRequestChunk
-	(*UploadImageResponse)(nil),         // 17: satelit.UploadImageResponse
-	(*DeleteImageRequest)(nil),          // 18: satelit.DeleteImageRequest
-	(*DeleteImageResponse)(nil),         // 19: satelit.DeleteImageResponse
-	(*AddVirtualMachineRequest)(nil),    // 20: satelit.AddVirtualMachineRequest
-	(*AddVirtualMachineResponse)(nil),   // 21: satelit.AddVirtualMachineResponse
-	(*StartVirtualMachineRequest)(nil),  // 22: satelit.StartVirtualMachineRequest
-	(*StartVirtualMachineResponse)(nil), // 23: satelit.StartVirtualMachineResponse
+	(*Subnet)(nil),                      // 2: satelit.Subnet
+	(*Address)(nil),                     // 3: satelit.Address
+	(*GetVolumesRequest)(nil),           // 4: satelit.GetVolumesRequest
+	(*GetVolumesResponse)(nil),          // 5: satelit.GetVolumesResponse
+	(*AddVolumeRequest)(nil),            // 6: satelit.AddVolumeRequest
+	(*AddVolumeResponse)(nil),           // 7: satelit.AddVolumeResponse
+	(*AddVolumeImageRequest)(nil),       // 8: satelit.AddVolumeImageRequest
+	(*AddVolumeImageResponse)(nil),      // 9: satelit.AddVolumeImageResponse
+	(*AttachVolumeRequest)(nil),         // 10: satelit.AttachVolumeRequest
+	(*AttachVolumeResponse)(nil),        // 11: satelit.AttachVolumeResponse
+	(*DeleteVolumeRequest)(nil),         // 12: satelit.DeleteVolumeRequest
+	(*DeleteVolumeResponse)(nil),        // 13: satelit.DeleteVolumeResponse
+	(*GetImagesRequest)(nil),            // 14: satelit.GetImagesRequest
+	(*GetImagesResponse)(nil),           // 15: satelit.GetImagesResponse
+	(*UploadImageRequest)(nil),          // 16: satelit.UploadImageRequest
+	(*UploadImageRequestMeta)(nil),      // 17: satelit.UploadImageRequestMeta
+	(*UploadImageRequestChunk)(nil),     // 18: satelit.UploadImageRequestChunk
+	(*UploadImageResponse)(nil),         // 19: satelit.UploadImageResponse
+	(*DeleteImageRequest)(nil),          // 20: satelit.DeleteImageRequest
+	(*DeleteImageResponse)(nil),         // 21: satelit.DeleteImageResponse
+	(*CreateSubnetRequest)(nil),         // 22: satelit.CreateSubnetRequest
+	(*CreateSubnetResponse)(nil),        // 23: satelit.CreateSubnetResponse
+	(*GetSubnetRequest)(nil),            // 24: satelit.GetSubnetRequest
+	(*GetSubnetResponse)(nil),           // 25: satelit.GetSubnetResponse
+	(*ListSubnetRequest)(nil),           // 26: satelit.ListSubnetRequest
+	(*ListSubnetResponse)(nil),          // 27: satelit.ListSubnetResponse
+	(*DeleteSubnetRequest)(nil),         // 28: satelit.DeleteSubnetRequest
+	(*DeleteSubnetResponse)(nil),        // 29: satelit.DeleteSubnetResponse
+	(*CreateAddressRequest)(nil),        // 30: satelit.CreateAddressRequest
+	(*CreateAddressResponse)(nil),       // 31: satelit.CreateAddressResponse
+	(*GetAddressRequest)(nil),           // 32: satelit.GetAddressRequest
+	(*GetAddressResponse)(nil),          // 33: satelit.GetAddressResponse
+	(*ListAddressRequest)(nil),          // 34: satelit.ListAddressRequest
+	(*ListAddressResponse)(nil),         // 35: satelit.ListAddressResponse
+	(*DeleteAddressRequest)(nil),        // 36: satelit.DeleteAddressRequest
+	(*DeleteAddressResponse)(nil),       // 37: satelit.DeleteAddressResponse
+	(*AddVirtualMachineRequest)(nil),    // 38: satelit.AddVirtualMachineRequest
+	(*AddVirtualMachineResponse)(nil),   // 39: satelit.AddVirtualMachineResponse
+	(*StartVirtualMachineRequest)(nil),  // 40: satelit.StartVirtualMachineRequest
+	(*StartVirtualMachineResponse)(nil), // 41: satelit.StartVirtualMachineResponse
 }
 var file_satelit_proto_depIdxs = []int32{
 	0,  // 0: satelit.GetVolumesResponse.volumes:type_name -> satelit.Volume
 	0,  // 1: satelit.AddVolumeResponse.volume:type_name -> satelit.Volume
 	0,  // 2: satelit.AddVolumeImageResponse.volume:type_name -> satelit.Volume
 	1,  // 3: satelit.GetImagesResponse.images:type_name -> satelit.Image
-	15, // 4: satelit.UploadImageRequest.meta:type_name -> satelit.UploadImageRequestMeta
-	16, // 5: satelit.UploadImageRequest.chunk:type_name -> satelit.UploadImageRequestChunk
+	17, // 4: satelit.UploadImageRequest.meta:type_name -> satelit.UploadImageRequestMeta
+	18, // 5: satelit.UploadImageRequest.chunk:type_name -> satelit.UploadImageRequestChunk
 	1,  // 6: satelit.UploadImageResponse.image:type_name -> satelit.Image
-	2,  // 7: satelit.Satelit.GetVolumes:input_type -> satelit.GetVolumesRequest
-	4,  // 8: satelit.Satelit.AddVolume:input_type -> satelit.AddVolumeRequest
-	6,  // 9: satelit.Satelit.AddVolumeImage:input_type -> satelit.AddVolumeImageRequest
-	8,  // 10: satelit.Satelit.AttachVolume:input_type -> satelit.AttachVolumeRequest
-	12, // 11: satelit.Satelit.GetImages:input_type -> satelit.GetImagesRequest
-	14, // 12: satelit.Satelit.UploadImage:input_type -> satelit.UploadImageRequest
-	18, // 13: satelit.Satelit.DeleteImage:input_type -> satelit.DeleteImageRequest
-	20, // 14: satelit.Satelit.AddVirtualMachine:input_type -> satelit.AddVirtualMachineRequest
-	22, // 15: satelit.Satelit.StartVirtualMachine:input_type -> satelit.StartVirtualMachineRequest
-	3,  // 16: satelit.Satelit.GetVolumes:output_type -> satelit.GetVolumesResponse
-	5,  // 17: satelit.Satelit.AddVolume:output_type -> satelit.AddVolumeResponse
-	7,  // 18: satelit.Satelit.AddVolumeImage:output_type -> satelit.AddVolumeImageResponse
-	9,  // 19: satelit.Satelit.AttachVolume:output_type -> satelit.AttachVolumeResponse
-	13, // 20: satelit.Satelit.GetImages:output_type -> satelit.GetImagesResponse
-	17, // 21: satelit.Satelit.UploadImage:output_type -> satelit.UploadImageResponse
-	19, // 22: satelit.Satelit.DeleteImage:output_type -> satelit.DeleteImageResponse
-	21, // 23: satelit.Satelit.AddVirtualMachine:output_type -> satelit.AddVirtualMachineResponse
-	23, // 24: satelit.Satelit.StartVirtualMachine:output_type -> satelit.StartVirtualMachineResponse
-	16, // [16:25] is the sub-list for method output_type
-	7,  // [7:16] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	2,  // 7: satelit.CreateSubnetResponse.subnet:type_name -> satelit.Subnet
+	2,  // 8: satelit.GetSubnetResponse.subnet:type_name -> satelit.Subnet
+	2,  // 9: satelit.ListSubnetResponse.subnets:type_name -> satelit.Subnet
+	3,  // 10: satelit.CreateAddressResponse.address:type_name -> satelit.Address
+	3,  // 11: satelit.GetAddressResponse.address:type_name -> satelit.Address
+	3,  // 12: satelit.ListAddressResponse.addresses:type_name -> satelit.Address
+	4,  // 13: satelit.Satelit.GetVolumes:input_type -> satelit.GetVolumesRequest
+	6,  // 14: satelit.Satelit.AddVolume:input_type -> satelit.AddVolumeRequest
+	8,  // 15: satelit.Satelit.AddVolumeImage:input_type -> satelit.AddVolumeImageRequest
+	10, // 16: satelit.Satelit.AttachVolume:input_type -> satelit.AttachVolumeRequest
+	14, // 17: satelit.Satelit.GetImages:input_type -> satelit.GetImagesRequest
+	16, // 18: satelit.Satelit.UploadImage:input_type -> satelit.UploadImageRequest
+	20, // 19: satelit.Satelit.DeleteImage:input_type -> satelit.DeleteImageRequest
+	22, // 20: satelit.Satelit.CreateSubnet:input_type -> satelit.CreateSubnetRequest
+	24, // 21: satelit.Satelit.GetSubnet:input_type -> satelit.GetSubnetRequest
+	26, // 22: satelit.Satelit.ListSubnet:input_type -> satelit.ListSubnetRequest
+	28, // 23: satelit.Satelit.DeleteSubnet:input_type -> satelit.DeleteSubnetRequest
+	30, // 24: satelit.Satelit.CreateAddress:input_type -> satelit.CreateAddressRequest
+	32, // 25: satelit.Satelit.GetAddress:input_type -> satelit.GetAddressRequest
+	34, // 26: satelit.Satelit.ListAddress:input_type -> satelit.ListAddressRequest
+	36, // 27: satelit.Satelit.DeleteAddress:input_type -> satelit.DeleteAddressRequest
+	38, // 28: satelit.Satelit.AddVirtualMachine:input_type -> satelit.AddVirtualMachineRequest
+	40, // 29: satelit.Satelit.StartVirtualMachine:input_type -> satelit.StartVirtualMachineRequest
+	5,  // 30: satelit.Satelit.GetVolumes:output_type -> satelit.GetVolumesResponse
+	7,  // 31: satelit.Satelit.AddVolume:output_type -> satelit.AddVolumeResponse
+	9,  // 32: satelit.Satelit.AddVolumeImage:output_type -> satelit.AddVolumeImageResponse
+	11, // 33: satelit.Satelit.AttachVolume:output_type -> satelit.AttachVolumeResponse
+	15, // 34: satelit.Satelit.GetImages:output_type -> satelit.GetImagesResponse
+	19, // 35: satelit.Satelit.UploadImage:output_type -> satelit.UploadImageResponse
+	21, // 36: satelit.Satelit.DeleteImage:output_type -> satelit.DeleteImageResponse
+	23, // 37: satelit.Satelit.CreateSubnet:output_type -> satelit.CreateSubnetResponse
+	25, // 38: satelit.Satelit.GetSubnet:output_type -> satelit.GetSubnetResponse
+	27, // 39: satelit.Satelit.ListSubnet:output_type -> satelit.ListSubnetResponse
+	29, // 40: satelit.Satelit.DeleteSubnet:output_type -> satelit.DeleteSubnetResponse
+	31, // 41: satelit.Satelit.CreateAddress:output_type -> satelit.CreateAddressResponse
+	33, // 42: satelit.Satelit.GetAddress:output_type -> satelit.GetAddressResponse
+	35, // 43: satelit.Satelit.ListAddress:output_type -> satelit.ListAddressResponse
+	37, // 44: satelit.Satelit.DeleteAddress:output_type -> satelit.DeleteAddressResponse
+	39, // 45: satelit.Satelit.AddVirtualMachine:output_type -> satelit.AddVirtualMachineResponse
+	41, // 46: satelit.Satelit.StartVirtualMachine:output_type -> satelit.StartVirtualMachineResponse
+	30, // [30:47] is the sub-list for method output_type
+	13, // [13:30] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_satelit_proto_init() }
@@ -1553,7 +2588,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetVolumesRequest); i {
+			switch v := v.(*Subnet); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1565,7 +2600,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetVolumesResponse); i {
+			switch v := v.(*Address); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1577,7 +2612,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddVolumeRequest); i {
+			switch v := v.(*GetVolumesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1589,7 +2624,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddVolumeResponse); i {
+			switch v := v.(*GetVolumesResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1601,7 +2636,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddVolumeImageRequest); i {
+			switch v := v.(*AddVolumeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1613,7 +2648,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddVolumeImageResponse); i {
+			switch v := v.(*AddVolumeResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1625,7 +2660,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AttachVolumeRequest); i {
+			switch v := v.(*AddVolumeImageRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1637,7 +2672,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AttachVolumeResponse); i {
+			switch v := v.(*AddVolumeImageResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1649,7 +2684,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteVolumeRequest); i {
+			switch v := v.(*AttachVolumeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1661,7 +2696,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteVolumeResponse); i {
+			switch v := v.(*AttachVolumeResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1673,7 +2708,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetImagesRequest); i {
+			switch v := v.(*DeleteVolumeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1685,7 +2720,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetImagesResponse); i {
+			switch v := v.(*DeleteVolumeResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1697,7 +2732,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UploadImageRequest); i {
+			switch v := v.(*GetImagesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1709,7 +2744,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UploadImageRequestMeta); i {
+			switch v := v.(*GetImagesResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1721,7 +2756,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UploadImageRequestChunk); i {
+			switch v := v.(*UploadImageRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1733,7 +2768,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UploadImageResponse); i {
+			switch v := v.(*UploadImageRequestMeta); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1745,7 +2780,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteImageRequest); i {
+			switch v := v.(*UploadImageRequestChunk); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1757,7 +2792,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteImageResponse); i {
+			switch v := v.(*UploadImageResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1769,7 +2804,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddVirtualMachineRequest); i {
+			switch v := v.(*DeleteImageRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1781,7 +2816,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddVirtualMachineResponse); i {
+			switch v := v.(*DeleteImageResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1793,7 +2828,7 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StartVirtualMachineRequest); i {
+			switch v := v.(*CreateSubnetRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1805,6 +2840,222 @@ func file_satelit_proto_init() {
 			}
 		}
 		file_satelit_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateSubnetResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetSubnetRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetSubnetResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListSubnetRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListSubnetResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteSubnetRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteSubnetResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateAddressRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateAddressResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAddressRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAddressResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListAddressRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListAddressResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteAddressRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteAddressResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddVirtualMachineRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddVirtualMachineResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StartVirtualMachineRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelit_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StartVirtualMachineResponse); i {
 			case 0:
 				return &v.state
@@ -1817,7 +3068,7 @@ func file_satelit_proto_init() {
 			}
 		}
 	}
-	file_satelit_proto_msgTypes[14].OneofWrappers = []interface{}{
+	file_satelit_proto_msgTypes[16].OneofWrappers = []interface{}{
 		(*UploadImageRequest_Meta)(nil),
 		(*UploadImageRequest_Chunk)(nil),
 	}
@@ -1827,7 +3078,7 @@ func file_satelit_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_satelit_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -1860,6 +3111,14 @@ type SatelitClient interface {
 	GetImages(ctx context.Context, in *GetImagesRequest, opts ...grpc.CallOption) (*GetImagesResponse, error)
 	UploadImage(ctx context.Context, opts ...grpc.CallOption) (Satelit_UploadImageClient, error)
 	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*DeleteImageResponse, error)
+	CreateSubnet(ctx context.Context, in *CreateSubnetRequest, opts ...grpc.CallOption) (*CreateSubnetResponse, error)
+	GetSubnet(ctx context.Context, in *GetSubnetRequest, opts ...grpc.CallOption) (*GetSubnetResponse, error)
+	ListSubnet(ctx context.Context, in *ListSubnetRequest, opts ...grpc.CallOption) (*ListSubnetResponse, error)
+	DeleteSubnet(ctx context.Context, in *DeleteSubnetRequest, opts ...grpc.CallOption) (*DeleteSubnetResponse, error)
+	CreateAddress(ctx context.Context, in *CreateAddressRequest, opts ...grpc.CallOption) (*CreateAddressResponse, error)
+	GetAddress(ctx context.Context, in *GetAddressRequest, opts ...grpc.CallOption) (*GetAddressResponse, error)
+	ListAddress(ctx context.Context, in *ListAddressRequest, opts ...grpc.CallOption) (*ListAddressResponse, error)
+	DeleteAddress(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressResponse, error)
 	AddVirtualMachine(ctx context.Context, in *AddVirtualMachineRequest, opts ...grpc.CallOption) (*AddVirtualMachineResponse, error)
 	StartVirtualMachine(ctx context.Context, in *StartVirtualMachineRequest, opts ...grpc.CallOption) (*StartVirtualMachineResponse, error)
 }
@@ -1960,6 +3219,78 @@ func (c *satelitClient) DeleteImage(ctx context.Context, in *DeleteImageRequest,
 	return out, nil
 }
 
+func (c *satelitClient) CreateSubnet(ctx context.Context, in *CreateSubnetRequest, opts ...grpc.CallOption) (*CreateSubnetResponse, error) {
+	out := new(CreateSubnetResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/CreateSubnet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) GetSubnet(ctx context.Context, in *GetSubnetRequest, opts ...grpc.CallOption) (*GetSubnetResponse, error) {
+	out := new(GetSubnetResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/GetSubnet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) ListSubnet(ctx context.Context, in *ListSubnetRequest, opts ...grpc.CallOption) (*ListSubnetResponse, error) {
+	out := new(ListSubnetResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/ListSubnet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) DeleteSubnet(ctx context.Context, in *DeleteSubnetRequest, opts ...grpc.CallOption) (*DeleteSubnetResponse, error) {
+	out := new(DeleteSubnetResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/DeleteSubnet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) CreateAddress(ctx context.Context, in *CreateAddressRequest, opts ...grpc.CallOption) (*CreateAddressResponse, error) {
+	out := new(CreateAddressResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/CreateAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) GetAddress(ctx context.Context, in *GetAddressRequest, opts ...grpc.CallOption) (*GetAddressResponse, error) {
+	out := new(GetAddressResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/GetAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) ListAddress(ctx context.Context, in *ListAddressRequest, opts ...grpc.CallOption) (*ListAddressResponse, error) {
+	out := new(ListAddressResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/ListAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitClient) DeleteAddress(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressResponse, error) {
+	out := new(DeleteAddressResponse)
+	err := c.cc.Invoke(ctx, "/satelit.Satelit/DeleteAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *satelitClient) AddVirtualMachine(ctx context.Context, in *AddVirtualMachineRequest, opts ...grpc.CallOption) (*AddVirtualMachineResponse, error) {
 	out := new(AddVirtualMachineResponse)
 	err := c.cc.Invoke(ctx, "/satelit.Satelit/AddVirtualMachine", in, out, opts...)
@@ -1987,6 +3318,14 @@ type SatelitServer interface {
 	GetImages(context.Context, *GetImagesRequest) (*GetImagesResponse, error)
 	UploadImage(Satelit_UploadImageServer) error
 	DeleteImage(context.Context, *DeleteImageRequest) (*DeleteImageResponse, error)
+	CreateSubnet(context.Context, *CreateSubnetRequest) (*CreateSubnetResponse, error)
+	GetSubnet(context.Context, *GetSubnetRequest) (*GetSubnetResponse, error)
+	ListSubnet(context.Context, *ListSubnetRequest) (*ListSubnetResponse, error)
+	DeleteSubnet(context.Context, *DeleteSubnetRequest) (*DeleteSubnetResponse, error)
+	CreateAddress(context.Context, *CreateAddressRequest) (*CreateAddressResponse, error)
+	GetAddress(context.Context, *GetAddressRequest) (*GetAddressResponse, error)
+	ListAddress(context.Context, *ListAddressRequest) (*ListAddressResponse, error)
+	DeleteAddress(context.Context, *DeleteAddressRequest) (*DeleteAddressResponse, error)
 	AddVirtualMachine(context.Context, *AddVirtualMachineRequest) (*AddVirtualMachineResponse, error)
 	StartVirtualMachine(context.Context, *StartVirtualMachineRequest) (*StartVirtualMachineResponse, error)
 }
@@ -2015,6 +3354,30 @@ func (*UnimplementedSatelitServer) UploadImage(Satelit_UploadImageServer) error 
 }
 func (*UnimplementedSatelitServer) DeleteImage(context.Context, *DeleteImageRequest) (*DeleteImageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteImage not implemented")
+}
+func (*UnimplementedSatelitServer) CreateSubnet(context.Context, *CreateSubnetRequest) (*CreateSubnetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSubnet not implemented")
+}
+func (*UnimplementedSatelitServer) GetSubnet(context.Context, *GetSubnetRequest) (*GetSubnetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSubnet not implemented")
+}
+func (*UnimplementedSatelitServer) ListSubnet(context.Context, *ListSubnetRequest) (*ListSubnetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSubnet not implemented")
+}
+func (*UnimplementedSatelitServer) DeleteSubnet(context.Context, *DeleteSubnetRequest) (*DeleteSubnetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubnet not implemented")
+}
+func (*UnimplementedSatelitServer) CreateAddress(context.Context, *CreateAddressRequest) (*CreateAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAddress not implemented")
+}
+func (*UnimplementedSatelitServer) GetAddress(context.Context, *GetAddressRequest) (*GetAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAddress not implemented")
+}
+func (*UnimplementedSatelitServer) ListAddress(context.Context, *ListAddressRequest) (*ListAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAddress not implemented")
+}
+func (*UnimplementedSatelitServer) DeleteAddress(context.Context, *DeleteAddressRequest) (*DeleteAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAddress not implemented")
 }
 func (*UnimplementedSatelitServer) AddVirtualMachine(context.Context, *AddVirtualMachineRequest) (*AddVirtualMachineResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddVirtualMachine not implemented")
@@ -2161,6 +3524,150 @@ func _Satelit_DeleteImage_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Satelit_CreateSubnet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSubnetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).CreateSubnet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/CreateSubnet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).CreateSubnet(ctx, req.(*CreateSubnetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_GetSubnet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSubnetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).GetSubnet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/GetSubnet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).GetSubnet(ctx, req.(*GetSubnetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_ListSubnet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSubnetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).ListSubnet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/ListSubnet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).ListSubnet(ctx, req.(*ListSubnetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_DeleteSubnet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSubnetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).DeleteSubnet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/DeleteSubnet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).DeleteSubnet(ctx, req.(*DeleteSubnetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_CreateAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).CreateAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/CreateAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).CreateAddress(ctx, req.(*CreateAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_GetAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).GetAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/GetAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).GetAddress(ctx, req.(*GetAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_ListAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).ListAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/ListAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).ListAddress(ctx, req.(*ListAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Satelit_DeleteAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitServer).DeleteAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.Satelit/DeleteAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitServer).DeleteAddress(ctx, req.(*DeleteAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Satelit_AddVirtualMachine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddVirtualMachineRequest)
 	if err := dec(in); err != nil {
@@ -2224,6 +3731,38 @@ var _Satelit_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteImage",
 			Handler:    _Satelit_DeleteImage_Handler,
+		},
+		{
+			MethodName: "CreateSubnet",
+			Handler:    _Satelit_CreateSubnet_Handler,
+		},
+		{
+			MethodName: "GetSubnet",
+			Handler:    _Satelit_GetSubnet_Handler,
+		},
+		{
+			MethodName: "ListSubnet",
+			Handler:    _Satelit_ListSubnet_Handler,
+		},
+		{
+			MethodName: "DeleteSubnet",
+			Handler:    _Satelit_DeleteSubnet_Handler,
+		},
+		{
+			MethodName: "CreateAddress",
+			Handler:    _Satelit_CreateAddress_Handler,
+		},
+		{
+			MethodName: "GetAddress",
+			Handler:    _Satelit_GetAddress_Handler,
+		},
+		{
+			MethodName: "ListAddress",
+			Handler:    _Satelit_ListAddress_Handler,
+		},
+		{
+			MethodName: "DeleteAddress",
+			Handler:    _Satelit_DeleteAddress_Handler,
 		},
 		{
 			MethodName: "AddVirtualMachine",
