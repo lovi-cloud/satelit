@@ -8,13 +8,9 @@ import (
 	"testing"
 
 	"github.com/jmoiron/sqlx"
-
-	"github.com/whywaita/satelit/internal/testutils"
-
 	uuid "github.com/satori/go.uuid"
+	"github.com/whywaita/satelit/internal/testutils"
 	"github.com/whywaita/satelit/pkg/europa"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 const (
