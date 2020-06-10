@@ -277,7 +277,13 @@ func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRe
 	}
 
 	return &pb.CreateSubnetResponse{
-		Uuid: subnet.UUID.String(),
+		Subnet: &pb.Subnet{
+			Uuid:    subnet.UUID.String(),
+			Name:    subnet.Name,
+			Network: subnet.Network.String(),
+			Start:   subnet.Start.String(),
+			End:     subnet.End.String(),
+		},
 	}, nil
 }
 
@@ -351,7 +357,11 @@ func (s *SatelitServer) CreateAddress(ctx context.Context, req *pb.CreateAddress
 	}
 
 	return &pb.CreateAddressResponse{
-		Uuid: address.UUID.String(),
+		Address: &pb.Address{
+			Uuid:     address.UUID.String(),
+			Ip:       address.IP.String(),
+			SubnetId: address.SubnetID.String(),
+		},
 	}, nil
 }
 
