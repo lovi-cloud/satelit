@@ -134,7 +134,7 @@ message CreateSubnetRequest {
 }
 
 message CreateSubnetResponse {
-  string uuid = 1;
+  Subnet subnet = 1;
 }
 
 message GetSubnetRequest {
@@ -162,7 +162,7 @@ message CreateAddressRequest {
 }
 
 message CreateAddressResponse {
-  string uuid = 1;
+  Address address = 1;
 }
 
 message GetAddressRequest {
