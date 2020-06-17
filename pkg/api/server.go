@@ -271,18 +271,21 @@ func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequ
 
 // CreateSubnet create a subnet
 func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRequest) (*pb.CreateSubnetResponse, error) {
-	subnet, err := s.IPAM.CreateSubnet(ctx, req.Name, req.Network, req.Start, req.End)
+	subnet, err := s.IPAM.CreateSubnet(ctx, req.Name, req.Network, req.Start, req.End, req.Gateway, req.DnsServer, req.MetadataServer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create subnet: %w", err)
 	}
 
 	return &pb.CreateSubnetResponse{
 		Subnet: &pb.Subnet{
-			Uuid:    subnet.UUID.String(),
-			Name:    subnet.Name,
-			Network: subnet.Network.String(),
-			Start:   subnet.Start.String(),
-			End:     subnet.End.String(),
+			Uuid:           subnet.UUID.String(),
+			Name:           subnet.Name,
+			Network:        subnet.Network.String(),
+			Start:          subnet.Start.String(),
+			End:            subnet.End.String(),
+			Gateway:        subnet.Gateway.String(),
+			DnsServer:      subnet.DNSServer.String(),
+			MetadataServer: subnet.MetadataServer.String(),
 		},
 	}, nil
 }
@@ -300,11 +303,14 @@ func (s *SatelitServer) GetSubnet(ctx context.Context, req *pb.GetSubnetRequest)
 
 	return &pb.GetSubnetResponse{
 		Subnet: &pb.Subnet{
-			Uuid:    subnet.UUID.String(),
-			Name:    subnet.Name,
-			Network: subnet.Network.String(),
-			Start:   subnet.Start.String(),
-			End:     subnet.End.String(),
+			Uuid:           subnet.UUID.String(),
+			Name:           subnet.Name,
+			Network:        subnet.Network.String(),
+			Start:          subnet.Start.String(),
+			End:            subnet.End.String(),
+			Gateway:        subnet.Gateway.String(),
+			DnsServer:      subnet.DNSServer.String(),
+			MetadataServer: subnet.MetadataServer.String(),
 		},
 	}, nil
 }
@@ -319,11 +325,14 @@ func (s *SatelitServer) ListSubnet(ctx context.Context, req *pb.ListSubnetReques
 	tmp := make([]*pb.Subnet, len(subnets))
 	for i, subnet := range subnets {
 		tmp[i] = &pb.Subnet{
-			Uuid:    subnet.UUID.String(),
-			Name:    subnet.Name,
-			Network: subnet.Network.String(),
-			Start:   subnet.Start.String(),
-			End:     subnet.End.String(),
+			Uuid:           subnet.UUID.String(),
+			Name:           subnet.Name,
+			Network:        subnet.Network.String(),
+			Start:          subnet.Start.String(),
+			End:            subnet.End.String(),
+			Gateway:        subnet.Gateway.String(),
+			DnsServer:      subnet.DNSServer.String(),
+			MetadataServer: subnet.MetadataServer.String(),
 		}
 	}
 

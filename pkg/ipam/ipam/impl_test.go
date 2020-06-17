@@ -17,23 +17,32 @@ func TestServerCreateSubnet(t *testing.T) {
 	server := New(memory.New())
 
 	tests := []struct {
-		name   string
-		prefix string
-		start  string
-		end    string
-		want   *ipam.Subnet
-		err    bool
+		name           string
+		prefix         string
+		start          string
+		end            string
+		gateway        string
+		dnsServer      string
+		metadataServer string
+		want           *ipam.Subnet
+		err            bool
 	}{
 		{
-			name:   "test000",
-			prefix: "10.0.0.0/24",
-			start:  "10.0.0.33",
-			end:    "10.0.0.100",
+			name:           "test000",
+			prefix:         "10.0.0.0/24",
+			start:          "10.0.0.33",
+			end:            "10.0.0.100",
+			gateway:        "10.0.0.1",
+			dnsServer:      "8.8.8.8",
+			metadataServer: "10.0.0.15",
 			want: &ipam.Subnet{
-				Name:    "test000",
-				Network: parseCIDR("10.0.0.0/24"),
-				Start:   parseIP("10.0.0.33"),
-				End:     parseIP("10.0.0.100"),
+				Name:           "test000",
+				Network:        parseCIDR("10.0.0.0/24"),
+				Start:          parseIP("10.0.0.33"),
+				End:            parseIP("10.0.0.100"),
+				Gateway:        parseIPPointer("10.0.0.1"),
+				DNSServer:      parseIPPointer("8.8.8.8"),
+				MetadataServer: parseIPPointer("10.0.0.15"),
 			},
 			err: false,
 		},
@@ -43,10 +52,13 @@ func TestServerCreateSubnet(t *testing.T) {
 			start:  "192.168.0.33",
 			end:    "192.168.0.100",
 			want: &ipam.Subnet{
-				Name:    "test001",
-				Network: parseCIDR("192.168.0.0/25"),
-				Start:   parseIP("192.168.0.33"),
-				End:     parseIP("192.168.0.100"),
+				Name:           "test001",
+				Network:        parseCIDR("192.168.0.0/25"),
+				Start:          parseIP("192.168.0.33"),
+				End:            parseIP("192.168.0.100"),
+				Gateway:        nil,
+				DNSServer:      nil,
+				MetadataServer: nil,
 			},
 			err: false,
 		},
@@ -82,9 +94,36 @@ func TestServerCreateSubnet(t *testing.T) {
 			want:   nil,
 			err:    true,
 		},
+		{
+			name:    "test006",
+			prefix:  "192.168.0.0/25",
+			start:   "192.168.0.33",
+			end:     "192.168.0.34",
+			gateway: "10.0.0.1",
+			want:    nil,
+			err:     true,
+		},
+		{
+			name:      "test007",
+			prefix:    "192.168.0.0/25",
+			start:     "192.168.0.33",
+			end:       "192.168.0.34",
+			dnsServer: "example.com",
+			want:      nil,
+			err:       true,
+		},
+		{
+			name:           "test006",
+			prefix:         "192.168.0.0/25",
+			start:          "192.168.0.33",
+			end:            "192.168.0.34",
+			metadataServer: "1.1.1.1",
+			want:           nil,
+			err:            true,
+		},
 	}
 	for _, test := range tests {
-		got, err := server.CreateSubnet(context.Background(), test.name, test.prefix, test.start, test.end)
+		got, err := server.CreateSubnet(context.Background(), test.name, test.prefix, test.start, test.end, test.gateway, test.dnsServer, test.metadataServer)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %v but: %v", test.name, err)
 		}
@@ -100,7 +139,7 @@ func TestServerCreateSubnet(t *testing.T) {
 func TestServerCreateAddress(t *testing.T) {
 	server := New(memory.New())
 
-	subnet, err := server.CreateSubnet(context.Background(), "test000", "10.0.0.0/24", "10.0.0.100", "10.0.0.102")
+	subnet, err := server.CreateSubnet(context.Background(), "test000", "10.0.0.0/24", "10.0.0.100", "10.0.0.102", "10.0.0.1", "8.8.8.8", "10.0.0.15")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -162,6 +201,11 @@ func TestServerCreateAddress(t *testing.T) {
 
 func parseIP(s string) types.IP {
 	return types.IP(net.ParseIP(s))
+}
+
+func parseIPPointer(s string) *types.IP {
+	i := parseIP(s)
+	return &i
 }
 
 func parseCIDR(s string) types.IPNet {
