@@ -10,10 +10,8 @@ import (
 	"strings"
 
 	"github.com/go-sql-driver/mysql"
-
-	"github.com/whywaita/satelit/pkg/datastore"
-
 	"github.com/jmoiron/sqlx"
+	"github.com/whywaita/satelit/pkg/datastore"
 )
 
 const schemaDirRelativePathFormat = "%s/../mysql/%s"
