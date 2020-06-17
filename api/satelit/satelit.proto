@@ -4,6 +4,7 @@ package satelit;
 option  go_package = ".;satelit";
 
 service Satelit {
+  rpc GetVolume(GetVolumeRequest) returns (GetVolumeResponse) {}
   rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
   rpc AddVolumeImage(AddVolumeImageRequest) returns (AddVolumeImageResponse) {}
@@ -57,6 +58,14 @@ message Address {
 }
 
 // Request / Response
+message GetVolumeRequest {
+  string uuid = 1;
+}
+
+message GetVolumeResponse {
+  Volume volume = 1;
+}
+
 message GetVolumesRequest {}
 
 message GetVolumesResponse {

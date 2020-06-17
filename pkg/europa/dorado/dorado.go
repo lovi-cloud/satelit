@@ -139,7 +139,6 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volumes (ID: %s): %w", id, err)
 	}
-	fmt.Printf("%+v\n", hmps)
 	if len(hmps) != 1 {
 		return nil, fmt.Errorf("found multiple volumes in same name (ID: %s)", id)
 	}
