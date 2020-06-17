@@ -43,11 +43,14 @@ message Image {
 }
 
 message Subnet {
-  string uuid    = 1;
-  string name    = 2;
-  string network = 3;
-  string start   = 4;
-  string end     = 5;
+  string uuid            = 1;
+  string name            = 2;
+  string network         = 3;
+  string start           = 4;
+  string end             = 5;
+  string gateway         = 6;
+  string dns_server      = 7;
+  string metadata_server = 8;
 }
 
 message Address {
@@ -127,10 +130,13 @@ message DeleteImageRequest {
 message DeleteImageResponse {}
 
 message CreateSubnetRequest {
-  string name    = 1;
-  string network = 2;
-  string start   = 3;
-  string end     = 4;
+  string name            = 1;
+  string network         = 2;
+  string start           = 3;
+  string end             = 4;
+  string gateway         = 5;
+  string dns_server      = 6;
+  string metadata_server = 7;
 }
 
 message CreateSubnetResponse {

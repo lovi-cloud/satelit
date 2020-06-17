@@ -34,6 +34,9 @@ CREATE TABLE IF NOT EXISTS subnet (
     network VARCHAR(255) NOT NULL UNIQUE,
     start VARCHAR(255) NOT NULL,
     end VARCHAR(255) NOT NULL,
+    gateway VARCHAR(255),
+    dns_server VARCHAR(255),
+    metadata_server VARCHAR(255),
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp on update current_timestamp
 );
