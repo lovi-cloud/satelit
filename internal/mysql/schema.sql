@@ -1,11 +1,20 @@
 CREATE DATABASE IF NOT EXISTS satelit;
 
-USE satelit;
-
 CREATE TABLE IF NOT EXISTS hypervisor (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     iqn VARCHAR(255) NOT NULL,
     hostname VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
+);
+
+CREATE TABLE IF NOT EXISTS volume (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    attached BOOLEAN NOT NULL,
+    hostname VARCHAR(255),
+    capacity_gb INT NOT NULL,
+    base_image_id BINARY(16) NOT NULL,
+    host_lun_id INT,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
 );

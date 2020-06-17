@@ -17,6 +17,7 @@ import (
 type Memory struct {
 	mutex *sync.Mutex
 
+	volumes         map[string]europa.Volume
 	images          map[string]europa.BaseImage
 	subnets         map[uuid.UUID]ipam.Subnet
 	addresses       map[uuid.UUID]ipam.Address
@@ -76,6 +77,37 @@ func (m *Memory) PutImage(image europa.BaseImage) error {
 func (m *Memory) DeleteImage(imageID string) error {
 	m.mutex.Lock()
 	delete(m.images, imageID)
+	m.mutex.Unlock()
+
+	return nil
+}
+
+// GetVolume return volume
+func (m *Memory) GetVolume(volumeID string) (*europa.Volume, error) {
+	m.mutex.Lock()
+	v, ok := m.volumes[volumeID]
+	m.mutex.Unlock()
+
+	if !ok {
+		return nil, errors.New("not found")
+	}
+
+	return &v, nil
+}
+
+// PutVolume write volume
+func (m *Memory) PutVolume(volume europa.Volume) error {
+	m.mutex.Lock()
+	m.volumes[volume.ID] = volume
+	m.mutex.Unlock()
+
+	return nil
+}
+
+// DeleteVolume delete volume
+func (m *Memory) DeleteVolume(volumeID string) error {
+	m.mutex.Lock()
+	delete(m.volumes, volumeID)
 	m.mutex.Unlock()
 
 	return nil
