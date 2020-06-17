@@ -5,11 +5,10 @@ import (
 	"log"
 	"testing"
 
-	"github.com/whywaita/satelit/pkg/datastore"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/ory/dockertest/v3"
 	"github.com/whywaita/satelit/internal/config"
+	"github.com/whywaita/satelit/pkg/datastore"
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
 )
 
