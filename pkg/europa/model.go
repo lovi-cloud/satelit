@@ -9,12 +9,12 @@ import (
 
 // A Volume is volume information
 type Volume struct {
-	ID          string // equal HyperMetroPair ID
-	Attached    bool
-	HostName    string
-	CapacityGB  uint32
-	BaseImageID string
-	HostLUNID   int       // set when attached
+	ID          string    `db:"id"` // equal HyperMetroPair ID in dorado
+	Attached    bool      `db:"attached"`
+	HostName    string    `db:"hostname"`
+	CapacityGB  uint32    `db:"capacity_gb"`
+	BaseImageID string    `db:"base_image_id"`
+	HostLUNID   int       `db:"host_lun_id"` // set when attached
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`
 }

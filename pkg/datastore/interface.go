@@ -18,6 +18,10 @@ type Datastore interface {
 	PutImage(image europa.BaseImage) error
 	DeleteImage(imageID string) error
 
+	GetVolume(volumeID string) (*europa.Volume, error)
+	PutVolume(volume europa.Volume) error
+	DeleteVolume(volumeID string) error
+
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*uuid.UUID, error)
 	GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error)
