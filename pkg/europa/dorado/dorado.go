@@ -135,7 +135,7 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 
 // GetVolume get volume from Dorado
 func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
-	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryId(id))
+	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryID(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volumes (ID: %s): %w", id, err)
 	}
