@@ -11,7 +11,7 @@ type IPNet net.IPNet
 
 // Value implements the database/sql/driver Valuer interface.
 func (i IPNet) Value() (driver.Value, error) {
-	return i, nil
+	return driver.Value(i.String()), nil
 }
 
 // Scan implements the database/sql Scanner interface.
@@ -43,7 +43,7 @@ type IP net.IP
 
 // Value implements the database/sql/driver Valuer interface.
 func (i IP) Value() (driver.Value, error) {
-	return i, nil
+	return driver.Value(i.String()), nil
 }
 
 // Scan implements the database/sql Scanner interface.
@@ -51,6 +51,8 @@ func (i *IP) Scan(src interface{}) error {
 	var ip *IP
 	var err error
 	switch src := src.(type) {
+	case nil:
+		ip = nil
 	case string:
 		ip, err = parseIP(src)
 	case []uint8:
