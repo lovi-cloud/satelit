@@ -32,7 +32,7 @@ import (
 
 // A SatelitServer is definition of Satlite API Server
 type SatelitServer struct {
-	pb.UnimplementedSatelitServer
+	pb.SatelitServer
 
 	Europa europa.Europa
 	IPAM   ipam.IPAM
@@ -59,6 +59,18 @@ func (s *SatelitServer) Run() int {
 	}
 
 	return 0
+}
+
+// GetVolume call GetVolume to Europa Backend
+func (s *SatelitServer) GetVolume(ctx context.Context, req *pb.GetVolumeRequest) (*pb.GetVolumeResponse, error) {
+	volume, err := s.Europa.GetVolume(ctx, req.Uuid)
+	if err != nil {
+		fmt.Errorf("failed to get volume (id: %s): %w", req.Uuid, err)
+	}
+
+	return &pb.GetVolumeResponse{
+		Volume: volume.ToPb(),
+	}, nil
 }
 
 // GetVolumes call ListVolume to Europa Backend
