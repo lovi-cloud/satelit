@@ -134,6 +134,21 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 	return &pb.AttachVolumeResponse{}, nil
 }
 
+// DeleteVolume call DeleteVolume to Europa backend
+func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRequest) (*pb.DeleteVolumeResponse, error) {
+	u, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Uuid, err)
+	}
+
+	err = s.Europa.DeleteVolume(ctx, u.String())
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete volume: %w", err)
+	}
+
+	return nil, nil
+}
+
 // parseRequestUUID return uuid.UUID from gRPC request string
 func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 	u := uuid.FromStringOrNil(reqName)

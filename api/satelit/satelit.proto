@@ -9,6 +9,7 @@ service Satelit {
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
   rpc AddVolumeImage(AddVolumeImageRequest) returns (AddVolumeImageResponse) {}
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
+  rpc DeleteVolume(DeleteVolumeRequest) returns (DeleteVolumeResponse) {}
   rpc GetImages(GetImagesRequest) returns (GetImagesResponse) {}
   rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {}
   rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse) {}
@@ -98,7 +99,9 @@ message AttachVolumeRequest {
 
 message AttachVolumeResponse {}
 
-message DeleteVolumeRequest {}
+message DeleteVolumeRequest {
+  string uuid = 1;
+}
 
 message DeleteVolumeResponse {}
 
