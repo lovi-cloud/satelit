@@ -50,6 +50,14 @@ CREATE TABLE IF NOT EXISTS address (
     FOREIGN KEY fk_subnet_id(subnet_id) REFERENCES subnet(uuid) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
+CREATE TABLE IF NOT EXISTS lease (
+    mac_address VARCHAR(17) NOT NULL PRIMARY KEY,
+    address_id BINARY(16) NOT NULL UNIQUE,
+    created_at timestamp not null default current_timestamp,
+    updated_at timestamp not null default current_timestamp on update current_timestamp,
+    FOREIGN KEY fk_subnet_id(address_id) REFERENCES address(uuid) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
 CREATE TABLE IF NOT EXISTS virtual_machine (
     uuid BINARY(16) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
