@@ -158,7 +158,10 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to delete volume (ID: %s): %w", id, err)
 	}
 
-	// TODO: delete record from datastore
+	err = d.datastore.DeleteVolume(id)
+	if err != nil {
+		return fmt.Errorf("failed to delete volume from datastore (ID: %s): %w", id, err)
+	}
 
 	return nil
 }
