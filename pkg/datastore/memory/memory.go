@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"sync"
+	"time"
 
 	uuid "github.com/satori/go.uuid"
 
@@ -21,6 +23,7 @@ type Memory struct {
 	images          map[string]europa.BaseImage
 	subnets         map[uuid.UUID]ipam.Subnet
 	addresses       map[uuid.UUID]ipam.Address
+	leases          map[string]ipam.Lease
 	virtualMachines map[uuid.UUID]ganymede.VirtualMachine
 }
 
@@ -30,6 +33,7 @@ func New() *Memory {
 		mutex:           &sync.Mutex{},
 		subnets:         map[uuid.UUID]ipam.Subnet{},
 		addresses:       map[uuid.UUID]ipam.Address{},
+		leases:          map[string]ipam.Lease{},
 		virtualMachines: map[uuid.UUID]ganymede.VirtualMachine{},
 	}
 }
@@ -213,6 +217,59 @@ func (m *Memory) DeleteAddress(ctx context.Context, uuid uuid.UUID) error {
 		return fmt.Errorf("failed to find address uuid=%s", uuid)
 	}
 	delete(m.addresses, uuid)
+
+	return nil
+}
+
+// CreateLease create a lease
+func (m *Memory) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	now := time.Now()
+	lease.CreatedAt = now
+	lease.UpdatedAt = now
+	m.leases[lease.MacAddress.String()] = lease
+
+	return &lease, nil
+}
+
+// GetLeaseByMACAddress retrieves lease according to the mac given
+func (m *Memory) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	val, ok := m.leases[mac.String()]
+	if !ok {
+		return nil, fmt.Errorf("failed to find lease mac_address=%s", mac.String())
+	}
+
+	return &val, nil
+}
+
+// ListLease retrieves all leases
+func (m *Memory) ListLease(ctx context.Context) ([]ipam.Lease, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var leases []ipam.Lease
+	for _, lease := range m.leases {
+		leases = append(leases, lease)
+	}
+
+	return leases, nil
+}
+
+// DeleteLease deletes a lease
+func (m *Memory) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.leases[mac.String()]
+	if !ok {
+		return fmt.Errorf("failed to find lease mac_address=%s", mac.String())
+	}
+	delete(m.leases, mac.String())
 
 	return nil
 }
