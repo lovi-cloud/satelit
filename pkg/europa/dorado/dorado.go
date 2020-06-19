@@ -43,8 +43,8 @@ type Device struct {
 func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, error) {
 	ctx := context.Background()
 	client, err := dorado.NewClient(
-		doradoConfig.LocalIps[0],
-		doradoConfig.RemoteIps[0],
+		doradoConfig.LocalIps,
+		doradoConfig.RemoteIps,
 		doradoConfig.Username,
 		doradoConfig.Password,
 		doradoConfig.PortGroupName,
