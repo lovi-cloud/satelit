@@ -55,6 +55,7 @@ func (s *SatelitDatastore) GetDHCPLease(ctx context.Context, req *pb.GetDHCPLeas
 		Lease: &pb.DHCPLease{
 			MacAddress:     lease.MacAddress.String(),
 			Ip:             lease.IP.String(),
+			Network:        lease.Network.String(),
 			Gateway:        lease.Gateway.String(),
 			DnsServer:      lease.DNSServer.String(),
 			MetadataServer: lease.MetadataServer.String(),
