@@ -247,6 +247,33 @@ func (m *Memory) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr)
 	return &val, nil
 }
 
+// GetDHCPLeaseByMACAddress retrieves DHCPLease according to the mac given
+func (m *Memory) GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	lease, ok := m.leases[mac.String()]
+	if !ok {
+		return nil, fmt.Errorf("failed to find lease mac_address=%s", mac.String())
+	}
+	address, ok := m.addresses[lease.AddressID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find address uuid=%s", lease.AddressID)
+	}
+	subnet, ok := m.subnets[address.SubnetID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find subnet uuid=%s", address.SubnetID)
+	}
+
+	return &ipam.DHCPLease{
+		MacAddress:     lease.MacAddress,
+		IP:             address.IP,
+		Gateway:        subnet.Gateway,
+		DNSServer:      subnet.DNSServer,
+		MetadataServer: subnet.MetadataServer,
+	}, nil
+}
+
 // ListLease retrieves all leases
 func (m *Memory) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 	m.mutex.Lock()
