@@ -38,3 +38,12 @@ type Lease struct {
 	CreatedAt  time.Time          `db:"created_at"`
 	UpdatedAt  time.Time          `db:"updated_at"`
 }
+
+// A DHCPLease is DHCP response information
+type DHCPLease struct {
+	MacAddress     types.HardwareAddr `db:"mac_address"`
+	IP             types.IP           `db:"ip"`
+	Gateway        *types.IP          `db:"gateway"`
+	DNSServer      *types.IP          `db:"dns_server"`
+	MetadataServer *types.IP          `db:"metadata_server"`
+}
