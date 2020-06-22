@@ -10,9 +10,10 @@ service SatelitDatastore {
 message DHCPLease {
   string mac_address     = 1;
   string ip              = 2;
-  string gateway         = 3;
-  string dns_server      = 4;
-  string metadata_server = 5;
+  string network         = 3;
+  string gateway         = 4;
+  string dns_server      = 5;
+  string metadata_server = 6;
 }
 
 message GetDHCPLeaseRequest {

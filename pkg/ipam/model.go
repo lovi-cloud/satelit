@@ -43,6 +43,7 @@ type Lease struct {
 type DHCPLease struct {
 	MacAddress     types.HardwareAddr `db:"mac_address"`
 	IP             types.IP           `db:"ip"`
+	Network        types.IPNet        `db:"network"`
 	Gateway        *types.IP          `db:"gateway"`
 	DNSServer      *types.IP          `db:"dns_server"`
 	MetadataServer *types.IP          `db:"metadata_server"`
