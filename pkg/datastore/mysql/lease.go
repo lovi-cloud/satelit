@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
 
@@ -11,7 +12,7 @@ import (
 
 // CreateLease create a lease
 func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error) {
-	query := `INSERT INTO lease(mac_address, address_id) VALUES (?, ?)`
+	query := `INSERT INTO lease(mac_address, address_id) VALUES (?, UUID_TO_BIN(?))`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -62,8 +63,10 @@ func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease`
 
 	var leases []ipam.Lease
-	if err := m.Conn.SelectContext(ctx, &leases, query); err != nil {
+	if err := m.Conn.SelectContext(ctx, &leases, query); err != nil && err != sql.ErrNoRows {
 		return nil, fmt.Errorf("failed to get lease list: %w", err)
+	} else if err == sql.ErrNoRows {
+		return leases, nil
 	}
 
 	return leases, nil
