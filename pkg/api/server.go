@@ -136,9 +136,9 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 
 // DetachVolume call DetachVolume to Europa backend
 func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRequest) (*pb.DetachVolumeResponse, error) {
-	err := s.Europa.DetachVolume(ctx, req.Uuid)
+	err := s.Europa.DetachVolume(ctx, req.Id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to detach volume (ID: %s): %w", req.Uuid, err)
+		return nil, fmt.Errorf("failed to detach volume (ID: %s): %w", req.Id, err)
 	}
 
 	return &pb.DetachVolumeResponse{}, nil
@@ -146,12 +146,7 @@ func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRe
 
 // DeleteVolume call DeleteVolume to Europa backend
 func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRequest) (*pb.DeleteVolumeResponse, error) {
-	u, err := s.parseRequestUUID(req.Uuid)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Uuid, err)
-	}
-
-	err = s.Europa.DeleteVolume(ctx, u.String())
+	err := s.Europa.DeleteVolume(ctx, req.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to delete volume: %w", err)
 	}
