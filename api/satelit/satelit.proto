@@ -101,13 +101,13 @@ message AttachVolumeRequest {
 message AttachVolumeResponse {}
 
 message DetachVolumeRequest {
-  string uuid = 1;
+  string id = 1;
 }
 
 message DetachVolumeResponse {}
 
 message DeleteVolumeRequest {
-  string uuid = 1;
+  string id = 1;
 }
 
 message DeleteVolumeResponse {}
