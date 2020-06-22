@@ -36,6 +36,7 @@ type Datastore interface {
 
 	CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error)
 	GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error)
+	GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
 	DeleteLease(ctx context.Context, mac net.HardwareAddr) error
 

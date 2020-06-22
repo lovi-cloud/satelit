@@ -41,6 +41,22 @@ func (m *MySQL) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) 
 	return &lease, nil
 }
 
+// GetDHCPLeaseByMACAddress retrieves DHCPLease according to the mac given
+func (m *MySQL) GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error) {
+	query := `select mac_address, ip, gateway, dns_server, metadata_server from lease lef join address on address_id = address.uuid left join subnet on subnet_id = subnet.uuid where mac_address = ?`
+	stmt, err := m.Conn.PreparexContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create statement: %w", err)
+	}
+
+	var dhcp ipam.DHCPLease
+	if err := stmt.GetContext(ctx, &dhcp, types.HardwareAddr(mac)); err != nil {
+		return nil, fmt.Errorf("failed to get DHCP lease: %w", err)
+	}
+
+	return &dhcp, nil
+}
+
 // ListLease retrieves all leases
 func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease`
