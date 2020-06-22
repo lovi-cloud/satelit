@@ -425,6 +425,78 @@ func (s *SatelitServer) DeleteAddress(ctx context.Context, req *pb.DeleteAddress
 	return &pb.DeleteAddressResponse{}, nil
 }
 
+// CreateLease create a lease.
+func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequest) (*pb.CreateLeaseResponse, error) {
+	u, err := uuid.FromString(req.AddressId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+	}
+	lease, err := s.IPAM.CreateLease(ctx, u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create lease: %w", err)
+	}
+
+	return &pb.CreateLeaseResponse{
+		Lease: &pb.Lease{
+			MacAddress: lease.MacAddress.String(),
+			AddressId:  lease.AddressID.String(),
+		},
+	}, nil
+}
+
+// GetLease retrieves address according to the parameters given.
+func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (*pb.GetLeaseResponse, error) {
+	mac, err := net.ParseMAC(req.MacAddress)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request mac: %w", err)
+	}
+	lease, err := s.IPAM.GetLease(ctx, mac)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get lease: %w", err)
+	}
+
+	return &pb.GetLeaseResponse{
+		Lease: &pb.Lease{
+			MacAddress: lease.MacAddress.String(),
+			AddressId:  lease.AddressID.String(),
+		},
+	}, nil
+}
+
+// ListLease retrieves all leases according to the parameters given.
+func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest) (*pb.ListLeaseResponse, error) {
+	leases, err := s.IPAM.ListLease(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list leases: %w", err)
+	}
+
+	tmp := make([]*pb.Lease, len(leases))
+	for i, lease := range leases {
+		tmp[i] = &pb.Lease{
+			MacAddress: lease.MacAddress.String(),
+			AddressId:  lease.AddressID.String(),
+		}
+	}
+
+	return &pb.ListLeaseResponse{
+		Leases: tmp,
+	}, nil
+}
+
+// DeleteLease deletes lease
+func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequest) (*pb.DeleteLeaseResponse, error) {
+	mac, err := net.ParseMAC(req.MacAddress)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request mac: %w", err)
+	}
+
+	if err := s.IPAM.DeleteLease(ctx, mac); err != nil {
+		return nil, fmt.Errorf("failed to delete lease: %w", err)
+	}
+
+	return &pb.DeleteLeaseResponse{}, nil
+}
+
 // AddVirtualMachine create virtual machine.
 func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtualMachineRequest) (*pb.AddVirtualMachineResponse, error) {
 	logger.Logger.Info(fmt.Sprintf("AddVirtualMachine (name: %s)", req.Name))
