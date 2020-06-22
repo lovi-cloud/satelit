@@ -10,24 +10,19 @@ import (
 	"net"
 	"sync"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
-
-	agentpb "github.com/whywaita/satelit/api"
-	"github.com/whywaita/satelit/internal/client/teleskop"
-
-	"github.com/whywaita/satelit/pkg/datastore"
-
-	"github.com/whywaita/satelit/pkg/ipam"
-
 	uuid "github.com/satori/go.uuid"
-
 	"google.golang.org/grpc"
 
+	agentpb "github.com/whywaita/satelit/api"
 	pb "github.com/whywaita/satelit/api/satelit"
+	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
 	"github.com/whywaita/satelit/internal/qcow2"
+	"github.com/whywaita/satelit/pkg/datastore"
 	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/whywaita/satelit/pkg/ipam"
 )
 
 // A SatelitServer is definition of Satlite API Server
@@ -42,23 +37,21 @@ type SatelitServer struct {
 }
 
 // Run start gRPC Server
-func (s *SatelitServer) Run() int {
+func (s *SatelitServer) Run() error {
 	logger.Logger.Info(fmt.Sprintf("Run satelit server, listen on %s", config.GetValue().API.Listen))
 	lis, err := net.Listen("tcp", config.GetValue().API.Listen)
 	if err != nil {
-		logger.Logger.Error(err.Error())
-		return 1
+		return err
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterSatelitServer(grpcServer, s)
 
 	err = grpcServer.Serve(lis)
 	if err != nil {
-		logger.Logger.Error(err.Error())
-		return 1
+		return err
 	}
 
-	return 0
+	return nil
 }
 
 // GetVolumes call ListVolume to Europa Backend
