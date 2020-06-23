@@ -226,17 +226,12 @@ func getNextAddress(ip net.IP) net.IP {
 func generateNewMACAddress() (*net.HardwareAddr, error) {
 	var mac net.HardwareAddr
 
-	buff := make([]byte, 6)
+	buff := make([]byte, 3)
 	_, err := rand.Read(buff)
 	if err != nil {
 		return nil, err
 	}
-	buff[0] = byte('c')
-	buff[1] = byte('a')
+	mac = append(mac, byte(0xca), byte(0x03), byte(0x18), buff[0], buff[1], buff[2])
 
-	// Set the local bit
-	buff[0] |= 2
-
-	mac = append(mac, buff[0], buff[1], buff[2], buff[3], buff[4], buff[5])
 	return &mac, nil
 }
