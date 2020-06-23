@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	uuid "github.com/satori/go.uuid"
@@ -10,14 +11,14 @@ import (
 
 // CreateSubnet create a subnet
 func (m *MySQL) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*uuid.UUID, error) {
-	query := `INSERT INTO subnet(uuid, name, network, start, end) VALUES (UUID_TO_BIN(?), ?, ?, ?, ?)`
+	query := `INSERT INTO subnet(uuid, name, network, start, end, gateway, dns_server, metadata_server) VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
 	}
 
 	u := uuid.NewV4()
-	_, err = stmt.ExecContext(ctx, u, subnet.Name, subnet.Network, subnet.Start, subnet.End)
+	_, err = stmt.ExecContext(ctx, u, subnet.Name, subnet.Network, subnet.Start, subnet.End, subnet.Gateway, subnet.DNSServer, subnet.MetadataServer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -27,7 +28,7 @@ func (m *MySQL) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*uuid.UUI
 
 // GetSubnetByID retrieves address according to the id given
 func (m *MySQL) GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error) {
-	query := `SELECT uuid, name, network, start, end, created_at, updated_at FROM subnet WHERE uuid = ?`
+	query := `SELECT uuid, name, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet WHERE uuid = UUID_TO_BIN(?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -43,11 +44,13 @@ func (m *MySQL) GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet
 
 // ListSubnet retrieves all subnets
 func (m *MySQL) ListSubnet(ctx context.Context) ([]ipam.Subnet, error) {
-	query := `SELECT uuid, name, network, start, end, created_at, updated_at FROM subnet`
+	query := `SELECT uuid, name, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet`
 
 	var subnets []ipam.Subnet
-	if err := m.Conn.SelectContext(ctx, &subnets, query); err != nil {
+	if err := m.Conn.SelectContext(ctx, &subnets, query); err != nil && err != sql.ErrNoRows {
 		return nil, fmt.Errorf("failed to get subnet list: %w", err)
+	} else if err == sql.ErrNoRows {
+		return subnets, nil
 	}
 
 	return subnets, nil
@@ -55,7 +58,7 @@ func (m *MySQL) ListSubnet(ctx context.Context) ([]ipam.Subnet, error) {
 
 // DeleteSubnet deletes a subnet
 func (m *MySQL) DeleteSubnet(ctx context.Context, uuid uuid.UUID) error {
-	query := `DELETE FROM subnet WHERE uuid = ?`
+	query := `DELETE FROM subnet WHERE uuid = UUID_TO_BIN(?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)
@@ -88,7 +91,7 @@ func (m *MySQL) CreateAddress(ctx context.Context, address ipam.Address) (*uuid.
 
 // GetAddressByID retrieves address according to the id given
 func (m *MySQL) GetAddressByID(ctx context.Context, uuid uuid.UUID) (*ipam.Address, error) {
-	query := `SELECT uuid, ip, subnet_id, created_at, updated_at FROM address WHERE uuid = ?`
+	query := `SELECT uuid, ip, subnet_id, created_at, updated_at FROM address WHERE uuid = UUID_TO_BIN(?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -104,15 +107,17 @@ func (m *MySQL) GetAddressByID(ctx context.Context, uuid uuid.UUID) (*ipam.Addre
 
 // ListAddressBySubnetID retrieves all address according to the subnetID given.
 func (m *MySQL) ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) ([]ipam.Address, error) {
-	query := `SELECT uuid, ip, subnet_id, created_at, updated_at FROM address WHERE subnet_id = ?`
+	query := `SELECT uuid, ip, subnet_id, created_at, updated_at FROM address WHERE subnet_id = UUID_TO_BIN(?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
 	}
 
 	var addresses []ipam.Address
-	if err := stmt.SelectContext(ctx, &addresses, subnetID); err != nil {
+	if err := stmt.SelectContext(ctx, &addresses, subnetID); err != nil && err != sql.ErrNoRows {
 		return nil, fmt.Errorf("failed to get address list: %w", err)
+	} else if err == sql.ErrNoRows {
+		return addresses, nil
 	}
 
 	return addresses, nil
@@ -120,7 +125,7 @@ func (m *MySQL) ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) (
 
 // DeleteAddress deletes address
 func (m *MySQL) DeleteAddress(ctx context.Context, uuid uuid.UUID) error {
-	query := `DELETE FROM address WHERE uuid = ?`
+	query := `DELETE FROM address WHERE uuid = UUID_TO_BIN(?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)

@@ -44,10 +44,13 @@ func run() error {
 
 	fmt.Println("CreateSubnet")
 	resp2, err := client.CreateSubnet(ctx, &pb.CreateSubnetRequest{
-		Name:    "yjuba-test002",
-		Network: "10.0.1.0/24",
-		Start:   "10.0.1.100",
-		End:     "10.0.1.200",
+		Name:           "yjuba-test001",
+		Network:        "10.192.0.0/23",
+		Start:          "10.192.0.100",
+		End:            "10.192.0.200",
+		Gateway:        "10.192.0.1",
+		DnsServer:      "8.8.8.8",
+		MetadataServer: "10.192.0.15",
 	})
 	if err != nil {
 		return err
@@ -61,6 +64,24 @@ func run() error {
 		return err
 	}
 	fmt.Printf("%#q\n", resp3)
+
+	fmt.Println("CreateAddress")
+	resp4, err := client.CreateAddress(ctx, &pb.CreateAddressRequest{
+		SubnetId: resp2.Subnet.Uuid,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%#q\n", resp4)
+
+	fmt.Println("CreateLease")
+	resp5, err := client.CreateLease(ctx, &pb.CreateLeaseRequest{
+		AddressId: resp4.Address.Uuid,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%#q\n", resp5)
 
 	return nil
 }

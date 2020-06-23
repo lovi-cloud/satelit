@@ -23,6 +23,10 @@ service Satelit {
   rpc GetAddress(GetAddressRequest) returns (GetAddressResponse) {}
   rpc ListAddress(ListAddressRequest) returns (ListAddressResponse) {}
   rpc DeleteAddress(DeleteAddressRequest) returns (DeleteAddressResponse) {}
+  rpc CreateLease(CreateLeaseRequest) returns (CreateLeaseResponse) {}
+  rpc GetLease(GetLeaseRequest) returns (GetLeaseResponse) {}
+  rpc ListLease(ListLeaseRequest) returns (ListLeaseResponse) {}
+  rpc DeleteLease(DeleteLeaseRequest) returns (DeleteLeaseResponse) {}
 
   rpc AddVirtualMachine(AddVirtualMachineRequest)
       returns (AddVirtualMachineResponse) {}
@@ -46,17 +50,25 @@ message Image {
 }
 
 message Subnet {
-  string uuid    = 1;
-  string name    = 2;
-  string network = 3;
-  string start   = 4;
-  string end     = 5;
+  string uuid            = 1;
+  string name            = 2;
+  string network         = 3;
+  string start           = 4;
+  string end             = 5;
+  string gateway         = 6;
+  string dns_server      = 7;
+  string metadata_server = 8;
 }
 
 message Address {
   string uuid      = 1;
   string ip        = 2;
   string subnet_id = 3;
+}
+
+message Lease {
+  string mac_address = 1;
+  string address_id  = 2;
 }
 
 // Request / Response
@@ -146,10 +158,13 @@ message DeleteImageRequest {
 message DeleteImageResponse {}
 
 message CreateSubnetRequest {
-  string name    = 1;
-  string network = 2;
-  string start   = 3;
-  string end     = 4;
+  string name            = 1;
+  string network         = 2;
+  string start           = 3;
+  string end             = 4;
+  string gateway         = 5;
+  string dns_server      = 6;
+  string metadata_server = 7;
 }
 
 message CreateSubnetResponse {
@@ -205,6 +220,34 @@ message DeleteAddressRequest {
 }
 
 message DeleteAddressResponse {}
+
+message CreateLeaseRequest {
+  string address_id = 1;
+}
+
+message CreateLeaseResponse {
+  Lease lease = 1;
+}
+
+message GetLeaseRequest {
+  string mac_address = 1;
+}
+
+message GetLeaseResponse {
+  Lease lease = 1;
+}
+
+message ListLeaseRequest {}
+
+message ListLeaseResponse {
+  repeated Lease leases = 1;
+}
+
+message DeleteLeaseRequest {
+  string mac_address = 1;
+}
+
+message DeleteLeaseResponse {}
 
 message AddVirtualMachineRequest {
   string name            = 1;

@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"context"
+	"net"
 
 	uuid "github.com/satori/go.uuid"
 
@@ -33,6 +34,12 @@ type Datastore interface {
 	GetAddressByID(ctx context.Context, uuid uuid.UUID) (*ipam.Address, error)
 	ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) ([]ipam.Address, error)
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
+
+	CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error)
+	GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error)
+	GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error)
+	ListLease(ctx context.Context) ([]ipam.Lease, error)
+	DeleteLease(ctx context.Context, mac net.HardwareAddr) error
 
 	GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
