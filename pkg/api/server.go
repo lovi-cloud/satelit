@@ -10,6 +10,9 @@ import (
 	"net"
 	"sync"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/grpc"
 
@@ -43,7 +46,21 @@ func (s *SatelitServer) Run() error {
 	if err != nil {
 		return err
 	}
-	grpcServer := grpc.NewServer()
+	grpc_zap.ReplaceGrpcLoggerV2(logger.Logger)
+	grpcServer := grpc.NewServer(
+		grpc_middleware.WithUnaryServerChain(
+			grpc_ctxtags.UnaryServerInterceptor(),
+			grpc_zap.PayloadUnaryServerInterceptor(logger.Logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
+				return true
+			}),
+		),
+		grpc_middleware.WithStreamServerChain(
+			grpc_ctxtags.StreamServerInterceptor(),
+			grpc_zap.PayloadStreamServerInterceptor(logger.Logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
+				return true
+			}),
+		),
+	)
 	pb.RegisterSatelitServer(grpcServer, s)
 
 	err = grpcServer.Serve(lis)
