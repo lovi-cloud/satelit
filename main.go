@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	fmt.Println(fmt.Sprintf("satelit revision: %s", revision))
+	fmt.Fprintln(os.Stderr, fmt.Sprintf("satelit revision: %s", revision))
 }
 
 func main() {
