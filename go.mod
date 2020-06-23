@@ -13,6 +13,7 @@ require (
 	github.com/whywaita/go-dorado-sdk v0.5.3
 	github.com/whywaita/go-os-brick v0.0.4
 	go.uber.org/zap v1.14.1
+	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
 	google.golang.org/grpc v1.29.0
 	google.golang.org/protobuf v1.21.0
 )
