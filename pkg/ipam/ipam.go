@@ -2,6 +2,7 @@ package ipam
 
 import (
 	"context"
+	"net"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -17,4 +18,9 @@ type IPAM interface {
 	GetAddress(ctx context.Context, uuid uuid.UUID) (*Address, error)
 	ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) ([]Address, error)
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
+
+	CreateLease(ctx context.Context, addressID uuid.UUID) (*Lease, error)
+	GetLease(ctx context.Context, mac net.HardwareAddr) (*Lease, error)
+	ListLease(ctx context.Context) ([]Lease, error)
+	DeleteLease(ctx context.Context, mac net.HardwareAddr) error
 }

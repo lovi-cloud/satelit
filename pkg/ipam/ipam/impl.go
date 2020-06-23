@@ -3,6 +3,7 @@ package ipam
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
 	"fmt"
 	"net"
 	"sync"
@@ -186,6 +187,31 @@ func (s server) DeleteAddress(ctx context.Context, uuid uuid.UUID) error {
 	return s.datastore.DeleteAddress(ctx, uuid)
 }
 
+func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lease, error) {
+	mac, err := generateNewMACAddress()
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate new MAC Address: %w", err)
+	}
+
+	lease := ipam.Lease{
+		MacAddress: types.HardwareAddr(*mac),
+		AddressID:  addressID,
+	}
+	return s.datastore.CreateLease(ctx, lease)
+}
+
+func (s server) GetLease(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
+	return s.datastore.GetLeaseByMACAddress(ctx, mac)
+}
+
+func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
+	return s.datastore.ListLease(ctx)
+}
+
+func (s server) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
+	return s.datastore.DeleteLease(ctx, mac)
+}
+
 func getNextAddress(ip net.IP) net.IP {
 	a := net.ParseIP(ip.String())
 	for i := len(a) - 1; i >= 0; i-- {
@@ -195,4 +221,17 @@ func getNextAddress(ip net.IP) net.IP {
 		}
 	}
 	return a
+}
+
+func generateNewMACAddress() (*net.HardwareAddr, error) {
+	var mac net.HardwareAddr
+
+	buff := make([]byte, 3)
+	_, err := rand.Read(buff)
+	if err != nil {
+		return nil, err
+	}
+	mac = append(mac, byte(0xca), byte(0x03), byte(0x18), buff[0], buff[1], buff[2])
+
+	return &mac, nil
 }

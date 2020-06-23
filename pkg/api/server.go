@@ -10,24 +10,19 @@ import (
 	"net"
 	"sync"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
-
-	agentpb "github.com/whywaita/satelit/api"
-	"github.com/whywaita/satelit/internal/client/teleskop"
-
-	"github.com/whywaita/satelit/pkg/datastore"
-
-	"github.com/whywaita/satelit/pkg/ipam"
-
 	uuid "github.com/satori/go.uuid"
-
 	"google.golang.org/grpc"
 
+	agentpb "github.com/whywaita/satelit/api"
 	pb "github.com/whywaita/satelit/api/satelit"
+	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
 	"github.com/whywaita/satelit/internal/qcow2"
+	"github.com/whywaita/satelit/pkg/datastore"
 	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/whywaita/satelit/pkg/ipam"
 )
 
 // A SatelitServer is definition of Satlite API Server
@@ -42,23 +37,21 @@ type SatelitServer struct {
 }
 
 // Run start gRPC Server
-func (s *SatelitServer) Run() int {
+func (s *SatelitServer) Run() error {
 	logger.Logger.Info(fmt.Sprintf("Run satelit server, listen on %s", config.GetValue().API.Listen))
 	lis, err := net.Listen("tcp", config.GetValue().API.Listen)
 	if err != nil {
-		logger.Logger.Error(err.Error())
-		return 1
+		return err
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterSatelitServer(grpcServer, s)
 
 	err = grpcServer.Serve(lis)
 	if err != nil {
-		logger.Logger.Error(err.Error())
-		return 1
+		return err
 	}
 
-	return 0
+	return nil
 }
 
 // GetVolumes call ListVolume to Europa Backend
@@ -430,6 +423,78 @@ func (s *SatelitServer) DeleteAddress(ctx context.Context, req *pb.DeleteAddress
 	}
 
 	return &pb.DeleteAddressResponse{}, nil
+}
+
+// CreateLease create a lease.
+func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequest) (*pb.CreateLeaseResponse, error) {
+	u, err := uuid.FromString(req.AddressId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+	}
+	lease, err := s.IPAM.CreateLease(ctx, u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create lease: %w", err)
+	}
+
+	return &pb.CreateLeaseResponse{
+		Lease: &pb.Lease{
+			MacAddress: lease.MacAddress.String(),
+			AddressId:  lease.AddressID.String(),
+		},
+	}, nil
+}
+
+// GetLease retrieves address according to the parameters given.
+func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (*pb.GetLeaseResponse, error) {
+	mac, err := net.ParseMAC(req.MacAddress)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request mac: %w", err)
+	}
+	lease, err := s.IPAM.GetLease(ctx, mac)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get lease: %w", err)
+	}
+
+	return &pb.GetLeaseResponse{
+		Lease: &pb.Lease{
+			MacAddress: lease.MacAddress.String(),
+			AddressId:  lease.AddressID.String(),
+		},
+	}, nil
+}
+
+// ListLease retrieves all leases according to the parameters given.
+func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest) (*pb.ListLeaseResponse, error) {
+	leases, err := s.IPAM.ListLease(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list leases: %w", err)
+	}
+
+	tmp := make([]*pb.Lease, len(leases))
+	for i, lease := range leases {
+		tmp[i] = &pb.Lease{
+			MacAddress: lease.MacAddress.String(),
+			AddressId:  lease.AddressID.String(),
+		}
+	}
+
+	return &pb.ListLeaseResponse{
+		Leases: tmp,
+	}, nil
+}
+
+// DeleteLease deletes lease
+func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequest) (*pb.DeleteLeaseResponse, error) {
+	mac, err := net.ParseMAC(req.MacAddress)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request mac: %w", err)
+	}
+
+	if err := s.IPAM.DeleteLease(ctx, mac); err != nil {
+		return nil, fmt.Errorf("failed to delete lease: %w", err)
+	}
+
+	return &pb.DeleteLeaseResponse{}, nil
 }
 
 // AddVirtualMachine create virtual machine.

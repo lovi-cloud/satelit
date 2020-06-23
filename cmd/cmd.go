@@ -62,3 +62,16 @@ func NewSatelit() (*api.SatelitServer, error) {
 		Ganymede:  libvirtBackend,
 	}, nil
 }
+
+// NewSatelitDatastore create SatelitDatastoreServer instance.
+func NewSatelitDatastore() (*api.SatelitDatastore, error) {
+	c := config.GetValue().MySQLConfig
+	ds, err := mysql.New(&c)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
+	}
+
+	return &api.SatelitDatastore{
+		Datastore: ds,
+	}, nil
+}

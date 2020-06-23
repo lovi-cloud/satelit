@@ -72,6 +72,38 @@ func (i *IP) String() string {
 	return ip.String()
 }
 
+// HardwareAddr is net.HardwareAddr with the implementation of the Valuer and Scanner interface.
+type HardwareAddr net.HardwareAddr
+
+// Value implements the database/sql/driver Valuer interface.
+func (h HardwareAddr) Value() (driver.Value, error) {
+	return driver.Value(h.String()), nil
+}
+
+// Scan implements the database/sql Scanner interface.
+func (h *HardwareAddr) Scan(src interface{}) error {
+	var mac *HardwareAddr
+	var err error
+	switch src := src.(type) {
+	case string:
+		mac, err = parseMAC(src)
+	case []uint8:
+		mac, err = parseMAC(fmt.Sprintf("%s", src))
+	default:
+		return fmt.Errorf("incompatible type for HardwareAddr: %T", src)
+	}
+	if err != nil {
+		return err
+	}
+	*h = *mac
+	return nil
+}
+
+func (h *HardwareAddr) String() string {
+	mac := net.HardwareAddr(*h)
+	return mac.String()
+}
+
 func parseCIDR(s string) (*IPNet, error) {
 	_, n, err := net.ParseCIDR(s)
 	if err != nil {
@@ -88,4 +120,13 @@ func parseIP(s string) (*IP, error) {
 	}
 	ip := IP(i)
 	return &ip, nil
+}
+
+func parseMAC(s string) (*HardwareAddr, error) {
+	m, err := net.ParseMAC(s)
+	if err != nil {
+		return nil, err
+	}
+	mac := HardwareAddr(m)
+	return &mac, nil
 }

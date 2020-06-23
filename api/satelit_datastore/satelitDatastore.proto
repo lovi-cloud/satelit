@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package satelit;
+option  go_package = ".;satelit_datastore";
+
+service SatelitDatastore {
+  rpc GetDHCPLease(GetDHCPLeaseRequest) returns (GetDHCPLeaseResponse) {}
+}
+
+message DHCPLease {
+  string mac_address     = 1;
+  string ip              = 2;
+  string network         = 3;
+  string gateway         = 4;
+  string dns_server      = 5;
+  string metadata_server = 6;
+}
+
+message GetDHCPLeaseRequest {
+  string mac_address = 1;
+}
+
+message GetDHCPLeaseResponse {
+  DHCPLease lease = 1;
+}

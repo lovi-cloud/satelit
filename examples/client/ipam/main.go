@@ -65,5 +65,23 @@ func run() error {
 	}
 	fmt.Printf("%#q\n", resp3)
 
+	fmt.Println("CreateAddress")
+	resp4, err := client.CreateAddress(ctx, &pb.CreateAddressRequest{
+		SubnetId: resp2.Subnet.Uuid,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%#q\n", resp4)
+
+	fmt.Println("CreateLease")
+	resp5, err := client.CreateLease(ctx, &pb.CreateLeaseRequest{
+		AddressId: resp4.Address.Uuid,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%#q\n", resp5)
+
 	return nil
 }
