@@ -82,6 +82,22 @@ func (m *Memory) DeleteImage(imageID string) error {
 	return nil
 }
 
+// GetVolumes return volumes
+func (m *Memory) GetVolumes(volumeIDs []string) ([]europa.Volume, error) {
+	var vs []europa.Volume
+
+	m.mutex.Lock()
+	for _, volumeID := range volumeIDs {
+		v, ok := m.volumes[volumeID]
+		if ok {
+			vs = append(vs, v)
+		}
+	}
+	m.mutex.Unlock()
+
+	return vs, nil
+}
+
 // GetVolume return volume
 func (m *Memory) GetVolume(volumeID string) (*europa.Volume, error) {
 	m.mutex.Lock()

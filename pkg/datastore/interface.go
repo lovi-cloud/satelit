@@ -18,6 +18,7 @@ type Datastore interface {
 	PutImage(image europa.BaseImage) error
 	DeleteImage(imageID string) error
 
+	GetVolumes(volumeIDs []string) ([]europa.Volume, error)
 	GetVolume(volumeID string) (*europa.Volume, error)
 	PutVolume(volume europa.Volume) error
 	DeleteVolume(volumeID string) error
