@@ -121,15 +121,15 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 		return nil, fmt.Errorf("failed to get volume list: %w", err)
 	}
 
-	var vs []europa.Volume
+	var ids []string
 	for _, hmp := range hmps {
-		v, err := d.toVolume(&hmp)
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
-		}
-		vs = append(vs, *v)
+		ids = append(ids, hmp.ID)
 	}
 
+	vs, err := d.datastore.GetVolumes(ids)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get volume list from datastore: %w", err)
+	}
 	return vs, nil
 }
 
@@ -143,8 +143,13 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 		return nil, fmt.Errorf("found multiple volumes in same name (ID: %s)", id)
 	}
 
+	vd, err := d.datastore.GetVolume(id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
+	}
+
 	volume := hmps[0]
-	v, err := d.toVolume(&volume)
+	v, err := d.toVolume(&volume, vd.Attached, vd.HostName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", volume.ID, err)
 	}
@@ -404,7 +409,7 @@ func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
 	return nil
 }
 
-func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
+func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair, isAttached bool, hostname string) (*europa.Volume, error) {
 	v := &europa.Volume{}
 	v.ID = hmp.ID
 
@@ -412,6 +417,9 @@ func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse CAPACITYBYTE (ID: %s): %w", hmp.ID, err)
 	}
+
+	v.Attached = isAttached
+	v.HostName = hostname
 
 	v.CapacityGB = uint32(c / dorado.CapacityUnit)
 	return v, nil
