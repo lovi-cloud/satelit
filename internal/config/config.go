@@ -4,11 +4,16 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/goccy/go-yaml"
+	yaml "github.com/goccy/go-yaml"
 )
 
 // A API is config of Satelit API Server
 type API struct {
+	Listen string `yaml:"listen"`
+}
+
+// A Datastore is config of Satelit Datastore API Server
+type Datastore struct {
 	Listen string `yaml:"listen"`
 }
 
@@ -39,6 +44,7 @@ type Dorado struct {
 // A YAML is top element of config.yaml
 type YAML struct {
 	API         API         `yaml:"api"`
+	Datastore   Datastore   `yaml:"datastore"`
 	MySQLConfig MySQLConfig `yaml:"mysql"`
 	Teleskop    Teleskop    `yaml:"teleskop"`
 	Dorado      Dorado      `yaml:"dorado"`

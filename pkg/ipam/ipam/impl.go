@@ -3,6 +3,7 @@ package ipam
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
 	"fmt"
 	"net"
 	"sync"
@@ -28,7 +29,7 @@ func New(d datastore.Datastore) ipam.IPAM {
 }
 
 // CreateSubnet create a subnet
-func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end string) (*ipam.Subnet, error) {
+func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gateway, dnsServer, metadataServer string) (*ipam.Subnet, error) {
 	_, prefixNet, err := net.ParseCIDR(prefix)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse prefix: %w", err)
@@ -55,10 +56,46 @@ func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end strin
 	}
 
 	subnet := ipam.Subnet{
-		Name:    name,
-		Network: types.IPNet(*prefixNet),
-		Start:   types.IP(startAddr),
-		End:     types.IP(endAddr),
+		Name:           name,
+		Network:        types.IPNet(*prefixNet),
+		Start:          types.IP(startAddr),
+		End:            types.IP(endAddr),
+		Gateway:        nil,
+		DNSServer:      nil,
+		MetadataServer: nil,
+	}
+
+	if gateway != "" {
+		gwAddr := net.ParseIP(gateway)
+		if gwAddr == nil {
+			return nil, fmt.Errorf("failed to parse gateway address")
+		}
+		if !prefixNet.Contains(gwAddr) {
+			return nil, fmt.Errorf("invalid gateway address")
+		}
+		gw := types.IP(gwAddr)
+		subnet.Gateway = &gw
+	}
+
+	if dnsServer != "" {
+		dnsAddr := net.ParseIP(dnsServer)
+		if dnsAddr == nil {
+			return nil, fmt.Errorf("failed to parse DNS server address")
+		}
+		dns := types.IP(dnsAddr)
+		subnet.DNSServer = &dns
+	}
+
+	if metadataServer != "" {
+		mdAddr := net.ParseIP(metadataServer)
+		if mdAddr == nil {
+			return nil, fmt.Errorf("failed to parse metadata server address")
+		}
+		if !prefixNet.Contains(mdAddr) {
+			return nil, fmt.Errorf("invalid metadata server address")
+		}
+		md := types.IP(mdAddr)
+		subnet.MetadataServer = &md
 	}
 
 	subnetID, err := s.datastore.CreateSubnet(ctx, subnet)
@@ -150,6 +187,31 @@ func (s server) DeleteAddress(ctx context.Context, uuid uuid.UUID) error {
 	return s.datastore.DeleteAddress(ctx, uuid)
 }
 
+func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lease, error) {
+	mac, err := generateNewMACAddress()
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate new MAC Address: %w", err)
+	}
+
+	lease := ipam.Lease{
+		MacAddress: types.HardwareAddr(*mac),
+		AddressID:  addressID,
+	}
+	return s.datastore.CreateLease(ctx, lease)
+}
+
+func (s server) GetLease(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
+	return s.datastore.GetLeaseByMACAddress(ctx, mac)
+}
+
+func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
+	return s.datastore.ListLease(ctx)
+}
+
+func (s server) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
+	return s.datastore.DeleteLease(ctx, mac)
+}
+
 func getNextAddress(ip net.IP) net.IP {
 	a := net.ParseIP(ip.String())
 	for i := len(a) - 1; i >= 0; i-- {
@@ -159,4 +221,17 @@ func getNextAddress(ip net.IP) net.IP {
 		}
 	}
 	return a
+}
+
+func generateNewMACAddress() (*net.HardwareAddr, error) {
+	var mac net.HardwareAddr
+
+	buff := make([]byte, 3)
+	_, err := rand.Read(buff)
+	if err != nil {
+		return nil, err
+	}
+	mac = append(mac, byte(0xca), byte(0x03), byte(0x18), buff[0], buff[1], buff[2])
+
+	return &mac, nil
 }
