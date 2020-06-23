@@ -142,11 +142,13 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	if len(hmps) != 1 {
 		return nil, fmt.Errorf("found multiple volumes in same name (ID: %s)", id)
 	}
+	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmps))
 
 	vd, err := d.datastore.GetVolume(id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
 	}
+	logger.Logger.Debug(fmt.Sprintf("successfully retrieves volume from datastore: %+v", vd))
 
 	volume := hmps[0]
 	v, err := d.toVolume(&volume, vd.Attached, vd.HostName)
