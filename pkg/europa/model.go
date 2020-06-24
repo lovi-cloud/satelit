@@ -13,7 +13,7 @@ type Volume struct {
 	Attached    bool      `db:"attached"`
 	HostName    string    `db:"hostname"`
 	CapacityGB  uint32    `db:"capacity_gb"`
-	BaseImageID string    `db:"base_image_id"`
+	BaseImageID uuid.UUID `db:"base_image_id"`
 	HostLUNID   int       `db:"host_lun_id"` // set when attached
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`

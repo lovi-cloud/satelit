@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/pkg/errors"
 
 	"github.com/jmoiron/sqlx"
@@ -15,7 +17,7 @@ import (
 var testVolume = europa.Volume{
 	ID:          "TEST_VOLUME_ID_IS_NOT_UUID",
 	CapacityGB:  8,
-	BaseImageID: testUUID,
+	BaseImageID: uuid.FromStringOrNil(testUUID),
 }
 
 func TestMySQL_PutVolume(t *testing.T) {
@@ -56,7 +58,7 @@ func TestMySQL_PutVolume(t *testing.T) {
 		Attached:    true,
 		HostName:    "testHost",
 		CapacityGB:  8,
-		BaseImageID: testUUID,
+		BaseImageID: uuid.FromStringOrNil(testUUID),
 		HostLUNID:   1,
 	}
 	ok, values = testutils.CompareStruct(want, v2)
@@ -107,7 +109,7 @@ func TestMySQL_DeleteVolume(t *testing.T) {
 }
 
 func getVolumeFromSQL(testDB *sqlx.DB, volumeID string) (*europa.Volume, error) {
-	query := fmt.Sprintf(`SELECT id, attached, hostname, capacity_gb, BIN_TO_UUID(base_image_id) as base_image_id, host_lun_id FROM volume WHERE id = "%s"`, volumeID)
+	query := fmt.Sprintf(`SELECT id, attached, hostname, capacity_gb, base_image_id, host_lun_id FROM volume WHERE id = "%s"`, volumeID)
 	var i europa.Volume
 	err := testDB.Get(&i, query)
 	if err != nil {
