@@ -33,6 +33,7 @@ func (m *MySQL) ListImage() ([]europa.BaseImage, error) {
 }
 
 // PutImage write image record
+// need to fix if call more than once
 func (m *MySQL) PutImage(image europa.BaseImage) error {
 	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (UUID_TO_BIN(?), ?, ?, ?)`
 	_, err := m.Conn.Exec(query, image.UUID, image.Name, image.CacheVolumeID, image.Description)
