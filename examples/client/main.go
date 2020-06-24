@@ -38,7 +38,7 @@ func run() error {
 	client := pb.NewSatelitClient(conn)
 
 	fmt.Println("GetImages")
-	resp, err := client.GetImages(ctx, &pb.GetImagesRequest{})
+	resp, err := client.ListImage(ctx, &pb.ListImageRequest{})
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func SampleUploadImage(ctx context.Context, client pb.SatelitClient) error {
 	fmt.Printf("%+v\n", image)
 
 	fmt.Println("GetImages")
-	resp, err := client.GetImages(ctx, &pb.GetImagesRequest{})
+	resp, err := client.ListImage(ctx, &pb.ListImageRequest{})
 	if err != nil {
 		return err
 	}

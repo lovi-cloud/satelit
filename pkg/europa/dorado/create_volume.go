@@ -16,12 +16,15 @@ func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int)
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
 	}
 
-	volume, err := d.toVolume(hmp)
+	volume, err := d.toVolume(hmp, false, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
 	}
 
-	// TODO: update datastore
+	err = d.datastore.PutVolume(*volume)
+	if err != nil {
+		return nil, fmt.Errorf("failed to put volume to datastore (ID: %s): %w", hmp.ID, err)
+	}
 
 	return volume, nil
 }
@@ -38,7 +41,7 @@ func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capa
 		return nil, fmt.Errorf("failed to create volume from source: %w", err)
 	}
 
-	volume, err := d.toVolume(hmp)
+	volume, err := d.toVolume(hmp, false, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert europa.Volume: %w", err)
 	}

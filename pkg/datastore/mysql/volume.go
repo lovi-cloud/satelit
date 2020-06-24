@@ -3,8 +3,26 @@ package mysql
 import (
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
+
 	"github.com/whywaita/satelit/pkg/europa"
 )
+
+// ListVolume retrieves multi volumes from MySQL IN query
+func (m *MySQL) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
+	q, a, err := sqlx.In(`SELECT * FROM volume WHERE id IN (?)`, volumeIDs)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create query: %w", err)
+	}
+
+	var volumes []europa.Volume
+	err = m.Conn.Select(&volumes, q, a...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieves volumes: %w", err)
+	}
+
+	return volumes, nil
+}
 
 // GetVolume return volume from datastore
 func (m *MySQL) GetVolume(volumeID string) (*europa.Volume, error) {

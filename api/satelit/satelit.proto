@@ -4,11 +4,14 @@ package satelit;
 option  go_package = ".;satelit";
 
 service Satelit {
-  rpc GetVolumes(GetVolumesRequest) returns (GetVolumesResponse) {}
+  rpc ShowVolume(ShowVolumeRequest) returns (ShowVolumeResponse) {}
+  rpc ListVolumes(ListVolumeRequest) returns (ListVolumeResponse) {}
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
   rpc AddVolumeImage(AddVolumeImageRequest) returns (AddVolumeImageResponse) {}
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}
-  rpc GetImages(GetImagesRequest) returns (GetImagesResponse) {}
+  rpc DetachVolume(DetachVolumeRequest) returns (DetachVolumeResponse) {}
+  rpc DeleteVolume(DeleteVolumeRequest) returns (DeleteVolumeResponse) {}
+  rpc ListImage(ListImageRequest) returns (ListImageResponse) {}
   rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {}
   rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse) {}
 
@@ -69,9 +72,17 @@ message Lease {
 }
 
 // Request / Response
-message GetVolumesRequest {}
+message ShowVolumeRequest {
+  string uuid = 1;
+}
 
-message GetVolumesResponse {
+message ShowVolumeResponse {
+  Volume volume = 1;
+}
+
+message ListVolumeRequest {}
+
+message ListVolumeResponse {
   repeated Volume volumes = 1;
 }
 
@@ -101,13 +112,21 @@ message AttachVolumeRequest {
 
 message AttachVolumeResponse {}
 
-message DeleteVolumeRequest {}
+message DetachVolumeRequest {
+  string id = 1;
+}
+
+message DetachVolumeResponse {}
+
+message DeleteVolumeRequest {
+  string id = 1;
+}
 
 message DeleteVolumeResponse {}
 
-message GetImagesRequest {}
+message ListImageRequest {}
 
-message GetImagesResponse {
+message ListImageResponse {
   repeated Image images = 1;
 }
 

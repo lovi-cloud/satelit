@@ -49,7 +49,7 @@ func TestMySQL_GetImage(t *testing.T) {
 		t.Fatalf("failed to put image: %s", err)
 	}
 
-	images, err := testDatastore.GetImages()
+	images, err := testDatastore.ListImage()
 	if err != nil {
 		t.Fatalf("failed to get image: %s", err)
 	}
