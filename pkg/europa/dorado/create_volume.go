@@ -10,8 +10,8 @@ import (
 )
 
 // CreateVolume create raw volume
-func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
-	hmp, err := d.client.CreateVolumeRaw(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID)
+func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB int) (*europa.Volume, error) {
+	hmp, err := d.client.CreateVolumeRaw(ctx, name, capacityGB, d.storagePoolName, d.hyperMetroDomainID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", name.String(), err)
 	}
@@ -30,13 +30,13 @@ func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacity int)
 }
 
 // CreateVolumeFromImage create volume that copied image
-func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
+func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID string) (*europa.Volume, error) {
 	image, err := d.GetImage(imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get image: %w", err)
 	}
 
-	hmp, err := d.client.CreateVolumeFromSource(ctx, name, capacity, d.storagePoolName, d.hyperMetroDomainID, image.CacheVolumeID)
+	hmp, err := d.client.CreateVolumeFromSource(ctx, name, capacityGB, d.storagePoolName, d.hyperMetroDomainID, image.CacheVolumeID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume from source: %w", err)
 	}
