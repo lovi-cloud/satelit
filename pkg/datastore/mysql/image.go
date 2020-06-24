@@ -6,7 +6,7 @@ import (
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
-// GetImage return image object
+// GetImage retrieves image object
 func (m *MySQL) GetImage(imageID string) (*europa.BaseImage, error) {
 	var image europa.BaseImage
 
@@ -19,8 +19,8 @@ func (m *MySQL) GetImage(imageID string) (*europa.BaseImage, error) {
 	return &image, nil
 }
 
-// GetImages return all images
-func (m *MySQL) GetImages() ([]europa.BaseImage, error) {
+// ListImage retrieves all images
+func (m *MySQL) ListImage() ([]europa.BaseImage, error) {
 	var images []europa.BaseImage
 
 	query := fmt.Sprintf("SELECT * FROM image")

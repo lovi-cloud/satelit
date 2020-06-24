@@ -43,8 +43,8 @@ type Device struct {
 func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, error) {
 	ctx := context.Background()
 	client, err := dorado.NewClient(
-		doradoConfig.LocalIps[0],
-		doradoConfig.RemoteIps[0],
+		doradoConfig.LocalIps,
+		doradoConfig.RemoteIps,
 		doradoConfig.Username,
 		doradoConfig.Password,
 		doradoConfig.PortGroupName,
@@ -121,31 +121,37 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 		return nil, fmt.Errorf("failed to get volume list: %w", err)
 	}
 
-	var vs []europa.Volume
+	var ids []string
 	for _, hmp := range hmps {
-		v, err := d.toVolume(&hmp)
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert europa.volume (ID: %s): %w", hmp.ID, err)
-		}
-		vs = append(vs, *v)
+		ids = append(ids, hmp.ID)
 	}
 
+	vs, err := d.datastore.ListVolume(ids)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get volume list from datastore: %w", err)
+	}
 	return vs, nil
 }
 
 // GetVolume get volume from Dorado
 func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
-	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryId(id))
+	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryID(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volumes (ID: %s): %w", id, err)
 	}
-	fmt.Printf("%+v\n", hmps)
 	if len(hmps) != 1 {
 		return nil, fmt.Errorf("found multiple volumes in same name (ID: %s)", id)
 	}
+	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmps))
+
+	vd, err := d.datastore.GetVolume(id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
+	}
+	logger.Logger.Debug(fmt.Sprintf("successfully retrieves volume from datastore: %+v", vd))
 
 	volume := hmps[0]
-	v, err := d.toVolume(&volume)
+	v, err := d.toVolume(&volume, vd.Attached, vd.HostName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", volume.ID, err)
 	}
@@ -159,7 +165,10 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to delete volume (ID: %s): %w", id, err)
 	}
 
-	// TODO: delete record from datastore
+	err = d.datastore.DeleteVolume(id)
+	if err != nil {
+		return fmt.Errorf("failed to delete volume from datastore (ID: %s): %w", id, err)
+	}
 
 	return nil
 }
@@ -190,7 +199,7 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 
 	hostLUNID, err := d.GetHostLUNID(ctx, hmp, hostname)
 	if err != nil {
-		return 0, "", fmt.Errorf("failed to get host lun id: %w", err)
+		return 0, "", fmt.Errorf("failed to get host lun id (ID: %s): %w", id, err)
 	}
 
 	req := &agentpb.ConnectBlockDeviceRequest{
@@ -202,7 +211,16 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
 	}
 
-	// TODO: update datastore
+	volume, err := d.datastore.GetVolume(id)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
+	}
+	volume.Attached = true
+	volume.HostName = hostname
+	err = d.datastore.PutVolume(*volume)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", id, err)
+	}
 
 	return hostLUNID, resp.DeviceName, nil
 }
@@ -227,6 +245,17 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 		return 0, "", fmt.Errorf("failed to attach volume to localhost (ID: %s): %w", hyperMetroPairID, err)
 	}
 
+	volume, err := d.datastore.GetVolume(hyperMetroPairID)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
+	}
+	volume.Attached = true
+	volume.HostName = hostname
+	err = d.datastore.PutVolume(*volume)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
+	}
+
 	return hostLUNID, deviceName, nil
 }
 
@@ -238,7 +267,19 @@ func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) erro
 	}
 
 	// TODO: send to detach operation
-	// TODO: update datastore
+
+	volume, err := d.datastore.GetVolume(hyperMetroPairID)
+	if err != nil {
+		return fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
+	}
+
+	volume.Attached = false
+	volume.HostName = ""
+
+	err = d.datastore.PutVolume(*volume)
+	if err != nil {
+		return fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
+	}
 
 	return nil
 }
@@ -261,7 +302,18 @@ func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 		return fmt.Errorf("failed to detach volume: %w", err)
 	}
 
-	// TODO: update datastore
+	volume, err := d.datastore.GetVolume(hyperMetroPairID)
+	if err != nil {
+		return fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
+	}
+
+	volume.Attached = false
+	volume.HostName = ""
+
+	err = d.datastore.PutVolume(*volume)
+	if err != nil {
+		return fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
+	}
 
 	return nil
 }
@@ -276,9 +328,9 @@ func (d *Dorado) GetImage(imageID string) (*europa.BaseImage, error) {
 	return image, nil
 }
 
-// GetImages return all images
-func (d *Dorado) GetImages() ([]europa.BaseImage, error) {
-	images, err := d.datastore.GetImages()
+// ListImage retrieves all images
+func (d *Dorado) ListImage() ([]europa.BaseImage, error) {
+	images, err := d.datastore.ListImage()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get images from datastore: %w", err)
 	}
@@ -359,7 +411,7 @@ func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
 	return nil
 }
 
-func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
+func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair, isAttached bool, hostname string) (*europa.Volume, error) {
 	v := &europa.Volume{}
 	v.ID = hmp.ID
 
@@ -367,6 +419,9 @@ func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair) (*europa.Volume, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse CAPACITYBYTE (ID: %s): %w", hmp.ID, err)
 	}
+
+	v.Attached = isAttached
+	v.HostName = hostname
 
 	v.CapacityGB = uint32(c / dorado.CapacityUnit)
 	return v, nil

@@ -30,7 +30,7 @@ import (
 
 // A SatelitServer is definition of Satlite API Server
 type SatelitServer struct {
-	pb.UnimplementedSatelitServer
+	pb.SatelitServer
 
 	Europa europa.Europa
 	IPAM   ipam.IPAM
@@ -71,8 +71,20 @@ func (s *SatelitServer) Run() error {
 	return nil
 }
 
-// GetVolumes call ListVolume to Europa Backend
-func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesRequest) (*pb.GetVolumesResponse, error) {
+// ShowVolume call GetVolume to Europa Backend
+func (s *SatelitServer) ShowVolume(ctx context.Context, req *pb.ShowVolumeRequest) (*pb.ShowVolumeResponse, error) {
+	volume, err := s.Europa.GetVolume(ctx, req.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get volume (id: %s): %w", req.Uuid, err)
+	}
+
+	return &pb.ShowVolumeResponse{
+		Volume: volume.ToPb(),
+	}, nil
+}
+
+// ListVolume call ListVolume to Europa Backend
+func (s *SatelitServer) ListVolume(ctx context.Context, req *pb.ListVolumeRequest) (*pb.ListVolumeResponse, error) {
 	volumes, err := s.Europa.ListVolume(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get list of volume: %w", err)
@@ -83,7 +95,7 @@ func (s *SatelitServer) GetVolumes(ctx context.Context, req *pb.GetVolumesReques
 		pvs = append(pvs, v.ToPb())
 	}
 
-	return &pb.GetVolumesResponse{
+	return &pb.ListVolumeResponse{
 		Volumes: pvs,
 	}, nil
 }
@@ -132,6 +144,26 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 	return &pb.AttachVolumeResponse{}, nil
 }
 
+// DetachVolume call DetachVolume to Europa backend
+func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRequest) (*pb.DetachVolumeResponse, error) {
+	err := s.Europa.DetachVolume(ctx, req.Id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to detach volume (ID: %s): %w", req.Id, err)
+	}
+
+	return &pb.DetachVolumeResponse{}, nil
+}
+
+// DeleteVolume call DeleteVolume to Europa backend
+func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRequest) (*pb.DeleteVolumeResponse, error) {
+	err := s.Europa.DeleteVolume(ctx, req.Id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete volume: %w", err)
+	}
+
+	return nil, nil
+}
+
 // parseRequestUUID return uuid.UUID from gRPC request string
 func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 	u := uuid.FromStringOrNil(reqName)
@@ -142,10 +174,10 @@ func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
 	return u, nil
 }
 
-// GetImages return all images
-func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest) (*pb.GetImagesResponse, error) {
+// ListImage retrieves all images
+func (s *SatelitServer) ListImage(ctx context.Context, req *pb.ListImageRequest) (*pb.ListImageResponse, error) {
 	logger.Logger.Info(fmt.Sprintf("GetImages"))
-	images, err := s.Europa.GetImages()
+	images, err := s.Europa.ListImage()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get images: %w", err)
 	}
@@ -155,7 +187,7 @@ func (s *SatelitServer) GetImages(ctx context.Context, req *pb.GetImagesRequest)
 		pbImages = append(pbImages, image.ToPb())
 	}
 
-	return &pb.GetImagesResponse{
+	return &pb.ListImageResponse{
 		Images: pbImages,
 	}, nil
 }
