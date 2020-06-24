@@ -13,7 +13,7 @@ import (
 )
 
 var testVolume = europa.Volume{
-	ID:          "aTESTVOLUMEID_IS_NOT_UUID",
+	ID:          "TEST_VOLUME_ID_IS_NOT_UUID",
 	CapacityGB:  8,
 	BaseImageID: testUUID,
 }
