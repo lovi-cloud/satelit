@@ -45,7 +45,7 @@ func (m *Memory) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacityGB
 }
 
 // CreateVolumeImage write volume info to in-memory
-func (m *Memory) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID string) (*europa.Volume, error) {
+func (m *Memory) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID uuid.UUID) (*europa.Volume, error) {
 	id := name.String()
 
 	v := europa.Volume{

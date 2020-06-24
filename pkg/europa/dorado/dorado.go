@@ -319,7 +319,7 @@ func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 }
 
 // GetImage return image by id
-func (d *Dorado) GetImage(imageID string) (*europa.BaseImage, error) {
+func (d *Dorado) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 	image, err := d.datastore.GetImage(imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to getr image from datastore: %w", err)
@@ -390,7 +390,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 }
 
 // DeleteImage delete image by Dorado
-func (d *Dorado) DeleteImage(ctx context.Context, id string) error {
+func (d *Dorado) DeleteImage(ctx context.Context, id uuid.UUID) error {
 	image, err := d.datastore.GetImage(id)
 	if err != nil {
 		return fmt.Errorf("failed to get image from datastore: %w", err)

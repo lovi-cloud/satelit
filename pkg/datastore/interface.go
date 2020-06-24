@@ -14,10 +14,10 @@ import (
 // A Datastore is type definition of data store.
 type Datastore interface {
 	GetIQN(ctx context.Context, hostname string) (string, error)
-	GetImage(imageID string) (*europa.BaseImage, error)
+	GetImage(imageID uuid.UUID) (*europa.BaseImage, error)
 	ListImage() ([]europa.BaseImage, error)
 	PutImage(image europa.BaseImage) error
-	DeleteImage(imageID string) error
+	DeleteImage(imageID uuid.UUID) error
 
 	ListVolume(volumeIDs []string) ([]europa.Volume, error)
 	GetVolume(volumeID string) (*europa.Volume, error)

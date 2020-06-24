@@ -20,7 +20,7 @@ type Memory struct {
 	mutex *sync.Mutex
 
 	volumes         map[string]europa.Volume
-	images          map[string]europa.BaseImage
+	images          map[uuid.UUID]europa.BaseImage
 	subnets         map[uuid.UUID]ipam.Subnet
 	addresses       map[uuid.UUID]ipam.Address
 	leases          map[string]ipam.Lease
@@ -44,7 +44,7 @@ func (m *Memory) GetIQN(ctx context.Context, hostname string) (string, error) {
 }
 
 // GetImage return image by id from on memory
-func (m *Memory) GetImage(imageID string) (*europa.BaseImage, error) {
+func (m *Memory) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 	m.mutex.Lock()
 	i, ok := m.images[imageID]
 	m.mutex.Unlock()
@@ -72,13 +72,13 @@ func (m *Memory) ListImage() ([]europa.BaseImage, error) {
 // PutImage write image
 func (m *Memory) PutImage(image europa.BaseImage) error {
 	m.mutex.Lock()
-	m.images[image.UUID.String()] = image
+	m.images[image.UUID] = image
 	m.mutex.Unlock()
 	return nil
 }
 
 // DeleteImage delete image
-func (m *Memory) DeleteImage(imageID string) error {
+func (m *Memory) DeleteImage(imageID uuid.UUID) error {
 	m.mutex.Lock()
 	delete(m.images, imageID)
 	m.mutex.Unlock()

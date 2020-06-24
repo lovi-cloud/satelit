@@ -30,7 +30,7 @@ func (d *Dorado) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB in
 }
 
 // CreateVolumeFromImage create volume that copied image
-func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID string) (*europa.Volume, error) {
+func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID uuid.UUID) (*europa.Volume, error) {
 	image, err := d.GetImage(imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get image: %w", err)
