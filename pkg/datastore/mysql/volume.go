@@ -8,8 +8,8 @@ import (
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
-// GetVolumes retrieves multi volumes from MySQL IN query
-func (m *MySQL) GetVolumes(volumeIDs []string) ([]europa.Volume, error) {
+// ListVolume retrieves multi volumes from MySQL IN query
+func (m *MySQL) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
 	q, a, err := sqlx.In(`SELECT * FROM volume WHERE id IN (?)`, volumeIDs)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create query: %w", err)
