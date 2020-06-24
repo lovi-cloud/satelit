@@ -126,7 +126,7 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 		ids = append(ids, hmp.ID)
 	}
 
-	vs, err := d.datastore.GetVolumes(ids)
+	vs, err := d.datastore.ListVolume(ids)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volume list from datastore: %w", err)
 	}
@@ -328,9 +328,9 @@ func (d *Dorado) GetImage(imageID string) (*europa.BaseImage, error) {
 	return image, nil
 }
 
-// GetImages return all images
-func (d *Dorado) GetImages() ([]europa.BaseImage, error) {
-	images, err := d.datastore.GetImages()
+// ListImage retrieves all images
+func (d *Dorado) ListImage() ([]europa.BaseImage, error) {
+	images, err := d.datastore.ListImage()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get images from datastore: %w", err)
 	}

@@ -56,8 +56,8 @@ func (m *Memory) GetImage(imageID string) (*europa.BaseImage, error) {
 	return &i, nil
 }
 
-// GetImages return all images
-func (m *Memory) GetImages() ([]europa.BaseImage, error) {
+// ListImage retrieves all images
+func (m *Memory) ListImage() ([]europa.BaseImage, error) {
 	var images []europa.BaseImage
 
 	m.mutex.Lock()
@@ -86,8 +86,8 @@ func (m *Memory) DeleteImage(imageID string) error {
 	return nil
 }
 
-// GetVolumes return volumes
-func (m *Memory) GetVolumes(volumeIDs []string) ([]europa.Volume, error) {
+// ListVolume rerieves volumes
+func (m *Memory) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
 	var vs []europa.Volume
 
 	m.mutex.Lock()
