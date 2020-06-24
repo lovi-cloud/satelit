@@ -107,7 +107,7 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityByte))
+	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityGigabyte))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Name, err)
 	}
@@ -124,7 +124,7 @@ func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeIma
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityByte), req.SourceImageId)
+	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityGigabyte), req.SourceImageId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume from image (ID: %s): %w", req.Name, err)
 	}
