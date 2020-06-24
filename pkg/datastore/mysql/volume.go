@@ -13,7 +13,7 @@ import (
 
 // ListVolume retrieves multi volumes from MySQL IN query
 func (m *MySQL) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
-	q, a, err := sqlx.In(`SELECT id, attached, hostname, capacity_gb, BIN_TO_UUID(base_image_id) as base_image_id, host_lun_id FROM volume WHERE id IN (?)`, volumeIDs)
+	q, a, err := sqlx.In(`SELECT id, attached, hostname, capacity_gb, base_image_id, host_lun_id FROM volume WHERE id IN (?)`, volumeIDs)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create query: %w", err)
 	}
@@ -31,7 +31,7 @@ func (m *MySQL) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
 func (m *MySQL) GetVolume(volumeID string) (*europa.Volume, error) {
 	var v europa.Volume
 
-	query := fmt.Sprintf(`SELECT id, attached, hostname, capacity_gb, BIN_TO_UUID(base_image_id) as base_image_id, host_lun_id FROM volume WHERE id = '%s'`, volumeID)
+	query := fmt.Sprintf(`SELECT id, attached, hostname, capacity_gb, base_image_id, host_lun_id FROM volume WHERE id = '%s'`, volumeID)
 	err := m.Conn.Get(&v, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute get query: %w", err)
