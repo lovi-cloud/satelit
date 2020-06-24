@@ -36,10 +36,10 @@ service Satelit {
 
 // type
 message Volume {
-  string id            = 1;
-  bool   attached      = 2;
-  string hostname      = 3;
-  uint32 capacity_byte = 4;
+  string id                = 1;
+  bool   attached          = 2;
+  string hostname          = 3;
+  uint32 capacity_gigabyte = 4;
 }
 
 message Image {
@@ -87,8 +87,8 @@ message ListVolumeResponse {
 }
 
 message AddVolumeRequest {
-  string name          = 1;
-  uint32 capacity_byte = 2;
+  string name              = 1;
+  uint32 capacity_gigabyte = 2;
 }
 
 message AddVolumeResponse {
@@ -96,9 +96,9 @@ message AddVolumeResponse {
 }
 
 message AddVolumeImageRequest {
-  string name            = 1;
-  uint32 capacity_byte   = 2;
-  string source_image_id = 3;
+  string name              = 1;
+  uint32 capacity_gigabyte = 2;
+  string source_image_id   = 3;
 }
 
 message AddVolumeImageResponse {

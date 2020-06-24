@@ -22,10 +22,10 @@ type Volume struct {
 // ToPb parse to Satelit API Server pb.Volume
 func (v *Volume) ToPb() *pb.Volume {
 	pv := &pb.Volume{
-		Id:           v.ID,
-		Attached:     v.Attached,
-		Hostname:     v.HostName,
-		CapacityByte: v.CapacityGB,
+		Id:               v.ID,
+		Attached:         v.Attached,
+		Hostname:         v.HostName,
+		CapacityGigabyte: v.CapacityGB,
 	}
 	return pv
 }

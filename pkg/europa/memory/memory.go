@@ -29,12 +29,12 @@ func New() (*Memory, error) {
 }
 
 // CreateVolumeRaw write volume information to in-memory
-func (m *Memory) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity int) (*europa.Volume, error) {
+func (m *Memory) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacityGB int) (*europa.Volume, error) {
 	id := name.String()
 
 	v := europa.Volume{
 		ID:         id,
-		CapacityGB: uint32(capacity),
+		CapacityGB: uint32(capacityGB),
 	}
 
 	m.Mu.Lock()
@@ -45,12 +45,12 @@ func (m *Memory) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacity i
 }
 
 // CreateVolumeImage write volume info to in-memory
-func (m *Memory) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacity int, imageID string) (*europa.Volume, error) {
+func (m *Memory) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID string) (*europa.Volume, error) {
 	id := name.String()
 
 	v := europa.Volume{
 		ID:          id,
-		CapacityGB:  uint32(capacity),
+		CapacityGB:  uint32(capacityGB),
 		BaseImageID: imageID,
 	}
 
