@@ -88,7 +88,7 @@ func getImageFromSQL(testDB *sqlx.DB, imageID string) (*europa.BaseImage, error)
 	var i europa.BaseImage
 	err := testDB.Get(&i, query)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute query: %s", err)
+		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 
 	return &i, nil
