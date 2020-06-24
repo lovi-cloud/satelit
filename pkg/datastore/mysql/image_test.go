@@ -68,7 +68,7 @@ func TestMySQL_DeleteImage(t *testing.T) {
 		t.Fatalf("failed to put image: %s", err)
 	}
 
-	err = testDatastore.DeleteImage(testUUID)
+	err = testDatastore.DeleteImage(uuid.FromStringOrNil(testUUID))
 	if err != nil {
 		t.Fatalf("failed to delete image: %s", err)
 	}

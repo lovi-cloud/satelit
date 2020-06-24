@@ -124,7 +124,12 @@ func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeIma
 		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
 	}
 
-	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityGigabyte), req.SourceImageId)
+	sourceImageID, err := s.parseRequestUUID(req.SourceImageId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request source image id (ID: %s): %w", req.SourceImageId, err)
+	}
+
+	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityGigabyte), sourceImageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume from image (ID: %s): %w", req.Name, err)
 	}
@@ -165,10 +170,10 @@ func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRe
 }
 
 // parseRequestUUID return uuid.UUID from gRPC request string
-func (s *SatelitServer) parseRequestUUID(reqName string) (uuid.UUID, error) {
-	u := uuid.FromStringOrNil(reqName)
+func (s *SatelitServer) parseRequestUUID(reqUUID string) (uuid.UUID, error) {
+	u := uuid.FromStringOrNil(reqUUID)
 	if u == uuid.Nil {
-		return uuid.Nil, fmt.Errorf("failed to parse uuid from string (name: %s)", reqName)
+		return uuid.Nil, fmt.Errorf("failed to parse uuid from string (uuid: %s)", reqUUID)
 	}
 
 	return u, nil
@@ -303,7 +308,12 @@ func (s *SatelitServer) receiveImage(stream pb.Satelit_UploadImageServer, w io.W
 
 // DeleteImage delete image
 func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequest) (*pb.DeleteImageResponse, error) {
-	err := s.Europa.DeleteImage(ctx, req.Id)
+	imageID, err := s.parseRequestUUID(req.Id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request image id (ID: %s): %w", req.Id, err)
+	}
+
+	err = s.Europa.DeleteImage(ctx, imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to delete image from europa: %w", err)
 	}
@@ -548,10 +558,13 @@ func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequ
 
 // AddVirtualMachine create virtual machine.
 func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtualMachineRequest) (*pb.AddVirtualMachineResponse, error) {
-	logger.Logger.Info(fmt.Sprintf("AddVirtualMachine (name: %s)", req.Name))
+	sourceImageID, err := s.parseRequestUUID(req.SourceImageId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request source image id (ID: %s): %w", req.SourceImageId, err)
+	}
 
 	u := uuid.NewV4()
-	volume, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), req.SourceImageId)
+	volume, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), sourceImageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume from image: %w", err)
 	}

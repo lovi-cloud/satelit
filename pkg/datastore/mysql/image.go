@@ -3,11 +3,13 @@ package mysql
 import (
 	"fmt"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/whywaita/satelit/pkg/europa"
 )
 
 // GetImage retrieves image object
-func (m *MySQL) GetImage(imageID string) (*europa.BaseImage, error) {
+func (m *MySQL) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 	var image europa.BaseImage
 
 	query := fmt.Sprintf(`SELECT * FROM image WHERE uuid = "%s"`, imageID)
@@ -45,7 +47,7 @@ func (m *MySQL) PutImage(image europa.BaseImage) error {
 }
 
 // DeleteImage delete image record
-func (m *MySQL) DeleteImage(imageID string) error {
+func (m *MySQL) DeleteImage(imageID uuid.UUID) error {
 	query := fmt.Sprintf(`DELETE FROM image WHERE uuid = "%s"`, imageID)
 	_, err := m.Conn.Exec(query)
 	if err != nil {
