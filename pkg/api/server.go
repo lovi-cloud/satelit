@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -592,10 +593,11 @@ func (s *SatelitServer) StartVirtualMachine(ctx context.Context, req *pb.StartVi
 		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
 	}
 
-	teleskopClient := teleskop.GetClient(vm.HypervisorName)
-	var zeroValue agentpb.AgentClient
-	if teleskopClient == zeroValue { // TODO: GetClient need to return error?
-		return nil, status.Errorf(codes.NotFound, "failed to retrieves teleskop client: %s", vm.HypervisorName)
+	teleskopClient, err := teleskop.GetClient(vm.HypervisorName)
+	if errors.Is(err, teleskop.ErrTeleskopAgentNotFound) {
+		return nil, status.Errorf(codes.NotFound, "failed to retrieve teleskop client: %+v", err)
+	} else if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve teleskop client: %+v", err)
 	}
 
 	resp, err := teleskopClient.StartVirtualMachine(ctx, &agentpb.StartVirtualMachineRequest{Uuid: req.Uuid})

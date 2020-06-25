@@ -1,6 +1,7 @@
 package teleskop
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -11,6 +12,11 @@ import (
 var (
 	client map[string]agentpb.AgentClient
 	mu     sync.RWMutex
+)
+
+// Error const
+var (
+	ErrTeleskopAgentNotFound = errors.New("a teleskop agent is not registered")
 )
 
 // New create teleskop map
@@ -36,10 +42,14 @@ func New(endpoints map[string]string) error {
 }
 
 // GetClient return teleskop Client
-func GetClient(hostname string) agentpb.AgentClient {
+func GetClient(hostname string) (agentpb.AgentClient, error) {
 	mu.RLock()
-	c := client[hostname]
+	c, ok := client[hostname]
 	mu.RUnlock()
 
-	return c
+	if !ok {
+		return nil, ErrTeleskopAgentNotFound
+	}
+
+	return c, nil
 }

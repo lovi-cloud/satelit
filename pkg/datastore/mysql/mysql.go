@@ -55,7 +55,12 @@ func (m *MySQL) GetIQN(ctx context.Context, hostname string) (string, error) {
 	}
 
 	// not found in mysql
-	resp, err := teleskop.GetClient(hostname).GetISCSIQualifiedName(ctx, &pb.GetISCSIQualifiedNameRequest{})
+	teleskopClient, err := teleskop.GetClient(hostname)
+	if err != nil {
+		return "", fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+
+	resp, err := teleskopClient.GetISCSIQualifiedName(ctx, &pb.GetISCSIQualifiedNameRequest{})
 	if err != nil {
 		return "", fmt.Errorf("failed to get IQN from Teleskop (host: %v): %w", hostname, err)
 	}
