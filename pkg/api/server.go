@@ -49,6 +49,9 @@ func (s *SatelitServer) Run() error {
 	if err != nil {
 		return err
 	}
+	opts := []grpc_zap.Option{
+		grpc_zap.WithMessageProducer(grpc_zap.DefaultMessageProducer),
+	}
 	grpc_zap.ReplaceGrpcLoggerV2(logger.Logger)
 	grpcServer := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(
@@ -56,12 +59,14 @@ func (s *SatelitServer) Run() error {
 			grpc_zap.PayloadUnaryServerInterceptor(logger.Logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
 				return true
 			}),
+			grpc_zap.UnaryServerInterceptor(logger.Logger, opts...),
 		),
 		grpc_middleware.WithStreamServerChain(
 			grpc_ctxtags.StreamServerInterceptor(),
 			grpc_zap.PayloadStreamServerInterceptor(logger.Logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
 				return true
 			}),
+			grpc_zap.StreamServerInterceptor(logger.Logger, opts...),
 		),
 	)
 	pb.RegisterSatelitServer(grpcServer, s)
