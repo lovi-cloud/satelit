@@ -206,7 +206,12 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 		PortalAddresses: targetPortalIPs,
 		HostLunId:       uint32(hostLUNID),
 	}
-	resp, err := teleskop.GetClient(hostname).ConnectBlockDevice(ctx, req)
+
+	teleskopClient, err := teleskop.GetClient(hostname)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+	resp, err := teleskopClient.ConnectBlockDevice(ctx, req)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
 	}

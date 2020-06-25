@@ -33,7 +33,12 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 		MemoryKib:  memoryKiB,
 		BootDevice: bootDeviceName,
 	}
-	resp, err := teleskop.GetClient(hypervisorName).AddVirtualMachine(ctx, agentReq)
+
+	teleskopClient, err := teleskop.GetClient(hypervisorName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+	resp, err := teleskopClient.AddVirtualMachine(ctx, agentReq)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add virtual machine (name: %s): %w", name, err)
 	}
