@@ -18,7 +18,7 @@ type Memory struct {
 }
 
 // New create on memory backend
-func New() (*Memory, error) {
+func New() *Memory {
 	vs := map[string]europa.Volume{}
 	images := map[uuid.UUID]europa.BaseImage{}
 	m := Memory{
@@ -27,7 +27,7 @@ func New() (*Memory, error) {
 		Mu:      sync.RWMutex{},
 	}
 
-	return &m, nil
+	return &m
 }
 
 // CreateVolume write volume information to in-memory
