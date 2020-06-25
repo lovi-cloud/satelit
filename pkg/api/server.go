@@ -3,12 +3,14 @@ package api
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"math"
 	"net"
 	"sync"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -75,7 +77,7 @@ func (s *SatelitServer) Run() error {
 func (s *SatelitServer) ShowVolume(ctx context.Context, req *pb.ShowVolumeRequest) (*pb.ShowVolumeResponse, error) {
 	volume, err := s.Europa.GetVolume(ctx, req.Uuid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get volume (id: %s): %w", req.Uuid, err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volume: %+v", err)
 	}
 
 	return &pb.ShowVolumeResponse{
@@ -87,7 +89,7 @@ func (s *SatelitServer) ShowVolume(ctx context.Context, req *pb.ShowVolumeReques
 func (s *SatelitServer) ListVolume(ctx context.Context, req *pb.ListVolumeRequest) (*pb.ListVolumeResponse, error) {
 	volumes, err := s.Europa.ListVolume(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get list of volume: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volumes: %+v", err)
 	}
 
 	var pvs []*pb.Volume
@@ -104,12 +106,12 @@ func (s *SatelitServer) ListVolume(ctx context.Context, req *pb.ListVolumeReques
 func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest) (*pb.AddVolumeResponse, error) {
 	u, err := s.parseRequestUUID(req.Name)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request name (need uuid): %+v", err)
 	}
 
 	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityGigabyte))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create volume (ID: %s): %w", req.Name, err)
+		return nil, status.Errorf(codes.Internal, "failed to create volume: %+v", err)
 	}
 
 	return &pb.AddVolumeResponse{
@@ -121,17 +123,17 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeImageRequest) (*pb.AddVolumeImageResponse, error) {
 	u, err := s.parseRequestUUID(req.Name)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request id (ID: %s): %w", req.Name, err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request name (need uuid): %+v", err)
 	}
 
 	sourceImageID, err := s.parseRequestUUID(req.SourceImageId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request source image id (ID: %s): %w", req.SourceImageId, err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request source image id (need uuid): %+v", err)
 	}
 
 	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityGigabyte), sourceImageID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create volume from image (ID: %s): %w", req.Name, err)
+		return nil, status.Errorf(codes.Internal, "failed to create volume from image: %+v", err)
 	}
 
 	return &pb.AddVolumeImageResponse{
@@ -143,7 +145,7 @@ func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeIma
 func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRequest) (*pb.AttachVolumeResponse, error) {
 	_, _, err := s.Europa.AttachVolumeTeleskop(ctx, req.Id, req.Hostname)
 	if err != nil {
-		return nil, fmt.Errorf("failed to attach volume to %s (ID: %s): %w", req.Hostname, req.Id, err)
+		return nil, status.Errorf(codes.Internal, "failed to attach volume: %+v", err)
 	}
 
 	return &pb.AttachVolumeResponse{}, nil
@@ -153,7 +155,7 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRequest) (*pb.DetachVolumeResponse, error) {
 	err := s.Europa.DetachVolume(ctx, req.Id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to detach volume (ID: %s): %w", req.Id, err)
+		return nil, status.Errorf(codes.Internal, "failed to detach volume: %+v", err)
 	}
 
 	return &pb.DetachVolumeResponse{}, nil
@@ -163,7 +165,7 @@ func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRe
 func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRequest) (*pb.DeleteVolumeResponse, error) {
 	err := s.Europa.DeleteVolume(ctx, req.Id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to delete volume: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to delete volume: %+v", err)
 	}
 
 	return nil, nil
@@ -181,10 +183,9 @@ func (s *SatelitServer) parseRequestUUID(reqUUID string) (uuid.UUID, error) {
 
 // ListImage retrieves all images
 func (s *SatelitServer) ListImage(ctx context.Context, req *pb.ListImageRequest) (*pb.ListImageResponse, error) {
-	logger.Logger.Info(fmt.Sprintf("GetImages"))
 	images, err := s.Europa.ListImage()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get images: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieves images: %+v", err)
 	}
 
 	var pbImages []*pb.Image
@@ -199,7 +200,6 @@ func (s *SatelitServer) ListImage(ctx context.Context, req *pb.ListImageRequest)
 
 // UploadImage upload to europa backend
 func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
-	logger.Logger.Info("UploadImage")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -211,7 +211,7 @@ func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 
 	m, err := s.receiveImage(stream, buf)
 	if err != nil {
-		return fmt.Errorf("failed to receive image file: %w", err)
+		return status.Errorf(codes.Internal, "failed to receive image file: %+v", err)
 	}
 	logger.Logger.Debug(fmt.Sprintf("received image (name: %s)", m.name))
 
@@ -220,26 +220,26 @@ func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 	reader := bytes.NewReader(b)
 	isQcow2, header := qcow2.Probe(reader)
 	if isQcow2 == false {
-		return errors.New("failed to validate qcow2 image")
+		return status.Errorf(codes.InvalidArgument, "failed to validate qcow2 image")
 	}
 
 	// send to europa
 	image, err := s.Europa.UploadImage(ctx, b, m.name, m.description, sanitizeImageSize(header.Size))
 	if err != nil {
-		return fmt.Errorf("failed to upload image to europa: %w", err)
+		return status.Errorf(codes.Internal, "failed to upload image to europa: %+v", err)
 	}
 	logger.Logger.Debug("uploaded image to europa")
 
 	err = stream.SendAndClose(&pb.UploadImageResponse{Image: image.ToPb()})
 	if err != nil {
-		return fmt.Errorf("failed to send and close: %s", err)
+		return status.Errorf(codes.Internal, "failed to send and close: %+v", err)
 	}
 	logger.Logger.Debug("close UploadImage stream")
 
 	// save to image info in database
 	err = s.Datastore.PutImage(*image)
 	if err != nil {
-		return fmt.Errorf("failed to put image to datastore: %w", err)
+		return status.Errorf(codes.Internal, "failed to put image: %+v", err)
 	}
 	logger.Logger.Debug("completed write image to datastore")
 
@@ -310,12 +310,12 @@ func (s *SatelitServer) receiveImage(stream pb.Satelit_UploadImageServer, w io.W
 func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequest) (*pb.DeleteImageResponse, error) {
 	imageID, err := s.parseRequestUUID(req.Id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request image id (ID: %s): %w", req.Id, err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request image id (need uuid): %+v", err)
 	}
 
 	err = s.Europa.DeleteImage(ctx, imageID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to delete image from europa: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to delete image from europa: %+v", err)
 	}
 
 	return &pb.DeleteImageResponse{}, nil
@@ -325,7 +325,7 @@ func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequ
 func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRequest) (*pb.CreateSubnetResponse, error) {
 	subnet, err := s.IPAM.CreateSubnet(ctx, req.Name, req.Network, req.Start, req.End, req.Gateway, req.DnsServer, req.MetadataServer)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create subnet: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to create subnet: %+v", err)
 	}
 
 	return &pb.CreateSubnetResponse{
@@ -344,13 +344,13 @@ func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRe
 
 // GetSubnet retrieves address according to the parameters given
 func (s *SatelitServer) GetSubnet(ctx context.Context, req *pb.GetSubnetRequest) (*pb.GetSubnetResponse, error) {
-	u, err := uuid.FromString(req.Uuid)
+	u, err := s.parseRequestUUID(req.Uuid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request id (need uuid): %+v", err)
 	}
 	subnet, err := s.IPAM.GetSubnet(ctx, u)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get subnet: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieves subnet: %+v", err)
 	}
 
 	return &pb.GetSubnetResponse{
@@ -371,7 +371,7 @@ func (s *SatelitServer) GetSubnet(ctx context.Context, req *pb.GetSubnetRequest)
 func (s *SatelitServer) ListSubnet(ctx context.Context, req *pb.ListSubnetRequest) (*pb.ListSubnetResponse, error) {
 	subnets, err := s.IPAM.ListSubnet(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list subnet: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to list subnet: %+v", err)
 	}
 
 	tmp := make([]*pb.Subnet, len(subnets))
@@ -395,12 +395,12 @@ func (s *SatelitServer) ListSubnet(ctx context.Context, req *pb.ListSubnetReques
 
 // DeleteSubnet deletes a subnet
 func (s *SatelitServer) DeleteSubnet(ctx context.Context, req *pb.DeleteSubnetRequest) (*pb.DeleteSubnetResponse, error) {
-	u, err := uuid.FromString(req.Uuid)
+	u, err := s.parseRequestUUID(req.Uuid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request id (need uuid): %+v", err)
 	}
 	if err := s.IPAM.DeleteSubnet(ctx, u); err != nil {
-		return nil, fmt.Errorf("failed to delete subnet: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to delete subnet: %+v", err)
 	}
 
 	return &pb.DeleteSubnetResponse{}, nil
@@ -408,13 +408,13 @@ func (s *SatelitServer) DeleteSubnet(ctx context.Context, req *pb.DeleteSubnetRe
 
 // CreateAddress create a address
 func (s *SatelitServer) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
-	u, err := uuid.FromString(req.SubnetId)
+	u, err := s.parseRequestUUID(req.SubnetId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request subnet id: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request subnet id (need uuid): %+v", err)
 	}
 	address, err := s.IPAM.CreateAddress(ctx, u)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get address: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to create address: %+v", err)
 	}
 
 	return &pb.CreateAddressResponse{
@@ -428,13 +428,13 @@ func (s *SatelitServer) CreateAddress(ctx context.Context, req *pb.CreateAddress
 
 // GetAddress retrieves address according to the parameters given
 func (s *SatelitServer) GetAddress(ctx context.Context, req *pb.GetAddressRequest) (*pb.GetAddressResponse, error) {
-	u, err := uuid.FromString(req.Uuid)
+	u, err := s.parseRequestUUID(req.Uuid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request uuid (need uuid): %+v", err)
 	}
 	address, err := s.IPAM.GetAddress(ctx, u)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get address: %w", err)
+		return nil, status.Errorf(codes.NotFound, "failed to get address: %+v", err)
 	}
 
 	return &pb.GetAddressResponse{
@@ -448,13 +448,13 @@ func (s *SatelitServer) GetAddress(ctx context.Context, req *pb.GetAddressReques
 
 // ListAddress retrieves all address according to the parameters given.
 func (s *SatelitServer) ListAddress(ctx context.Context, req *pb.ListAddressRequest) (*pb.ListAddressResponse, error) {
-	u, err := uuid.FromString(req.SubnetId)
+	u, err := s.parseRequestUUID(req.SubnetId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request subnet id: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request subnet id (need uuid): %+v", err)
 	}
 	addresses, err := s.IPAM.ListAddressBySubnetID(ctx, u)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list address: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to list address: %+v", err)
 	}
 
 	tmp := make([]*pb.Address, len(addresses))
@@ -473,12 +473,12 @@ func (s *SatelitServer) ListAddress(ctx context.Context, req *pb.ListAddressRequ
 
 // DeleteAddress deletes address
 func (s *SatelitServer) DeleteAddress(ctx context.Context, req *pb.DeleteAddressRequest) (*pb.DeleteAddressResponse, error) {
-	u, err := uuid.FromString(req.Uuid)
+	u, err := s.parseRequestUUID(req.Uuid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request uuid (need uuid): %+v", err)
 	}
 	if err := s.IPAM.DeleteAddress(ctx, u); err != nil {
-		return nil, fmt.Errorf("failed to delete address: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to delete address: %+v", err)
 	}
 
 	return &pb.DeleteAddressResponse{}, nil
@@ -486,13 +486,13 @@ func (s *SatelitServer) DeleteAddress(ctx context.Context, req *pb.DeleteAddress
 
 // CreateLease create a lease.
 func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequest) (*pb.CreateLeaseResponse, error) {
-	u, err := uuid.FromString(req.AddressId)
+	u, err := s.parseRequestUUID(req.AddressId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request uuid: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request address id (need uuid): %+v", err)
 	}
 	lease, err := s.IPAM.CreateLease(ctx, u)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create lease: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to create lease: %+v", err)
 	}
 
 	return &pb.CreateLeaseResponse{
@@ -507,11 +507,11 @@ func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequ
 func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (*pb.GetLeaseResponse, error) {
 	mac, err := net.ParseMAC(req.MacAddress)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request mac: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse mac address: %+v", err)
 	}
 	lease, err := s.IPAM.GetLease(ctx, mac)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get lease: %w", err)
+		return nil, status.Errorf(codes.NotFound, "failed to retrieve lease: %+v", err)
 	}
 
 	return &pb.GetLeaseResponse{
@@ -526,7 +526,7 @@ func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (
 func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest) (*pb.ListLeaseResponse, error) {
 	leases, err := s.IPAM.ListLease(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list leases: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to list leases: %+v", err)
 	}
 
 	tmp := make([]*pb.Lease, len(leases))
@@ -546,11 +546,11 @@ func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest)
 func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequest) (*pb.DeleteLeaseResponse, error) {
 	mac, err := net.ParseMAC(req.MacAddress)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request mac: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse mac address: %+v", err)
 	}
 
 	if err := s.IPAM.DeleteLease(ctx, mac); err != nil {
-		return nil, fmt.Errorf("failed to delete lease: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to delete lease: %+v", err)
 	}
 
 	return &pb.DeleteLeaseResponse{}, nil
@@ -560,23 +560,23 @@ func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequ
 func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtualMachineRequest) (*pb.AddVirtualMachineResponse, error) {
 	sourceImageID, err := s.parseRequestUUID(req.SourceImageId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse request source image id (ID: %s): %w", req.SourceImageId, err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request source image id (need uuid): %+v", err)
 	}
 
 	u := uuid.NewV4()
 	volume, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), sourceImageID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create volume from image: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to create volume from image: %+v", err)
 	}
 
 	_, deviceName, err := s.Europa.AttachVolumeTeleskop(ctx, volume.ID, req.HypervisorName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to attach volume: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to attach volume: %+v", err)
 	}
 
 	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create virtual machine: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to create virtual machine: %+v", err)
 	}
 
 	return &pb.AddVirtualMachineResponse{
@@ -587,15 +587,20 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 
 // StartVirtualMachine start virtual machine
 func (s *SatelitServer) StartVirtualMachine(ctx context.Context, req *pb.StartVirtualMachineRequest) (*pb.StartVirtualMachineResponse, error) {
-	logger.Logger.Info(fmt.Sprintf("StartVirtualMachine (UUID: %s)", req.Uuid))
 	vm, err := s.Datastore.GetVirtualMachine(req.Uuid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get virtual machine: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
 	}
 
-	resp, err := teleskop.GetClient(vm.HypervisorName).StartVirtualMachine(ctx, &agentpb.StartVirtualMachineRequest{Uuid: req.Uuid})
+	teleskopClient := teleskop.GetClient(vm.HypervisorName)
+	var zeroValue agentpb.AgentClient
+	if teleskopClient == zeroValue { // TODO: GetClient need to return error?
+		return nil, status.Errorf(codes.NotFound, "failed to retrieves teleskop client: %s", vm.HypervisorName)
+	}
+
+	resp, err := teleskopClient.StartVirtualMachine(ctx, &agentpb.StartVirtualMachineRequest{Uuid: req.Uuid})
 	if err != nil {
-		return nil, fmt.Errorf("failed to start virtual machine: %w", err)
+		return nil, status.Errorf(codes.Internal, "failed to start virtual machine: %+v", err)
 	}
 
 	return &pb.StartVirtualMachineResponse{
