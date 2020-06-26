@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/go-test/deep v1.0.6
 	github.com/goccy/go-yaml v1.7.16
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
@@ -24,5 +25,4 @@ require (
 	google.golang.org/genproto v0.0.0-20200624020401-64a14ca9d1ad // indirect
 	google.golang.org/grpc v1.30.0
 	google.golang.org/protobuf v1.25.0
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

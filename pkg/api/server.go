@@ -174,7 +174,7 @@ func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRe
 		return nil, status.Errorf(codes.Internal, "failed to delete volume: %+v", err)
 	}
 
-	return nil, nil
+	return &pb.DeleteVolumeResponse{}, nil
 }
 
 // parseRequestUUID return uuid.UUID from gRPC request string
