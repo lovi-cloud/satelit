@@ -4,6 +4,8 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"net"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // IPNet is net.IPNet with the implementation of the Valuer and Scanner interface.
@@ -102,6 +104,29 @@ func (h *HardwareAddr) Scan(src interface{}) error {
 func (h *HardwareAddr) String() string {
 	mac := net.HardwareAddr(*h)
 	return mac.String()
+}
+
+// UUID is uuid.UUID with the implementation of the Valuer and Scanner interface.
+type UUID uuid.UUID
+
+// Value implements the database/sql/driver Valuer interface.
+func (u UUID) Value() (driver.Value, error) {
+	return driver.Value(uuid.UUID(u).Bytes()), nil
+}
+
+// Scan implements the database/sql Scanner interface.
+func (u *UUID) Scan(src interface{}) error {
+	uu := uuid.UUID(*u)
+	if err := uu.Scan(src); err != nil {
+		return err
+	}
+	*u = UUID(uu)
+	return nil
+}
+
+func (u *UUID) String() string {
+	uu := uuid.UUID(*u)
+	return uu.String()
 }
 
 func parseCIDR(s string) (*IPNet, error) {
