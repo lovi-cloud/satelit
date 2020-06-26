@@ -81,7 +81,7 @@ func (s *SatelitServer) Run() error {
 
 // ShowVolume call GetVolume to Europa Backend
 func (s *SatelitServer) ShowVolume(ctx context.Context, req *pb.ShowVolumeRequest) (*pb.ShowVolumeResponse, error) {
-	volume, err := s.Europa.GetVolume(ctx, req.Uuid)
+	volume, err := s.Europa.GetVolume(ctx, req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to retrieve volume: %+v", err)
 	}

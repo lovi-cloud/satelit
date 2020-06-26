@@ -135,14 +135,11 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 
 // GetVolume get volume from Dorado
 func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
-	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryID(id))
+	hmp, err := d.client.GetHyperMetroPair(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volumes (ID: %s): %w", id, err)
 	}
-	if len(hmps) != 1 {
-		return nil, fmt.Errorf("found multiple volumes in same name (ID: %s)", id)
-	}
-	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmps))
+	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmp))
 
 	vd, err := d.datastore.GetVolume(id)
 	if err != nil {
@@ -150,10 +147,9 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	}
 	logger.Logger.Debug(fmt.Sprintf("successfully retrieves volume from datastore: %+v", vd))
 
-	volume := hmps[0]
-	v, err := d.toVolume(&volume, vd.Attached, vd.HostName)
+	v, err := d.toVolume(hmp, vd.Attached, vd.HostName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", volume.ID, err)
+		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", hmp.ID, err)
 	}
 	return v, nil
 }
@@ -360,7 +356,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 
 	// mount new volume
 	u := uuid.NewV4()
-	hmp, err := d.client.CreateVolumeRaw(ctx, u, imageSizeGB, d.storagePoolName, d.hyperMetroDomainID)
+	v, err := d.CreateVolume(ctx, u, imageSizeGB)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
 	}
@@ -370,12 +366,12 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		return nil, fmt.Errorf("failed to get hostname: %w", err)
 	}
 
-	hostLUNID, deviceName, err := d.AttachVolumeSatelit(ctx, hmp.ID, hostname)
+	hostLUNID, deviceName, err := d.AttachVolumeSatelit(ctx, v.ID, hostname)
 	if err != nil {
 		return nil, fmt.Errorf("failed to attach volume: %w", err)
 	}
 	defer func() {
-		d.DetachVolumeSatelit(ctx, hmp.ID, hostLUNID)
+		d.DetachVolumeSatelit(ctx, v.ID, hostLUNID)
 	}()
 
 	// exec qemu-img convert
@@ -388,7 +384,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		UUID:          u,
 		Name:          name,
 		Description:   description,
-		CacheVolumeID: hmp.ID,
+		CacheVolumeID: v.ID,
 	}
 
 	return bi, nil
