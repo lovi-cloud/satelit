@@ -9,12 +9,7 @@ import (
 // GetVirtualMachine return virtual machine record
 func (m *MySQL) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error) {
 	var vm ganymede.VirtualMachine
-	query := fmt.Sprintf(`SELECT 
-BIN_TO_UUID(uuid),
-name,
-vcpus,
-memory_kib,
-hypervisor_name WHERE uuid = %s`, vmUUID)
+	query := fmt.Sprintf(`SELECT uuid, name, vcpus, memory_kib, hypervisor_name FROM virtual_machine WHERE uuid = UUID_TO_BIN('%s')`, vmUUID)
 	err := m.Conn.Get(&vm, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
