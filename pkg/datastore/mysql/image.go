@@ -12,7 +12,7 @@ import (
 func (m *MySQL) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 	var image europa.BaseImage
 
-	query := fmt.Sprintf(`SELECT * FROM image WHERE uuid = "%s"`, imageID)
+	query := fmt.Sprintf(`SELECT * FROM image WHERE uuid = UUID_TO_BIN('%s')`, imageID)
 	err := m.Conn.Get(&image, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute get query: %w", err)
@@ -48,7 +48,7 @@ func (m *MySQL) PutImage(image europa.BaseImage) error {
 
 // DeleteImage delete image record
 func (m *MySQL) DeleteImage(imageID uuid.UUID) error {
-	query := fmt.Sprintf(`DELETE FROM image WHERE uuid = "%s"`, imageID)
+	query := fmt.Sprintf(`DELETE FROM image WHERE uuid = UUID_TO_BIN('%s')`, imageID)
 	_, err := m.Conn.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to execute delete query: %w", err)
