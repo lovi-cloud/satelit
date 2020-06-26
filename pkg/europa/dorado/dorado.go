@@ -356,7 +356,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 
 	// mount new volume
 	u := uuid.NewV4()
-	hmp, err := d.client.CreateVolumeRaw(ctx, u, imageSizeGB, d.storagePoolName, d.hyperMetroDomainID)
+	v, err := d.CreateVolume(ctx, u, imageSizeGB)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
 	}
@@ -366,12 +366,12 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		return nil, fmt.Errorf("failed to get hostname: %w", err)
 	}
 
-	hostLUNID, deviceName, err := d.AttachVolumeSatelit(ctx, hmp.ID, hostname)
+	hostLUNID, deviceName, err := d.AttachVolumeSatelit(ctx, v.ID, hostname)
 	if err != nil {
 		return nil, fmt.Errorf("failed to attach volume: %w", err)
 	}
 	defer func() {
-		d.DetachVolumeSatelit(ctx, hmp.ID, hostLUNID)
+		d.DetachVolumeSatelit(ctx, v.ID, hostLUNID)
 	}()
 
 	// exec qemu-img convert
@@ -384,7 +384,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		UUID:          u,
 		Name:          name,
 		Description:   description,
-		CacheVolumeID: hmp.ID,
+		CacheVolumeID: v.ID,
 	}
 
 	return bi, nil
