@@ -73,7 +73,7 @@ message Lease {
 
 // Request / Response
 message ShowVolumeRequest {
-  string uuid = 1;
+  string id = 1;
 }
 
 message ShowVolumeResponse {
