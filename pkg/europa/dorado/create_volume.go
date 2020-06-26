@@ -46,7 +46,10 @@ func (d *Dorado) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capa
 		return nil, fmt.Errorf("failed to convert europa.Volume: %w", err)
 	}
 
-	// TODO: update datastore
+	err = d.datastore.PutVolume(*volume)
+	if err != nil {
+		return nil, fmt.Errorf("failed to put volume to datastore (ID: %s): %w", hmp.ID, err)
+	}
 
 	return volume, nil
 }
