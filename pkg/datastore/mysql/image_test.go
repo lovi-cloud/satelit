@@ -73,14 +73,15 @@ func TestMySQL_DeleteImage(t *testing.T) {
 		t.Fatalf("failed to delete image: %s", err)
 	}
 
-	_, err = getImageFromSQL(testDB, testUUID)
+	b, err := getImageFromSQL(testDB, testUUID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		t.Fatalf("failed to get image from sql: %s", err)
 	}
-
-	if errors.Is(err, sql.ErrNoRows) {
+	if b != nil {
 		t.Fatalf("unexpected images value, this test is after DeleteImage but there are image")
 	}
+
+	// sql.ErrNoRows is correct
 }
 
 func getImageFromSQL(testDB *sqlx.DB, imageID string) (*europa.BaseImage, error) {
