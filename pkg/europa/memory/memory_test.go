@@ -15,14 +15,11 @@ const (
 
 func TestMemoryVolumeOperation(t *testing.T) {
 	ctx := context.Background()
-	m, err := New()
-	if err != nil {
-		t.Error(err)
-	}
+	m := New()
 
 	u := uuid.FromStringOrNil(testUUID)
 
-	_, err = m.CreateVolumeRaw(ctx, u, testCapacity)
+	_, err := m.CreateVolume(ctx, u, testCapacity)
 	if err != nil {
 		t.Error(err)
 	}
