@@ -135,14 +135,11 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 
 // GetVolume get volume from Dorado
 func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
-	hmps, err := d.client.GetHyperMetroPairs(ctx, dorado.NewSearchQueryID(id))
+	hmp, err := d.client.GetHyperMetroPair(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volumes (ID: %s): %w", id, err)
 	}
-	if len(hmps) != 1 {
-		return nil, fmt.Errorf("found multiple volumes in same name (ID: %s)", id)
-	}
-	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmps))
+	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmp))
 
 	vd, err := d.datastore.GetVolume(id)
 	if err != nil {
@@ -150,10 +147,9 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	}
 	logger.Logger.Debug(fmt.Sprintf("successfully retrieves volume from datastore: %+v", vd))
 
-	volume := hmps[0]
-	v, err := d.toVolume(&volume, vd.Attached, vd.HostName)
+	v, err := d.toVolume(hmp, vd.Attached, vd.HostName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", volume.ID, err)
+		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", hmp.ID, err)
 	}
 	return v, nil
 }
