@@ -12,24 +12,26 @@ import (
 
 // A Memory is backend of europa by in-memory for testing.
 type Memory struct {
-	Volumes map[string]europa.Volume    // ID: Volume
-	Images  map[string]europa.BaseImage // ID: BaseImage
+	Volumes map[string]europa.Volume       // ID: Volume
+	Images  map[uuid.UUID]europa.BaseImage // ID: BaseImage
 	Mu      sync.RWMutex
 }
 
 // New create on memory backend
-func New() (*Memory, error) {
+func New() *Memory {
 	vs := map[string]europa.Volume{}
+	images := map[uuid.UUID]europa.BaseImage{}
 	m := Memory{
 		Volumes: vs,
+		Images:  images,
 		Mu:      sync.RWMutex{},
 	}
 
-	return &m, nil
+	return &m
 }
 
-// CreateVolumeRaw write volume information to in-memory
-func (m *Memory) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacityGB int) (*europa.Volume, error) {
+// CreateVolume write volume information to in-memory
+func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB int) (*europa.Volume, error) {
 	id := name.String()
 
 	v := europa.Volume{
@@ -44,8 +46,8 @@ func (m *Memory) CreateVolumeRaw(ctx context.Context, name uuid.UUID, capacityGB
 	return &v, nil
 }
 
-// CreateVolumeImage write volume info to in-memory
-func (m *Memory) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID uuid.UUID) (*europa.Volume, error) {
+// CreateVolumeFromImage write volume info to in-memory
+func (m *Memory) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID uuid.UUID) (*europa.Volume, error) {
 	id := name.String()
 
 	v := europa.Volume{
@@ -64,7 +66,7 @@ func (m *Memory) CreateVolumeImage(ctx context.Context, name uuid.UUID, capacity
 // DeleteVolume delete volume in-memory
 func (m *Memory) DeleteVolume(ctx context.Context, id string) error {
 	m.Mu.Lock()
-	delete(m.Volumes, "name")
+	delete(m.Volumes, id)
 	m.Mu.Unlock()
 
 	return nil
@@ -143,8 +145,21 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	return nil
 }
 
-// GetImages return image from in-memory
-func (m *Memory) GetImages() ([]europa.BaseImage, error) {
+// GetImage retrieves image
+func (m *Memory) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
+	m.Mu.RLock()
+	i, ok := m.Images[imageID]
+	m.Mu.RUnlock()
+
+	if !ok {
+		return nil, errors.New("not found")
+	}
+
+	return &i, nil
+}
+
+// ListImage return image from in-memory
+func (m *Memory) ListImage() ([]europa.BaseImage, error) {
 	var images []europa.BaseImage
 
 	m.Mu.RLock()
@@ -163,7 +178,7 @@ func (m *Memory) UploadImage(ctx context.Context, image []byte, name, descriptio
 }
 
 // DeleteImage delete from in-memory
-func (m *Memory) DeleteImage(ctx context.Context, id string) error {
+func (m *Memory) DeleteImage(ctx context.Context, id uuid.UUID) error {
 	// TODO: implement
 	return nil
 }
