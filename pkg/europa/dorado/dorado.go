@@ -156,6 +156,8 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 
 // DeleteVolume delete volume by Dorado
 func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
+	// TODO: check attach status
+
 	err := d.client.DeleteVolume(ctx, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete volume (ID: %s): %w", id, err)
@@ -211,6 +213,8 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
 	}
+
+	// TODO: send to operation attach volume to teleskop
 
 	volume, err := d.datastore.GetVolume(id)
 	if err != nil {
