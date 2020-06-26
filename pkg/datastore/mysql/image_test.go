@@ -49,12 +49,13 @@ func TestMySQL_GetImage(t *testing.T) {
 		t.Fatalf("failed to put image: %s", err)
 	}
 
-	images, err := testDatastore.ListImage()
+	image, err := testDatastore.GetImage(testImage.UUID)
 	if err != nil {
 		t.Fatalf("failed to get image: %s", err)
 	}
-	if len(images) != 1 {
-		t.Fatalf("unexpected images value, image count: (expected: 1, actual: %d)", len(images))
+	ok, values := testutils.CompareStruct(testImage, image)
+	if !ok {
+		t.Fatalf("unexpected values, field name: %s, input: %s, output: %s", values[0], values[1], values[2])
 	}
 }
 
@@ -85,9 +86,10 @@ func TestMySQL_DeleteImage(t *testing.T) {
 }
 
 func getImageFromSQL(testDB *sqlx.DB, imageID string) (*europa.BaseImage, error) {
-	query := fmt.Sprintf(`SELECT * FROM image WHERE BIN_TO_UUID(uuid) = "%s"`, imageID)
 	var i europa.BaseImage
-	err := testDB.Get(&i, query)
+	query := `SELECT uuid, name, description, volume_id, created_at, updated_at FROM image WHERE uuid = ?`
+	stmt, err := testDB.Preparex(query)
+	err = stmt.Get(&i, imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
