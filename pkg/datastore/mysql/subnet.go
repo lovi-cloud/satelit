@@ -10,25 +10,24 @@ import (
 )
 
 // CreateSubnet create a subnet
-func (m *MySQL) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*uuid.UUID, error) {
-	query := `INSERT INTO subnet(uuid, name, network, start, end, gateway, dns_server, metadata_server) VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?)`
+func (m *MySQL) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error) {
+	query := `INSERT INTO subnet(uuid, name, network, start, end, gateway, dns_server, metadata_server) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
 	}
 
-	u := uuid.NewV4()
-	_, err = stmt.ExecContext(ctx, u, subnet.Name, subnet.Network, subnet.Start, subnet.End, subnet.Gateway, subnet.DNSServer, subnet.MetadataServer)
+	_, err = stmt.ExecContext(ctx, subnet.UUID, subnet.Name, subnet.Network, subnet.Start, subnet.End, subnet.Gateway, subnet.DNSServer, subnet.MetadataServer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 
-	return &u, nil
+	return &subnet, nil
 }
 
 // GetSubnetByID retrieves address according to the id given
 func (m *MySQL) GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error) {
-	query := `SELECT uuid, name, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet WHERE uuid = UUID_TO_BIN(?)`
+	query := `SELECT uuid, name, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -58,7 +57,7 @@ func (m *MySQL) ListSubnet(ctx context.Context) ([]ipam.Subnet, error) {
 
 // DeleteSubnet deletes a subnet
 func (m *MySQL) DeleteSubnet(ctx context.Context, uuid uuid.UUID) error {
-	query := `DELETE FROM subnet WHERE uuid = UUID_TO_BIN(?)`
+	query := `DELETE FROM subnet WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)
