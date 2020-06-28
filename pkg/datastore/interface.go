@@ -2,10 +2,10 @@ package datastore
 
 import (
 	"context"
-	"net"
 
 	uuid "github.com/satori/go.uuid"
 
+	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/europa"
 	"github.com/whywaita/satelit/pkg/ganymede"
 	"github.com/whywaita/satelit/pkg/ipam"
@@ -36,10 +36,10 @@ type Datastore interface {
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
 
 	CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error)
-	GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error)
-	GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error)
+	GetLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.Lease, error)
+	GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
-	DeleteLease(ctx context.Context, mac net.HardwareAddr) error
+	DeleteLease(ctx context.Context, mac types.HardwareAddr) error
 
 	GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"net"
 
 	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/ipam"
@@ -27,7 +26,7 @@ func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease,
 }
 
 // GetLeaseByMACAddress retrieves lease according to the mac given
-func (m *MySQL) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
+func (m *MySQL) GetLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.Lease, error) {
 	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE mac_address = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
@@ -35,7 +34,7 @@ func (m *MySQL) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) 
 	}
 
 	var lease ipam.Lease
-	if err := stmt.GetContext(ctx, &lease, types.HardwareAddr(mac)); err != nil {
+	if err := stmt.GetContext(ctx, &lease, mac); err != nil {
 		return nil, fmt.Errorf("failed to get lease: %w", err)
 	}
 
@@ -43,7 +42,7 @@ func (m *MySQL) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) 
 }
 
 // GetDHCPLeaseByMACAddress retrieves DHCPLease according to the mac given
-func (m *MySQL) GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error) {
+func (m *MySQL) GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error) {
 	query := `select mac_address, ip, network, gateway, dns_server, metadata_server from lease lef join address on address_id = address.uuid left join subnet on subnet_id = subnet.uuid where mac_address = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
@@ -51,7 +50,7 @@ func (m *MySQL) GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAd
 	}
 
 	var dhcp ipam.DHCPLease
-	if err := stmt.GetContext(ctx, &dhcp, types.HardwareAddr(mac)); err != nil {
+	if err := stmt.GetContext(ctx, &dhcp, mac); err != nil {
 		return nil, fmt.Errorf("failed to get DHCP lease: %w", err)
 	}
 
@@ -73,14 +72,14 @@ func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 }
 
 // DeleteLease deletes a lease
-func (m *MySQL) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
+func (m *MySQL) DeleteLease(ctx context.Context, mac types.HardwareAddr) error {
 	query := `DELETE FROM lease WHERE mac_address = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)
 	}
 
-	_, err = stmt.ExecContext(ctx, types.HardwareAddr(mac))
+	_, err = stmt.ExecContext(ctx, mac)
 	if err != nil {
 		return fmt.Errorf("failed to delete lease: %w", err)
 	}
