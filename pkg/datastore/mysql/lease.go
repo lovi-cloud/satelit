@@ -12,7 +12,7 @@ import (
 
 // CreateLease create a lease
 func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error) {
-	query := `INSERT INTO lease(mac_address, address_id) VALUES (?, UUID_TO_BIN(?))`
+	query := `INSERT INTO lease(mac_address, address_id) VALUES (?, ?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
