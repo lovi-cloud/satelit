@@ -30,7 +30,7 @@ type Datastore interface {
 	ListSubnet(ctx context.Context) ([]ipam.Subnet, error)
 	DeleteSubnet(ctx context.Context, uuid uuid.UUID) error
 
-	CreateAddress(ctx context.Context, address ipam.Address) (*uuid.UUID, error)
+	CreateAddress(ctx context.Context, address ipam.Address) (*ipam.Address, error)
 	GetAddressByID(ctx context.Context, uuid uuid.UUID) (*ipam.Address, error)
 	ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) ([]ipam.Address, error)
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
