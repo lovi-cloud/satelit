@@ -25,7 +25,7 @@ type Datastore interface {
 	DeleteVolume(volumeID string) error
 
 	// IPAM
-	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*uuid.UUID, error)
+	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)
 	GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error)
 	ListSubnet(ctx context.Context) ([]ipam.Subnet, error)
 	DeleteSubnet(ctx context.Context, uuid uuid.UUID) error
