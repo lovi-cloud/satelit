@@ -59,6 +59,28 @@ func TestMySQL_GetImage(t *testing.T) {
 	}
 }
 
+func TestMySQL_ListImage(t *testing.T) {
+	testDatastore, teardown := testutils.GetTestDatastore()
+	defer teardown()
+
+	err := testDatastore.PutImage(testImage)
+	if err != nil {
+		t.Fatalf("failed to put image: %+v", err)
+	}
+
+	images, err := testDatastore.ListImage()
+	if err != nil {
+		t.Fatalf("failed to list image: %+v", err)
+	}
+	if len(images) != 1 {
+		t.Fatalf("unexpected images value, image count: (expected: 1, actual: %d)", len(images))
+	}
+	ok, values := testutils.CompareStruct(testImage, images[0])
+	if !ok {
+		t.Fatalf("unexpected values, field name: %s, input: %s, output: %s", values[0], values[1], values[2])
+	}
+}
+
 func TestMySQL_DeleteImage(t *testing.T) {
 	testDatastore, teardown := testutils.GetTestDatastore()
 	defer teardown()
