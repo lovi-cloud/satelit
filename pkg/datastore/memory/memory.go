@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"sync"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
 
+	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/europa"
 	"github.com/whywaita/satelit/pkg/ganymede"
 	"github.com/whywaita/satelit/pkg/ipam"
@@ -134,14 +134,13 @@ func (m *Memory) DeleteVolume(volumeID string) error {
 }
 
 // CreateSubnet create a subnet
-func (m *Memory) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*uuid.UUID, error) {
+func (m *Memory) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	subnet.UUID = uuid.NewV4()
 	m.subnets[subnet.UUID] = subnet
 
-	return &subnet.UUID, nil
+	return &subnet, nil
 }
 
 // GetSubnetByID retrieves address according to the id given
@@ -185,14 +184,13 @@ func (m *Memory) DeleteSubnet(ctx context.Context, uuid uuid.UUID) error {
 }
 
 // CreateAddress create a address
-func (m *Memory) CreateAddress(ctx context.Context, address ipam.Address) (*uuid.UUID, error) {
+func (m *Memory) CreateAddress(ctx context.Context, address ipam.Address) (*ipam.Address, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	address.UUID = uuid.NewV4()
 	m.addresses[address.UUID] = address
 
-	return &address.UUID, nil
+	return &address, nil
 }
 
 // GetAddressByID retrieves address according to the id given
@@ -251,7 +249,7 @@ func (m *Memory) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease
 }
 
 // GetLeaseByMACAddress retrieves lease according to the mac given
-func (m *Memory) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
+func (m *Memory) GetLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.Lease, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -264,7 +262,7 @@ func (m *Memory) GetLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr)
 }
 
 // GetDHCPLeaseByMACAddress retrieves DHCPLease according to the mac given
-func (m *Memory) GetDHCPLeaseByMACAddress(ctx context.Context, mac net.HardwareAddr) (*ipam.DHCPLease, error) {
+func (m *Memory) GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -304,7 +302,7 @@ func (m *Memory) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 }
 
 // DeleteLease deletes a lease
-func (m *Memory) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
+func (m *Memory) DeleteLease(ctx context.Context, mac types.HardwareAddr) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 

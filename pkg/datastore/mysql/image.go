@@ -12,8 +12,9 @@ import (
 func (m *MySQL) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 	var image europa.BaseImage
 
-	query := fmt.Sprintf(`SELECT * FROM image WHERE uuid = UUID_TO_BIN('%s')`, imageID)
-	err := m.Conn.Get(&image, query)
+	query := `SELECT uuid, name, description, volume_id, created_at, updated_at FROM image WHERE uuid = ?`
+	stmt, err := m.Conn.Preparex(query)
+	err = stmt.Get(&image, imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute get query: %w", err)
 	}
@@ -25,8 +26,9 @@ func (m *MySQL) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 func (m *MySQL) ListImage() ([]europa.BaseImage, error) {
 	var images []europa.BaseImage
 
-	query := fmt.Sprintf("SELECT * FROM image")
-	err := m.Conn.Select(&images, query)
+	query := `SELECT uuid, name, description, volume_id, created_at, updated_at FROM image`
+	stmt, err := m.Conn.Preparex(query)
+	err = stmt.Select(&images)
 	if err != nil {
 		return nil, fmt.Errorf("failed to SELCT image table: %w", err)
 	}
@@ -37,8 +39,9 @@ func (m *MySQL) ListImage() ([]europa.BaseImage, error) {
 // PutImage write image record
 // need to fix if call more than once
 func (m *MySQL) PutImage(image europa.BaseImage) error {
-	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (UUID_TO_BIN(?), ?, ?, ?)`
-	_, err := m.Conn.Exec(query, image.UUID, image.Name, image.CacheVolumeID, image.Description)
+	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (?, ?, ?, ?)`
+	stmt, err := m.Conn.Preparex(query)
+	_, err = stmt.Exec(image.UUID, image.Name, image.CacheVolumeID, image.Description)
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -48,8 +51,9 @@ func (m *MySQL) PutImage(image europa.BaseImage) error {
 
 // DeleteImage delete image record
 func (m *MySQL) DeleteImage(imageID uuid.UUID) error {
-	query := fmt.Sprintf(`DELETE FROM image WHERE uuid = UUID_TO_BIN('%s')`, imageID)
-	_, err := m.Conn.Exec(query)
+	query := `DELETE FROM image WHERE uuid = ?`
+	stmt, err := m.Conn.Preparex(query)
+	_, err = stmt.Exec(imageID)
 	if err != nil {
 		return fmt.Errorf("failed to execute delete query: %w", err)
 	}

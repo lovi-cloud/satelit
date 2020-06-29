@@ -45,7 +45,7 @@ func (m *MySQL) PutVolume(volume europa.Volume) error {
 	_, err := m.GetVolume(volume.ID)
 	if errors.Is(err, sql.ErrNoRows) {
 		// no rows, need to insert
-		query := `INSERT INTO volume(id, attached, hostname, capacity_gb, base_image_id, host_lun_id) VALUES (?, ?, ?, ?, UUID_TO_BIN(?), ?)`
+		query := `INSERT INTO volume(id, attached, hostname, capacity_gb, base_image_id, host_lun_id) VALUES (?, ?, ?, ?, ?, ?)`
 		_, err := m.Conn.Exec(query, volume.ID, volume.Attached, volume.HostName, volume.CapacityGB, volume.BaseImageID, volume.HostLUNID)
 		if err != nil {
 			return fmt.Errorf("failed to execute insert query: %w", err)
