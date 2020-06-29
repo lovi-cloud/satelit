@@ -15,6 +15,7 @@ import (
 	pb "github.com/whywaita/satelit/api/satelit_datastore"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/datastore"
 )
 
@@ -63,7 +64,7 @@ func (s *SatelitDatastore) GetDHCPLease(ctx context.Context, req *pb.GetDHCPLeas
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse MAC address: %+v", err)
 	}
 
-	lease, err := s.Datastore.GetDHCPLeaseByMACAddress(ctx, mac)
+	lease, err := s.Datastore.GetDHCPLeaseByMACAddress(ctx, types.HardwareAddr(mac))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get DHCP lease information: %+v", err)
 	}

@@ -56,6 +56,7 @@ func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gate
 	}
 
 	subnet := ipam.Subnet{
+		UUID:           uuid.NewV4(),
 		Name:           name,
 		Network:        types.IPNet(*prefixNet),
 		Start:          types.IP(startAddr),
@@ -98,13 +99,7 @@ func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gate
 		subnet.MetadataServer = &md
 	}
 
-	subnetID, err := s.datastore.CreateSubnet(ctx, subnet)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create subnet: %w", err)
-	}
-	subnet.UUID = *subnetID
-
-	return &subnet, nil
+	return s.datastore.CreateSubnet(ctx, subnet)
 }
 
 // GetSubnet retrieves address according to the id given
@@ -160,16 +155,11 @@ func (s server) CreateAddress(ctx context.Context, subnetID uuid.UUID) (*ipam.Ad
 	}
 
 	address := ipam.Address{
+		UUID:     uuid.NewV4(),
 		IP:       types.IP(*addr),
 		SubnetID: subnetID,
 	}
-	addressID, err := s.datastore.CreateAddress(ctx, address)
-	if err != nil {
-		return nil, err
-	}
-	address.UUID = *addressID
-
-	return &address, nil
+	return s.datastore.CreateAddress(ctx, address)
 }
 
 // GetAddress retrieves address according to the id given
@@ -201,7 +191,7 @@ func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lea
 }
 
 func (s server) GetLease(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
-	return s.datastore.GetLeaseByMACAddress(ctx, mac)
+	return s.datastore.GetLeaseByMACAddress(ctx, types.HardwareAddr(mac))
 }
 
 func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
@@ -209,7 +199,7 @@ func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 }
 
 func (s server) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
-	return s.datastore.DeleteLease(ctx, mac)
+	return s.datastore.DeleteLease(ctx, types.HardwareAddr(mac))
 }
 
 func getNextAddress(ip net.IP) net.IP {
