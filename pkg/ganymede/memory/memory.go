@@ -39,3 +39,13 @@ func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus ui
 
 	return vm, nil
 }
+
+// StartVirtualMachine start virtual machine
+func (m *Memory) StartVirtualMachine(ctx context.Context, uuid uuid.UUID) error {
+	_, err := m.ds.GetVirtualMachine(uuid.String())
+	if err != nil {
+		return fmt.Errorf("failed to find virtual machine: %w", err)
+	}
+
+	return nil
+}

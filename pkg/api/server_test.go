@@ -7,12 +7,11 @@ import (
 	"testing"
 
 	"github.com/go-test/deep"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 
 	pb "github.com/whywaita/satelit/api/satelit"
-
+	"github.com/whywaita/satelit/internal/logger"
 	datastoreMemory "github.com/whywaita/satelit/pkg/datastore/memory"
 	europaMemory "github.com/whywaita/satelit/pkg/europa/memory"
 	ganymedeMemory "github.com/whywaita/satelit/pkg/ganymede/memory"
@@ -60,6 +59,7 @@ const bufSize = 1024 * 1024
 var lis *bufconn.Listener
 
 func init() {
+	logger.New("debug")
 	server := NewMemorySatelit()
 
 	lis = bufconn.Listen(bufSize)

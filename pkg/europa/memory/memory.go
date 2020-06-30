@@ -3,7 +3,9 @@ package memory
 import (
 	"context"
 	"fmt"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
@@ -145,6 +147,19 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	return nil
 }
 
+// DetachVolumeSatelit detach volume from satelit server
+func (m *Memory) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID string, hostLUNID int) error {
+	v, err := m.GetVolume(ctx, hyperMetroPairID)
+	if err != nil {
+		return fmt.Errorf("failed to get volume: %w", err)
+	}
+	err = m.DetachVolume(ctx, v.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetImage retrieves image
 func (m *Memory) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 	m.Mu.RLock()
@@ -173,8 +188,37 @@ func (m *Memory) ListImage() ([]europa.BaseImage, error) {
 
 // UploadImage upload image to in-memory
 func (m *Memory) UploadImage(ctx context.Context, image []byte, name, description string, imageSizeGB int) (*europa.BaseImage, error) {
-	// TODO: implement
-	return nil, nil
+	u := uuid.NewV4()
+	v, err := m.CreateVolume(ctx, u, imageSizeGB)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create volume: %w", err)
+	}
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get hostname: %w", err)
+	}
+	hostLUNID, _, err := m.AttachVolumeSatelit(ctx, v.ID, hostname)
+	if err != nil {
+		return nil, fmt.Errorf("failed to attach volume: %w", err)
+	}
+	defer func() {
+		m.DetachVolumeSatelit(ctx, v.ID, hostLUNID)
+	}()
+
+	bi := &europa.BaseImage{
+		UUID:          u,
+		Name:          name,
+		Description:   description,
+		CacheVolumeID: v.ID,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
+	}
+	m.Mu.Lock()
+	m.Images[u] = *bi
+	m.Mu.Unlock()
+
+	return bi, nil
 }
 
 // DeleteImage delete from in-memory

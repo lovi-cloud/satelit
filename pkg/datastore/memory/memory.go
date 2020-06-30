@@ -31,6 +31,8 @@ type Memory struct {
 func New() *Memory {
 	return &Memory{
 		mutex:           &sync.Mutex{},
+		volumes:         map[string]europa.Volume{},
+		images:          map[uuid.UUID]europa.BaseImage{},
 		subnets:         map[uuid.UUID]ipam.Subnet{},
 		addresses:       map[uuid.UUID]ipam.Address{},
 		leases:          map[string]ipam.Lease{},
