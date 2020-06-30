@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	uuid "github.com/satori/go.uuid"
-	agentpb "github.com/whywaita/satelit/api"
 	pb "github.com/whywaita/satelit/api/satelit"
 	"github.com/whywaita/satelit/internal/client/teleskop"
+	agentpb "github.com/whywaita/teleskop/protoc/agent"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
