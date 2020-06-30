@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	agentpb "github.com/whywaita/satelit/api"
+	agentpb "github.com/whywaita/teleskop/protoc/agent"
 	"google.golang.org/grpc"
 )
 

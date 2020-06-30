@@ -6,11 +6,10 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
-
-	agentpb "github.com/whywaita/satelit/api"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/pkg/datastore"
+	"github.com/whywaita/satelit/pkg/ganymede"
+	agentpb "github.com/whywaita/teleskop/protoc/agent"
 )
 
 // A Libvirt is component of virtual machine.
