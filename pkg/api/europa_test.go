@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/go-test/deep"
+
 	pb "github.com/whywaita/satelit/api/satelit"
 )
 
@@ -18,6 +20,36 @@ AAAAAAAAAOAlmzoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAk4vfAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgMETEqcE5ggAAwA=
 `
+
+const (
+	testVolumeName       = "TEST_VOLUME"
+	testCapacityGigabyte = 8
+	testUUID             = "90dd6cd4-b3e4-47f3-9af5-47f78efc8fc7"
+)
+
+func TestSatelitServer_AddVolume(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	req := &pb.AddVolumeRequest{
+		Name:             testUUID,
+		CapacityGigabyte: testCapacityGigabyte,
+	}
+
+	resp, err := client.AddVolume(ctx, req)
+	if err != nil {
+		t.Errorf("AddVolume return error: %+v", err)
+	}
+
+	want := pb.Volume{
+		Id:               testUUID,
+		CapacityGigabyte: testCapacityGigabyte,
+	}
+
+	if diff := deep.Equal(resp.Volume, &want); diff != nil {
+		t.Error(diff)
+	}
+}
 
 func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 	hypervisorName, teardownTeleskop, err := setupTeleskop()
