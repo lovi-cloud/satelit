@@ -61,51 +61,9 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 	ctx, client, teardown := getSatelitClient()
 	defer teardown()
 
-	stream, err := client.UploadImage(ctx)
+	image, err := uploadDummyImage(ctx, client)
 	if err != nil {
-		t.Fatalf("failed to upload image: %+v\n", err)
-	}
-
-	err = stream.Send(&pb.UploadImageRequest{
-		Value: &pb.UploadImageRequest_Meta{
-			Meta: &pb.UploadImageRequestMeta{
-				Name:        "image001",
-				Description: "desc",
-			},
-		},
-	})
-	if err != nil {
-		t.Fatalf("failed to send meta data: %+v\n", err)
-	}
-
-	dummyImage, err := getDummyQcow2Image()
-	if err != nil {
-		t.Fatalf("failed to get dummy qcow2 image: %+v\n", err)
-	}
-
-	buff := make([]byte, 1024)
-	for {
-		n, err := dummyImage.Read(buff)
-		if err == io.EOF {
-			break
-		}
-		if err != nil && err != io.EOF {
-			t.Fatalf("failed to read dummy image: %+v\n", err)
-		}
-		err = stream.Send(&pb.UploadImageRequest{
-			Value: &pb.UploadImageRequest_Chunk{
-				Chunk: &pb.UploadImageRequestChunk{
-					Data: buff[:n],
-				},
-			},
-		})
-		if err != nil {
-			t.Fatalf("failed to send data: %+v\n", err)
-		}
-	}
-	resp, err := stream.CloseAndRecv()
-	if err != nil {
-		t.Fatalf("failed to close and recv stream: %+v\n", err)
+		t.Fatalf("failed to upload dummy image: %+v\n", err)
 	}
 
 	_, err = client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
@@ -113,7 +71,7 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 		Vcpus:          1,
 		MemoryKib:      1 * 1024 * 1024,
 		RootVolumeGb:   10,
-		SourceImageId:  resp.Image.Id,
+		SourceImageId:  image.Id,
 		HypervisorName: hypervisorName,
 	})
 	if err != nil {
