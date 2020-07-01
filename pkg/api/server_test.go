@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"log"
 	"net"
 	"testing"
@@ -101,4 +103,55 @@ func setupTeleskop() (hypervisorName string, teardown func(), err error) {
 		return
 	}
 	return hypervisorName, teardown, nil
+}
+
+func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.Image, error) {
+	stream, err := client.UploadImage(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call upload image: %w", err)
+	}
+
+	err = stream.Send(&pb.UploadImageRequest{
+		Value: &pb.UploadImageRequest_Meta{
+			Meta: &pb.UploadImageRequestMeta{
+				Name:        "image001",
+				Description: "desc",
+			},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to send meta data: %w", err)
+	}
+
+	dummyImage, err := getDummyQcow2Image()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get dummy qcow2 image: %w", err)
+	}
+
+	buff := make([]byte, 1024)
+	for {
+		n, err := dummyImage.Read(buff)
+		if err == io.EOF {
+			break
+		}
+		if err != nil && err != io.EOF {
+			return nil, fmt.Errorf("failed to read dummy image: %w", err)
+		}
+		err = stream.Send(&pb.UploadImageRequest{
+			Value: &pb.UploadImageRequest_Chunk{
+				Chunk: &pb.UploadImageRequestChunk{
+					Data: buff[:n],
+				},
+			},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to send data: %w", err)
+		}
+	}
+	resp, err := stream.CloseAndRecv()
+	if err != nil {
+		return nil, fmt.Errorf("failed to close and recv stream: %w", err)
+	}
+
+	return resp.Image, nil
 }
