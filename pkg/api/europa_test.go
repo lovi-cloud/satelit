@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	pb "github.com/whywaita/satelit/api/satelit"
-	"github.com/whywaita/satelit/internal/client/teleskop"
-	"github.com/whywaita/satelit/internal/testutils"
 )
 
 const gzipCompressedQcow2String = `
@@ -22,15 +20,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgMETEqcE5ggAAwA=
 `
 
 func TestSatelitServer_AddVirtualMachine(t *testing.T) {
-	ep, teardownTeleskop, err := testutils.NewDummyTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop()
 	if err != nil {
-		t.Fatalf("failed to start dummy teleskop: %+v\n", err)
+		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
 	defer teardownTeleskop()
-
-	if err := teleskop.New(map[string]string{"dummy": ep}); err != nil {
-		t.Fatalf("failed to create teleskop client: %+v\n", err)
-	}
 
 	ctx, client, teardown := getSatelitClient()
 	defer teardown()
@@ -88,7 +82,7 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 		MemoryKib:      1 * 1024 * 1024,
 		RootVolumeGb:   10,
 		SourceImageId:  resp.Image.Id,
-		HypervisorName: "dummy",
+		HypervisorName: hypervisorName,
 	})
 	if err != nil {
 		t.Fatalf("failed to add virtual machine: %+v\n", err)
