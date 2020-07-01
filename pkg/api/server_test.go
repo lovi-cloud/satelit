@@ -11,7 +11,9 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 
 	pb "github.com/whywaita/satelit/api/satelit"
+	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/internal/testutils"
 	datastoreMemory "github.com/whywaita/satelit/pkg/datastore/memory"
 	europaMemory "github.com/whywaita/satelit/pkg/europa/memory"
 	ganymedeMemory "github.com/whywaita/satelit/pkg/ganymede/memory"
@@ -85,6 +87,21 @@ func getSatelitClient() (context.Context, pb.SatelitClient, func() error) {
 	client := pb.NewSatelitClient(conn)
 
 	return ctx, client, conn.Close
+}
+
+func setupTeleskop() (hypervisorName string, teardown func(), err error) {
+	hypervisorName = "dummy"
+
+	var ep string
+	ep, teardown, err = testutils.NewDummyTeleskop()
+	if err != nil {
+		return
+	}
+	err = teleskop.New(map[string]string{hypervisorName: ep})
+	if err != nil {
+		return
+	}
+	return hypervisorName, teardown, nil
 }
 
 const (
