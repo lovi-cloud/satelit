@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"io"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -27,6 +28,88 @@ const (
 	testUUID             = "90dd6cd4-b3e4-47f3-9af5-47f78efc8fc7"
 )
 
+func TestSatelitServer_ShowVolume(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
+		Name:             testUUID,
+		CapacityGigabyte: 1,
+	})
+	if err != nil {
+		t.Fatalf("failed to create test volume: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.ShowVolumeRequest
+		want  *pb.ShowVolumeResponse
+		err   bool
+	}{
+		{
+			input: &pb.ShowVolumeRequest{
+				Id: resp.Volume.Id,
+			},
+			want: &pb.ShowVolumeResponse{
+				Volume: resp.Volume,
+			},
+			err: false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.ShowVolume(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if reflect.DeepEqual(test.want, got) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
+func TestSatelitServer_ListVolume(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
+		Name:             testUUID,
+		CapacityGigabyte: 1,
+	})
+	if err != nil {
+		t.Fatalf("failed to create test volume: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.ListVolumeRequest
+		want  *pb.ListVolumeResponse
+		err   bool
+	}{
+		{
+			input: &pb.ListVolumeRequest{},
+			want: &pb.ListVolumeResponse{
+				Volumes: []*pb.Volume{
+					resp.Volume,
+				},
+			},
+			err: false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.ListVolume(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if reflect.DeepEqual(test.want, got) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
 func TestSatelitServer_AddVolume(t *testing.T) {
 	ctx, client, teardown := getSatelitClient()
 	defer teardown()
@@ -48,6 +131,187 @@ func TestSatelitServer_AddVolume(t *testing.T) {
 
 	if diff := deep.Equal(resp.Volume, &want); diff != nil {
 		t.Error(diff)
+	}
+}
+
+func TestSatelitServer_AddVolumeImage(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	image, err := uploadDummyImage(ctx, client)
+	if err != nil {
+		t.Fatalf("failed to upload dummy image: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.AddVolumeImageRequest
+		want  *pb.AddVolumeImageResponse
+		err   bool
+	}{
+		{
+			input: &pb.AddVolumeImageRequest{
+				Name:             testUUID,
+				CapacityGigabyte: 10,
+				SourceImageId:    image.Id,
+			},
+			want: &pb.AddVolumeImageResponse{
+				Volume: &pb.Volume{
+					Id:               testUUID,
+					CapacityGigabyte: 10,
+				},
+			},
+			err: false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.AddVolumeImage(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if reflect.DeepEqual(test.want, got) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
+func TestSatelitServer_AttachVolume(t *testing.T) {
+	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	if err != nil {
+		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
+	}
+	defer teardownTeleskop()
+
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
+		Name:             testUUID,
+		CapacityGigabyte: 10,
+	})
+	if err != nil {
+		t.Fatalf("failed to add test volume: %+v", err)
+	}
+
+	tests := []struct {
+		input *pb.AttachVolumeRequest
+		want  *pb.AttachVolumeResponse
+		err   bool
+	}{
+		{
+			input: &pb.AttachVolumeRequest{
+				Id:       resp.Volume.Id,
+				Hostname: hypervisorName,
+			},
+			want: &pb.AttachVolumeResponse{},
+			err:  false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.AttachVolume(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if reflect.DeepEqual(test.want, got) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
+func TestSatelitServer_DetachVolume(t *testing.T) {
+	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	if err != nil {
+		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
+	}
+	defer teardownTeleskop()
+
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	volume, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
+		Name:             testUUID,
+		CapacityGigabyte: 10,
+	})
+	if err != nil {
+		t.Fatalf("failed to add test volume: %+v\n", err)
+	}
+
+	_, err = client.AttachVolume(ctx, &pb.AttachVolumeRequest{
+		Id:       volume.Volume.Id,
+		Hostname: hypervisorName,
+	})
+	if err != nil {
+		t.Fatalf("failed to attach test volume: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.DetachVolumeRequest
+		want  *pb.DetachVolumeResponse
+		err   bool
+	}{
+		{
+			input: &pb.DetachVolumeRequest{
+				Id: volume.Volume.Id,
+			},
+			want: &pb.DetachVolumeResponse{},
+			err:  false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.DetachVolume(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if reflect.DeepEqual(test.want, got) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
+func TestSatelitServer_DeleteVolume(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	volume, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
+		Name:             testUUID,
+		CapacityGigabyte: 10,
+	})
+	if err != nil {
+		t.Fatalf("failed to add test volume: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.DeleteVolumeRequest
+		want  *pb.DeleteVolumeResponse
+		err   bool
+	}{
+		{
+			input: &pb.DeleteVolumeRequest{
+				Id: volume.Volume.Id,
+			},
+			want: &pb.DeleteVolumeResponse{},
+			err:  false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.DeleteVolume(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if reflect.DeepEqual(test.want, got) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
 	}
 }
 
