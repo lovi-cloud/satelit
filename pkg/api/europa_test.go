@@ -314,6 +314,134 @@ func TestSatelitServer_DeleteVolume(t *testing.T) {
 	}
 }
 
+func TestSatelitServer_ListImage(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	imageResp, err := uploadDummyImage(ctx, client)
+	if err != nil {
+		t.Fatalf("failed to upload dummy image: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.ListImageRequest
+		want  *pb.ListImageResponse
+		err   bool
+	}{
+		{
+			input: &pb.ListImageRequest{},
+			want: &pb.ListImageResponse{
+				Images: []*pb.Image{
+					imageResp.Image,
+				},
+			},
+			err: false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.ListImage(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
+func TestSatelitServer_UploadImage(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	image, err := getDummyQcow2Image()
+	if err != nil {
+		t.Fatalf("failed to get dummy image: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.UploadImageRequest
+		image io.Reader
+		want  *pb.UploadImageResponse
+		err   bool
+	}{
+		{
+			input: &pb.UploadImageRequest{
+				Value: &pb.UploadImageRequest_Meta{
+					Meta: &pb.UploadImageRequestMeta{
+						Name:        "image001",
+						Description: "desc",
+					},
+				},
+			},
+			image: image,
+			want: &pb.UploadImageResponse{
+				Image: &pb.Image{
+					Id:          "",
+					Name:        "image001",
+					VolumeId:    "",
+					Description: "desc",
+				},
+			},
+			err: false,
+		},
+	}
+	for _, test := range tests {
+		got, err := uploadImage(ctx, client, test.image)
+		if got != nil {
+			test.want.Image.Id = got.Image.Id
+			test.want.Image.VolumeId = got.Image.VolumeId
+		}
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
+func TestSatelitServer_DeleteImage(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	imageResp, err := uploadDummyImage(ctx, client)
+	if err != nil {
+		t.Fatalf("failed to upload dummy image: %+v\n", err)
+	}
+
+	tests := []struct {
+		input *pb.DeleteImageRequest
+		want  *pb.DeleteImageResponse
+		err   bool
+	}{
+		{
+			input: &pb.DeleteImageRequest{
+				Id: imageResp.Image.Id,
+			},
+			want: &pb.DeleteImageResponse{},
+			err:  false,
+		},
+	}
+	for _, test := range tests {
+		got, err := client.DeleteImage(ctx, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
 func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 	hypervisorName, teardownTeleskop, err := setupTeleskop()
 	if err != nil {
