@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"io"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -63,8 +62,8 @@ func TestSatelitServer_ShowVolume(t *testing.T) {
 		if test.err && err == nil {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
-		if reflect.DeepEqual(test.want, got) {
-			t.Fatalf("want %q, but %q:", test.want, got)
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -104,8 +103,8 @@ func TestSatelitServer_ListVolume(t *testing.T) {
 		if test.err && err == nil {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
-		if reflect.DeepEqual(test.want, got) {
-			t.Fatalf("want %q, but %q:", test.want, got)
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -171,8 +170,8 @@ func TestSatelitServer_AddVolumeImage(t *testing.T) {
 		if test.err && err == nil {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
-		if reflect.DeepEqual(test.want, got) {
-			t.Fatalf("want %q, but %q:", test.want, got)
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -217,8 +216,8 @@ func TestSatelitServer_AttachVolume(t *testing.T) {
 		if test.err && err == nil {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
-		if reflect.DeepEqual(test.want, got) {
-			t.Fatalf("want %q, but %q:", test.want, got)
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -270,8 +269,8 @@ func TestSatelitServer_DetachVolume(t *testing.T) {
 		if test.err && err == nil {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
-		if reflect.DeepEqual(test.want, got) {
-			t.Fatalf("want %q, but %q:", test.want, got)
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -309,8 +308,8 @@ func TestSatelitServer_DeleteVolume(t *testing.T) {
 		if test.err && err == nil {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
-		if reflect.DeepEqual(test.want, got) {
-			t.Fatalf("want %q, but %q:", test.want, got)
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
