@@ -60,10 +60,17 @@ func NewMemorySatelit() *SatelitServer {
 const bufSize = 1024 * 1024
 
 var lis *bufconn.Listener
+var resetSatelit func()
 
 func init() {
 	logger.New("debug")
 	server := NewMemorySatelit()
+	resetSatelit = func() {
+		server.Europa = europaMemory.New()
+		server.Datastore = datastoreMemory.New()
+		server.IPAM = ipam.New(server.Datastore)
+		server.Ganymede = ganymedeMemory.New(server.Datastore)
+	}
 
 	lis = bufconn.Listen(bufSize)
 	s := grpc.NewServer()
@@ -87,7 +94,10 @@ func getSatelitClient() (context.Context, pb.SatelitClient, func() error) {
 
 	client := pb.NewSatelitClient(conn)
 
-	return ctx, client, conn.Close
+	return ctx, client, func() error {
+		resetSatelit()
+		return conn.Close()
+	}
 }
 
 func setupTeleskop() (hypervisorName string, teardown func(), err error) {
@@ -121,11 +131,6 @@ func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.Image, 
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to send meta data: %w", err)
-	}
-
-	dummyImage, err := getDummyQcow2Image()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get dummy qcow2 image: %w", err)
 	}
 
 	buff := make([]byte, 1024)
