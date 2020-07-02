@@ -442,34 +442,6 @@ func TestSatelitServer_DeleteImage(t *testing.T) {
 	}
 }
 
-func TestSatelitServer_AddVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
-	if err != nil {
-		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
-	}
-	defer teardownTeleskop()
-
-	ctx, client, teardown := getSatelitClient()
-	defer teardown()
-
-	imageResp, err := uploadDummyImage(ctx, client)
-	if err != nil {
-		t.Fatalf("failed to upload dummy image: %+v\n", err)
-	}
-
-	_, err = client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
-		Name:           "test001",
-		Vcpus:          1,
-		MemoryKib:      1 * 1024 * 1024,
-		RootVolumeGb:   10,
-		SourceImageId:  imageResp.Image.Id,
-		HypervisorName: hypervisorName,
-	})
-	if err != nil {
-		t.Fatalf("failed to add virtual machine: %+v\n", err)
-	}
-}
-
 func getDummyQcow2Image() (io.Reader, error) {
 	return gzip.NewReader(
 		base64.NewDecoder(
