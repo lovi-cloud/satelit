@@ -115,7 +115,7 @@ func setupTeleskop() (hypervisorName string, teardown func(), err error) {
 	return hypervisorName, teardown, nil
 }
 
-func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.Image, error) {
+func uploadImage(ctx context.Context, client pb.SatelitClient, image io.Reader) (*pb.UploadImageResponse, error) {
 	stream, err := client.UploadImage(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call upload image: %w", err)
@@ -135,12 +135,12 @@ func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.Image, 
 
 	buff := make([]byte, 1024)
 	for {
-		n, err := dummyImage.Read(buff)
+		n, err := image.Read(buff)
 		if err == io.EOF {
 			break
 		}
 		if err != nil && err != io.EOF {
-			return nil, fmt.Errorf("failed to read dummy image: %w", err)
+			return nil, fmt.Errorf("failed to read image: %w", err)
 		}
 		err = stream.Send(&pb.UploadImageRequest{
 			Value: &pb.UploadImageRequest_Chunk{
@@ -158,5 +158,13 @@ func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.Image, 
 		return nil, fmt.Errorf("failed to close and recv stream: %w", err)
 	}
 
-	return resp.Image, nil
+	return resp, nil
+}
+
+func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.UploadImageResponse, error) {
+	dummyImage, err := getDummyQcow2Image()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get dummy qcow2 image: %w", err)
+	}
+	return uploadImage(ctx, client, dummyImage)
 }

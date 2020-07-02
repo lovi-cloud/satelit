@@ -138,7 +138,7 @@ func TestSatelitServer_AddVolumeImage(t *testing.T) {
 	ctx, client, teardown := getSatelitClient()
 	defer teardown()
 
-	image, err := uploadDummyImage(ctx, client)
+	imageResp, err := uploadDummyImage(ctx, client)
 	if err != nil {
 		t.Fatalf("failed to upload dummy image: %+v\n", err)
 	}
@@ -152,7 +152,7 @@ func TestSatelitServer_AddVolumeImage(t *testing.T) {
 			input: &pb.AddVolumeImageRequest{
 				Name:             testUUID,
 				CapacityGigabyte: 10,
-				SourceImageId:    image.Id,
+				SourceImageId:    imageResp.Image.Id,
 			},
 			want: &pb.AddVolumeImageResponse{
 				Volume: &pb.Volume{
@@ -325,7 +325,7 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 	ctx, client, teardown := getSatelitClient()
 	defer teardown()
 
-	image, err := uploadDummyImage(ctx, client)
+	imageResp, err := uploadDummyImage(ctx, client)
 	if err != nil {
 		t.Fatalf("failed to upload dummy image: %+v\n", err)
 	}
@@ -335,7 +335,7 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 		Vcpus:          1,
 		MemoryKib:      1 * 1024 * 1024,
 		RootVolumeGb:   10,
-		SourceImageId:  image.Id,
+		SourceImageId:  imageResp.Image.Id,
 		HypervisorName: hypervisorName,
 	})
 	if err != nil {
