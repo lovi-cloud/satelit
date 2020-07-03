@@ -71,3 +71,20 @@ func (s *SatelitServer) StartVirtualMachine(ctx context.Context, req *pb.StartVi
 		Name: resp.Name,
 	}, nil
 }
+
+// ShowVirtualMachine retrieves virtual machine
+func (s *SatelitServer) ShowVirtualMachine(ctx context.Context, req *pb.ShowVirtualMachineRequest) (*pb.ShowVirtualMachineResponse, error) {
+	vmID, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request virtual machine id (need uuid): %+v", err)
+	}
+
+	vm, err := s.Datastore.GetVirtualMachine(vmID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
+	}
+
+	return &pb.ShowVirtualMachineResponse{
+		VirtualMachine: vm.ToPb(),
+	}, nil
+}
