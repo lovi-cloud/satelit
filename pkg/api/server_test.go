@@ -2,17 +2,19 @@ package api
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"log"
 	"net"
 	"testing"
-
-	"github.com/go-test/deep"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 
 	pb "github.com/whywaita/satelit/api/satelit"
-
+	"github.com/whywaita/satelit/internal/client/teleskop"
+	"github.com/whywaita/satelit/internal/logger"
+	"github.com/whywaita/satelit/internal/testutils"
 	datastoreMemory "github.com/whywaita/satelit/pkg/datastore/memory"
 	europaMemory "github.com/whywaita/satelit/pkg/europa/memory"
 	ganymedeMemory "github.com/whywaita/satelit/pkg/ganymede/memory"
@@ -58,9 +60,17 @@ func NewMemorySatelit() *SatelitServer {
 const bufSize = 1024 * 1024
 
 var lis *bufconn.Listener
+var resetSatelit func()
 
 func init() {
+	logger.New("debug")
 	server := NewMemorySatelit()
+	resetSatelit = func() {
+		server.Europa = europaMemory.New()
+		server.Datastore = datastoreMemory.New()
+		server.IPAM = ipam.New(server.Datastore)
+		server.Ganymede = ganymedeMemory.New(server.Datastore)
+	}
 
 	lis = bufconn.Listen(bufSize)
 	s := grpc.NewServer()
@@ -84,35 +94,77 @@ func getSatelitClient() (context.Context, pb.SatelitClient, func() error) {
 
 	client := pb.NewSatelitClient(conn)
 
-	return ctx, client, conn.Close
+	return ctx, client, func() error {
+		resetSatelit()
+		return conn.Close()
+	}
 }
 
-const (
-	testVolumeName       = "TEST_VOLUME"
-	testCapacityGigabyte = 8
-	testUUID             = "90dd6cd4-b3e4-47f3-9af5-47f78efc8fc7"
-)
+func setupTeleskop() (hypervisorName string, teardown func(), err error) {
+	hypervisorName = "dummy"
 
-func TestSatelitServer_AddVolume(t *testing.T) {
-	ctx, client, teardown := getSatelitClient()
-	defer teardown()
-
-	req := &pb.AddVolumeRequest{
-		Name:             testUUID,
-		CapacityGigabyte: testCapacityGigabyte,
-	}
-
-	resp, err := client.AddVolume(ctx, req)
+	var ep string
+	ep, teardown, err = testutils.NewDummyTeleskop()
 	if err != nil {
-		t.Errorf("AddVolume return error: %+v", err)
+		return
+	}
+	err = teleskop.New(map[string]string{hypervisorName: ep})
+	if err != nil {
+		return
+	}
+	return hypervisorName, teardown, nil
+}
+
+func uploadImage(ctx context.Context, client pb.SatelitClient, image io.Reader) (*pb.UploadImageResponse, error) {
+	stream, err := client.UploadImage(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call upload image: %w", err)
 	}
 
-	want := pb.Volume{
-		Id:               testUUID,
-		CapacityGigabyte: testCapacityGigabyte,
+	err = stream.Send(&pb.UploadImageRequest{
+		Value: &pb.UploadImageRequest_Meta{
+			Meta: &pb.UploadImageRequestMeta{
+				Name:        "image001",
+				Description: "desc",
+			},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to send meta data: %w", err)
 	}
 
-	if diff := deep.Equal(resp.Volume, &want); diff != nil {
-		t.Error(diff)
+	buff := make([]byte, 1024)
+	for {
+		n, err := image.Read(buff)
+		if err == io.EOF {
+			break
+		}
+		if err != nil && err != io.EOF {
+			return nil, fmt.Errorf("failed to read image: %w", err)
+		}
+		err = stream.Send(&pb.UploadImageRequest{
+			Value: &pb.UploadImageRequest_Chunk{
+				Chunk: &pb.UploadImageRequestChunk{
+					Data: buff[:n],
+				},
+			},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to send data: %w", err)
+		}
 	}
+	resp, err := stream.CloseAndRecv()
+	if err != nil {
+		return nil, fmt.Errorf("failed to close and recv stream: %w", err)
+	}
+
+	return resp, nil
+}
+
+func uploadDummyImage(ctx context.Context, client pb.SatelitClient) (*pb.UploadImageResponse, error) {
+	dummyImage, err := getDummyQcow2Image()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get dummy qcow2 image: %w", err)
+	}
+	return uploadImage(ctx, client, dummyImage)
 }

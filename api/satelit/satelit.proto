@@ -5,7 +5,7 @@ option  go_package = ".;satelit";
 
 service Satelit {
   rpc ShowVolume(ShowVolumeRequest) returns (ShowVolumeResponse) {}
-  rpc ListVolumes(ListVolumeRequest) returns (ListVolumeResponse) {}
+  rpc ListVolume(ListVolumeRequest) returns (ListVolumeResponse) {}
   rpc AddVolume(AddVolumeRequest) returns (AddVolumeResponse) {}
   rpc AddVolumeImage(AddVolumeImageRequest) returns (AddVolumeImageResponse) {}
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {}

@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	agentpb "github.com/whywaita/satelit/api"
+	agentpb "github.com/whywaita/teleskop/protoc/agent"
 
 	uuid "github.com/satori/go.uuid"
 	"github.com/whywaita/go-dorado-sdk/dorado"

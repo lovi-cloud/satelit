@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	// mysql driver
 	_ "github.com/go-sql-driver/mysql"
-	pb "github.com/whywaita/satelit/api"
+	pb "github.com/whywaita/teleskop/protoc/agent"
 
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
