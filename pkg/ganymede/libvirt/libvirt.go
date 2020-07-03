@@ -65,7 +65,7 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 
 // StartVirtualMachine send start operation to teleskop
 func (l *Libvirt) StartVirtualMachine(ctx context.Context, uuid uuid.UUID) error {
-	vm, err := l.ds.GetVirtualMachine(uuid.String())
+	vm, err := l.ds.GetVirtualMachine(uuid)
 	if err != nil {
 		return fmt.Errorf("failed to find virtual machine: %w", err)
 	}
