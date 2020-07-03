@@ -6,11 +6,10 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
-
-	agentpb "github.com/whywaita/satelit/api"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/pkg/datastore"
+	"github.com/whywaita/satelit/pkg/ganymede"
+	agentpb "github.com/whywaita/teleskop/protoc/agent"
 )
 
 // A Libvirt is component of virtual machine.
@@ -62,4 +61,26 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 	}
 
 	return vm, nil
+}
+
+// StartVirtualMachine send start operation to teleskop
+func (l *Libvirt) StartVirtualMachine(ctx context.Context, uuid uuid.UUID) error {
+	vm, err := l.ds.GetVirtualMachine(uuid.String())
+	if err != nil {
+		return fmt.Errorf("failed to find virtual machine: %w", err)
+	}
+
+	teleskopClient, err := teleskop.GetClient(vm.HypervisorName)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+
+	_, err = teleskopClient.StartVirtualMachine(ctx, &agentpb.StartVirtualMachineRequest{
+		Uuid: uuid.String(),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to start virtual machine: %w", err)
+	}
+
+	return nil
 }
