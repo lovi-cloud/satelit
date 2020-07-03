@@ -41,6 +41,6 @@ type Datastore interface {
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
 	DeleteLease(ctx context.Context, mac types.HardwareAddr) error
 
-	GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error)
+	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
 }
