@@ -318,17 +318,13 @@ func (m *Memory) DeleteLease(ctx context.Context, mac types.HardwareAddr) error 
 }
 
 // GetVirtualMachine return virtual machine record
-func (m *Memory) GetVirtualMachine(vmUUID string) (*ganymede.VirtualMachine, error) {
+func (m *Memory) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	id, err := uuid.FromString(vmUUID)
-	if err != nil {
-		return nil, fmt.Errorf("invalid input: %w", err)
-	}
-	val, ok := m.virtualMachines[id]
+	val, ok := m.virtualMachines[vmID]
 	if !ok {
-		return nil, fmt.Errorf("failed to find virtual machine uuid=%s", id)
+		return nil, fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
 	}
 
 	return &val, nil

@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	pb "github.com/whywaita/satelit/api/satelit"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -22,4 +24,19 @@ type VirtualMachine struct {
 	HypervisorName string    `db:"hypervisor_name"`
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
+}
+
+// ToPb convert to type for proto
+func (vm *VirtualMachine) ToPb() *pb.VirtualMachine {
+	if vm == nil {
+		return &pb.VirtualMachine{}
+	}
+
+	return &pb.VirtualMachine{
+		Uuid:           vm.UUID.String(),
+		Name:           vm.Name,
+		Vcpus:          vm.Vcpus,
+		MemoryKib:      vm.MemoryKiB,
+		HypervisorName: vm.HypervisorName,
+	}
 }

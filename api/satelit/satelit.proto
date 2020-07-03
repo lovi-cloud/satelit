@@ -32,6 +32,8 @@ service Satelit {
       returns (AddVirtualMachineResponse) {}
   rpc StartVirtualMachine(StartVirtualMachineRequest)
       returns (StartVirtualMachineResponse) {}
+  rpc ShowVirtualMachine(ShowVirtualMachineRequest)
+      returns (ShowVirtualMachineResponse) {}
 }
 
 // type
@@ -69,6 +71,14 @@ message Address {
 message Lease {
   string mac_address = 1;
   string address_id  = 2;
+}
+
+message VirtualMachine {
+  string uuid            = 1;
+  string name            = 2;
+  uint32 vcpus           = 3;
+  uint64 memory_kib      = 4;
+  string hypervisor_name = 5;
 }
 
 // Request / Response
@@ -270,4 +280,12 @@ message StartVirtualMachineRequest {
 message StartVirtualMachineResponse {
   string uuid = 1;
   string name = 2;
+}
+
+message ShowVirtualMachineRequest {
+  string uuid = 1;
+}
+
+message ShowVirtualMachineResponse {
+  VirtualMachine virtual_machine = 1;
 }
