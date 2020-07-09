@@ -43,4 +43,5 @@ type Datastore interface {
 
 	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
+	DeleteVirtualMachine(vmID uuid.UUID) error
 }

@@ -32,6 +32,12 @@ func (m *MySQL) PutVirtualMachine(vm ganymede.VirtualMachine) error {
 }
 
 // DeleteVirtualMachine delete virtual machine record
-func (m *MySQL) DeleteVirtualMachine(vmID string) error {
+func (m *MySQL) DeleteVirtualMachine(vmID uuid.UUID) error {
+	query := fmt.Sprintf(`DELETE FROM virtual_machine WHERE uuid = "%s"`, vmID.String())
+	_, err := m.Conn.Exec(query)
+	if err != nil {
+		return fmt.Errorf("failed to execute delete query: %w", err)
+	}
+
 	return nil
 }
