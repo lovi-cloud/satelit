@@ -100,4 +100,11 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
 	}
+
+	err = s.Ganymede.DeleteVirtualMachine(ctx, vm.UUID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete virtual machine: %+v", err)
+	}
+
+	return &pb.DeleteVirtualMachineResponse{}, nil
 }
