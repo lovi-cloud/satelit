@@ -339,3 +339,18 @@ func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
 
 	return nil
 }
+
+// DeleteVirtualMachine delete virtual machine record
+func (m *Memory) DeleteVirtualMachine(vmID uuid.UUID) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.virtualMachines[vmID]
+	if !ok {
+		return fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
+	}
+
+	delete(m.virtualMachines, vmID)
+
+	return nil
+}

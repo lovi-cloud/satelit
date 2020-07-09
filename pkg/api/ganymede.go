@@ -88,3 +88,23 @@ func (s *SatelitServer) ShowVirtualMachine(ctx context.Context, req *pb.ShowVirt
 		VirtualMachine: vm.ToPb(),
 	}, nil
 }
+
+// DeleteVirtualMachine delete virtual machine
+func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.DeleteVirtualMachineRequest) (*pb.DeleteVirtualMachineResponse, error) {
+	vmID, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request virtual machine id (need uuid): %+v", err)
+	}
+
+	vm, err := s.Datastore.GetVirtualMachine(vmID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
+	}
+
+	err = s.Ganymede.DeleteVirtualMachine(ctx, vm.UUID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete virtual machine: %+v", err)
+	}
+
+	return &pb.DeleteVirtualMachineResponse{}, nil
+}
