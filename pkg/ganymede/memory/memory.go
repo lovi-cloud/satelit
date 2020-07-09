@@ -41,10 +41,25 @@ func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus ui
 }
 
 // StartVirtualMachine start virtual machine
-func (m *Memory) StartVirtualMachine(ctx context.Context, uuid uuid.UUID) error {
-	_, err := m.ds.GetVirtualMachine(uuid)
+func (m *Memory) StartVirtualMachine(ctx context.Context, vmID uuid.UUID) error {
+	_, err := m.ds.GetVirtualMachine(vmID)
 	if err != nil {
 		return fmt.Errorf("failed to find virtual machine: %w", err)
+	}
+
+	return nil
+}
+
+// DeleteVirtualMachine delete virtual machine
+func (m *Memory) DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) error {
+	_, err := m.ds.GetVirtualMachine(vmID)
+	if err != nil {
+		return fmt.Errorf("failed to find virtual machine: %w", err)
+	}
+
+	err = m.ds.DeleteVirtualMachine(vmID)
+	if err != nil {
+		return fmt.Errorf("failed to delete virtual machine from datastore: %w", err)
 	}
 
 	return nil

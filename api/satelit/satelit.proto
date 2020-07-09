@@ -34,6 +34,8 @@ service Satelit {
       returns (StartVirtualMachineResponse) {}
   rpc ShowVirtualMachine(ShowVirtualMachineRequest)
       returns (ShowVirtualMachineResponse) {}
+  rpc DeleteVirtualMachine(DeleteVirtualMachineRequest)
+      returns (DeleteVirtualMachineRequest) {}
 }
 
 // type
@@ -289,3 +291,9 @@ message ShowVirtualMachineRequest {
 message ShowVirtualMachineResponse {
   VirtualMachine virtual_machine = 1;
 }
+
+message DeleteVirtualMachineRequest {
+  string uuid = 1;
+}
+
+message DeleteVirtualMachineResponse {}
