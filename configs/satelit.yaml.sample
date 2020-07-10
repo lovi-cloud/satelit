@@ -14,11 +14,11 @@ dorado:
   username: "dorado_username"
   password: "dorado_password"
   local_ip:
-    - "dorado_local_rest_ip_1"
-    - "dorado_local_rest_ip_2"
+    - "http://dorado_local_rest_ip_1"
+    - "http://dorado_local_rest_ip_2"
   remote_ip:
-    - "dorado_remote_rest_ip_1"
-    - "dorado_remote_rest_ip_2"
+    - "http://dorado_remote_rest_ip_1"
+    - "http://dorado_remote_rest_ip_2"
   portgroup_name: "portgroup_name"
   storagepool_name: "storagepool_name"
   hypermetrodomain_name: "hypermetrodomain_name"
