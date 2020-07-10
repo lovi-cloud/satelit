@@ -218,8 +218,8 @@ github.com/vishvananda/netlink v1.1.0/go.mod h1:cTgwzPIzzgDAYoQrMm0EdrjRUBkTqKYp
 github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df h1:OviZH7qLw/7ZovXvuNyL3XQl8UFofeikI1NW1Gypu7k=
 github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df/go.mod h1:JP3t17pCcGlemwknint6hfoeCVQrEMVwxRLRjXpq+BU=
 github.com/whywaita/go-dorado-sdk v0.5.3/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
-github.com/whywaita/go-dorado-sdk v0.8.0 h1:oXPda3LscZVhBR+zEQYURIFp0oQdgwzi/WWzaLg0ZMQ=
-github.com/whywaita/go-dorado-sdk v0.8.0/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
+github.com/whywaita/go-dorado-sdk v0.8.1 h1:6UIZXOUikGIjYDgFZK2d2uaVtNcacg/l7qrS3pmkv6I=
+github.com/whywaita/go-dorado-sdk v0.8.1/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
 github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
 github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
 github.com/whywaita/satelit v0.0.0-20200622124415-3e4c5c4c0572/go.mod h1:ekOZG6jElxIEd38UMaxyowOhiYFBulaZwMVug5sfINU=
