@@ -64,6 +64,8 @@ CREATE TABLE IF NOT EXISTS virtual_machine (
     vcpus INT NOT NULL,
     memory_kib INT NOT NULL,
     hypervisor_name VARCHAR(255) NOT NULL,
+    root_volume_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
+    updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
+    FOREIGN KEY fk_root_volume_id(root_volume_id) REFERENCES volume(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 )

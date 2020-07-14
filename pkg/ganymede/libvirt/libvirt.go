@@ -25,7 +25,7 @@ func New(ds datastore.Datastore) *Libvirt {
 }
 
 // CreateVirtualMachine send create operation to teleskop
-func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName string) (*ganymede.VirtualMachine, error) {
+func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string) (*ganymede.VirtualMachine, error) {
 	agentReq := &agentpb.AddVirtualMachineRequest{
 		Name:       name,
 		Vcpus:      vcpus,
@@ -53,6 +53,7 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 		Vcpus:          vcpus,
 		MemoryKiB:      memoryKiB,
 		HypervisorName: hypervisorName,
+		RootVolumeID:   rootVolumeID,
 	}
 
 	err = l.ds.PutVirtualMachine(*vm)
