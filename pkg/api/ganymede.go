@@ -31,7 +31,7 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 		return nil, status.Errorf(codes.Internal, "failed to attach volume: %+v", err)
 	}
 
-	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName)
+	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName, volume.ID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create virtual machine: %+v", err)
 	}
@@ -104,6 +104,11 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 	err = s.Ganymede.DeleteVirtualMachine(ctx, vm.UUID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete virtual machine: %+v", err)
+	}
+
+	err = s.Europa.DeleteVolume(ctx, vm.RootVolumeID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete root volume: %+v", err)
 	}
 
 	return &pb.DeleteVirtualMachineResponse{}, nil

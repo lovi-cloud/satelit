@@ -11,7 +11,7 @@ import (
 
 // A Ganymede is type definition of Virtual Machine.
 type Ganymede interface {
-	CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName string) (*VirtualMachine, error)
+	CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string) (*VirtualMachine, error)
 	StartVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 	DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 }
@@ -23,6 +23,7 @@ type VirtualMachine struct {
 	Vcpus          uint32    `db:"vcpus"`
 	MemoryKiB      uint64    `db:"memory_kib"`
 	HypervisorName string    `db:"hypervisor_name"`
+	RootVolumeID   string    `db:"root_volume_id"`
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 }
