@@ -193,7 +193,11 @@ func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequ
 
 // GetLease retrieves address according to the parameters given.
 func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (*pb.GetLeaseResponse, error) {
-	lease, err := s.IPAM.GetLease(ctx, int(req.Id))
+	leaseID, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request lease id: %+v", err)
+	}
+	lease, err := s.IPAM.GetLease(ctx, leaseID)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "failed to retrieve lease: %+v", err)
 	}

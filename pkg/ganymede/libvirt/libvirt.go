@@ -124,7 +124,7 @@ func (l *Libvirt) CreateBridge(ctx context.Context, vlanID uint32) (*ganymede.Br
 		return nil, fmt.Errorf("failed to retrieve teleskop clients: %w", err)
 	}
 
-	eg, ctx := errgroup.WithContext(ctx)
+	eg, ctx := errgroup.WithContext(context.Background())
 	for _, client := range clients {
 		client := client
 		eg.Go(func() error {
@@ -226,7 +226,7 @@ func (l *Libvirt) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
 }
 
 // AttachInterface is
-func (l *Libvirt) AttachInterface(ctx context.Context, vmID, bridgeID uuid.UUID, leaseID int, average int, name string) (*ganymede.InterfaceAttachment, error) {
+func (l *Libvirt) AttachInterface(ctx context.Context, vmID, bridgeID, leaseID uuid.UUID, average int, name string) (*ganymede.InterfaceAttachment, error) {
 	vm, err := l.ds.GetVirtualMachine(vmID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get target vm: %w", err)
@@ -262,7 +262,7 @@ func (l *Libvirt) AttachInterface(ctx context.Context, vmID, bridgeID uuid.UUID,
 		BridgeID:         bridge.UUID,
 		Average:          average,
 		Name:             name,
-		LeaseID:          lease.ID,
+		LeaseID:          lease.UUID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to write attachment: %w", err)

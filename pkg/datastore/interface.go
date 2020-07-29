@@ -36,7 +36,7 @@ type Datastore interface {
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
 
 	CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error)
-	GetLeaseByID(ctx context.Context, leaseID int) (*ipam.Lease, error)
+	GetLeaseByID(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error)
 	GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
 	DeleteLease(ctx context.Context, leaseID int) error

@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS address (
 );
 
 CREATE TABLE IF NOT EXISTS lease (
-    uuid VARCHAR(255) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    uuid VARCHAR(255) NOT NULL PRIMARY KEY,
     mac_address VARCHAR(17) NOT NULL,
     address_id VARCHAR(36) NOT NULL UNIQUE,
     created_at timestamp not null default current_timestamp,
@@ -80,14 +80,14 @@ CREATE TABLE IF NOT EXISTS bridge (
 );
 
 CREATE TABLE IF NOT EXISTS interface_attachment (
-    uuid VARCHAR(255) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    uuid VARCHAR(36) NOT NULL PRIMARY KEY,
     virtual_machine_id VARCHAR(255) NOT NULL,
     bridge_id VARCHAR(36) NOT NULL,
     average INT NOT NULL,
     name VARCHAR(255) NOT NULL,
-    lease_id INT NOT NULL UNIQUE,
+    lease_id VARCHAR(36) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
-    FOREIGN KEY fk_subnet_id(lease_id) REFERENCES lease(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY fk_subnet_id(lease_id) REFERENCES lease(uuid) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY fk_subnet_id(virtual_machine_id) REFERENCES virtual_machine(uuid) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
