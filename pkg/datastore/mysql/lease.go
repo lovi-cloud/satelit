@@ -19,7 +19,7 @@ func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease,
 		return nil, fmt.Errorf("failed to create statement: %w", err)
 	}
 
-	_, err = stmt.ExecContext(ctx, lease.MacAddress, lease.AddressID)
+	_, err = stmt.ExecContext(ctx, lease.UUID, lease.MacAddress, lease.AddressID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -74,7 +74,7 @@ func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 }
 
 // DeleteLease deletes a lease
-func (m *MySQL) DeleteLease(ctx context.Context, leaseID int) error {
+func (m *MySQL) DeleteLease(ctx context.Context, leaseID uuid.UUID) error {
 	query := `DELETE FROM lease WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {

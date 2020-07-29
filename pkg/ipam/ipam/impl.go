@@ -184,6 +184,7 @@ func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lea
 	}
 
 	lease := ipam.Lease{
+		UUID:       uuid.NewV4(),
 		MacAddress: types.HardwareAddr(*mac),
 		AddressID:  addressID,
 	}
@@ -198,7 +199,7 @@ func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 	return s.datastore.ListLease(ctx)
 }
 
-func (s server) DeleteLease(ctx context.Context, leaseID int) error {
+func (s server) DeleteLease(ctx context.Context, leaseID uuid.UUID) error {
 	return s.datastore.DeleteLease(ctx, leaseID)
 }
 

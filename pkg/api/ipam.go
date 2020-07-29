@@ -232,7 +232,11 @@ func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest)
 
 // DeleteLease deletes lease
 func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequest) (*pb.DeleteLeaseResponse, error) {
-	if err := s.IPAM.DeleteLease(ctx, int(req.Id)); err != nil {
+	leaseID, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.IPAM.DeleteLease(ctx, leaseID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete lease: %+v", err)
 	}
 

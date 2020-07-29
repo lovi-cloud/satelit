@@ -200,7 +200,11 @@ func (s *SatelitServer) AttachInterface(ctx context.Context, req *pb.AttachInter
 
 // DetachInterface is
 func (s *SatelitServer) DetachInterface(ctx context.Context, req *pb.DetachInterfaceRequest) (*pb.DetachInterfaceResponse, error) {
-	err := s.Ganymede.DetachInterface(ctx, int(req.AtttachmentId))
+	attachmentID, err := s.parseRequestUUID(req.AtttachmentId)
+	if err != nil {
+		return nil, err
+	}
+	err = s.Ganymede.DetachInterface(ctx, attachmentID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to detach interface: %+v", err)
 	}
@@ -210,7 +214,11 @@ func (s *SatelitServer) DetachInterface(ctx context.Context, req *pb.DetachInter
 
 // GetAttachment is
 func (s *SatelitServer) GetAttachment(ctx context.Context, req *pb.GetAttachmentRequest) (*pb.GetAttachmentResponse, error) {
-	attachent, err := s.Ganymede.GetAttachment(ctx, int(req.AttachmentId))
+	attachmentID, err := s.parseRequestUUID(req.AttachmentId)
+	if err != nil {
+		return nil, err
+	}
+	attachent, err := s.Ganymede.GetAttachment(ctx, attachmentID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get attachment: %+v", err)
 	}
