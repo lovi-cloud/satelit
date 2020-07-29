@@ -88,6 +88,6 @@ CREATE TABLE IF NOT EXISTS interface_attachment (
     lease_id INT NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
-    FOREIGN KEY fk_subnet_id(lease_id) REFERENCES lease(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY fk_subnet_id(lease_id) REFERENCES lease(uuid) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY fk_subnet_id(virtual_machine_id) REFERENCES virtual_machine(uuid) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
