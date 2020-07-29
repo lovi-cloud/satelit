@@ -53,3 +53,19 @@ func GetClient(hostname string) (agentpb.AgentClient, error) {
 
 	return c, nil
 }
+
+// ListClient return all tekeskop Clients
+func ListClient() ([]agentpb.AgentClient, error) {
+	mu.RLock()
+	var cs []agentpb.AgentClient
+	for _, c := range client {
+		cs = append(cs, c)
+	}
+	mu.RUnlock()
+
+	if len(cs) == 0 {
+		return nil, ErrTeleskopAgentNotFound
+	}
+
+	return cs, nil
+}

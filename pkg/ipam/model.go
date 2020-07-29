@@ -33,6 +33,7 @@ type Address struct {
 
 // A Lease is DHCP lease information
 type Lease struct {
+	ID         int                `db:"id"`
 	MacAddress types.HardwareAddr `db:"mac_address"`
 	AddressID  uuid.UUID          `db:"address_id"`
 	CreatedAt  time.Time          `db:"created_at"`

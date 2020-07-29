@@ -26,8 +26,6 @@ import (
 
 // A SatelitServer is definition of Satlite API Server
 type SatelitServer struct {
-	pb.SatelitServer
-
 	Datastore datastore.Datastore
 
 	Europa   europa.Europa

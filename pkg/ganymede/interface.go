@@ -14,6 +14,16 @@ type Ganymede interface {
 	CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string) (*VirtualMachine, error)
 	StartVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 	DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) error
+
+	CreateBridge(ctx context.Context, vlanID uint32) (*Bridge, error)
+	GetBridge(ctx context.Context, bridgeID uuid.UUID) (*Bridge, error)
+	ListBridge(ctx context.Context) ([]Bridge, error)
+	DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error
+
+	AttachInterface(ctx context.Context, vmID, bridgeID uuid.UUID, leaseID int, average int, name string) (*InterfaceAttachment, error)
+	DetachInterface(ctx context.Context, attachmentID int) error
+	GetAttachment(ctx context.Context, attachmentID int) (*InterfaceAttachment, error)
+	ListAttachment(ctx context.Context) ([]InterfaceAttachment, error)
 }
 
 // VirtualMachine is virtual machine.
@@ -40,5 +50,55 @@ func (vm *VirtualMachine) ToPb() *pb.VirtualMachine {
 		Vcpus:          vm.Vcpus,
 		MemoryKib:      vm.MemoryKiB,
 		HypervisorName: vm.HypervisorName,
+	}
+}
+
+// Bridge is bridge.
+type Bridge struct {
+	UUID      uuid.UUID `db:"uuid"`
+	VLANID    uint32    `db:"vlan_id"`
+	Name      string    `db:"name"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+}
+
+// ToPb is
+func (b *Bridge) ToPb() *pb.Bridge {
+	if b == nil {
+		return &pb.Bridge{}
+	}
+
+	return &pb.Bridge{
+		Uuid:   b.UUID.String(),
+		VlanId: b.VLANID,
+		Name:   b.Name,
+	}
+}
+
+// InterfaceAttachment is
+type InterfaceAttachment struct {
+	ID               int       `db:"id"`
+	VirtualMachineID uuid.UUID `db:"virtual_machine_id"`
+	BridgeID         uuid.UUID `db:"bridge_id"`
+	Average          int       `db:"average"`
+	Name             string    `db:"name"`
+	LeaseID          int       `db:"lease_id"`
+	CreatedAt        time.Time `db:"created_at"`
+	UpdatedAt        time.Time `db:"updated_at"`
+}
+
+// ToPb is
+func (i *InterfaceAttachment) ToPb() *pb.InterfaceAttachment {
+	if i == nil {
+		return &pb.InterfaceAttachment{}
+	}
+
+	return &pb.InterfaceAttachment{
+		Id:               int32(i.ID),
+		VirtualMachineId: i.VirtualMachineID.String(),
+		BridgeId:         i.BridgeID.String(),
+		Average:          int64(i.Average),
+		Name:             i.Name,
+		LeaseId:          int32(i.LeaseID),
 	}
 }

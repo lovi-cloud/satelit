@@ -190,16 +190,16 @@ func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lea
 	return s.datastore.CreateLease(ctx, lease)
 }
 
-func (s server) GetLease(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
-	return s.datastore.GetLeaseByMACAddress(ctx, types.HardwareAddr(mac))
+func (s server) GetLease(ctx context.Context, leaseID int) (*ipam.Lease, error) {
+	return s.datastore.GetLeaseByID(ctx, leaseID)
 }
 
 func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 	return s.datastore.ListLease(ctx)
 }
 
-func (s server) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
-	return s.datastore.DeleteLease(ctx, types.HardwareAddr(mac))
+func (s server) DeleteLease(ctx context.Context, leaseID int) error {
+	return s.datastore.DeleteLease(ctx, leaseID)
 }
 
 func getNextAddress(ip net.IP) net.IP {

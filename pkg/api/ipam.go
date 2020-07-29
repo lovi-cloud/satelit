@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"net"
 
 	pb "github.com/whywaita/satelit/api/satelit"
 
@@ -194,11 +193,7 @@ func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequ
 
 // GetLease retrieves address according to the parameters given.
 func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (*pb.GetLeaseResponse, error) {
-	mac, err := net.ParseMAC(req.MacAddress)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to parse mac address: %+v", err)
-	}
-	lease, err := s.IPAM.GetLease(ctx, mac)
+	lease, err := s.IPAM.GetLease(ctx, int(req.Id))
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "failed to retrieve lease: %+v", err)
 	}
@@ -233,12 +228,7 @@ func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest)
 
 // DeleteLease deletes lease
 func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequest) (*pb.DeleteLeaseResponse, error) {
-	mac, err := net.ParseMAC(req.MacAddress)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to parse mac address: %+v", err)
-	}
-
-	if err := s.IPAM.DeleteLease(ctx, mac); err != nil {
+	if err := s.IPAM.DeleteLease(ctx, int(req.Id)); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete lease: %+v", err)
 	}
 

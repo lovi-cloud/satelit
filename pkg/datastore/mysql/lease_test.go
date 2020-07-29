@@ -38,6 +38,7 @@ var testAddress = ipam.Address{
 }
 
 var testLease = ipam.Lease{
+	ID:         1,
 	MacAddress: parseMAC(testMACAddr),
 	AddressID:  testAddress.UUID,
 }
@@ -70,7 +71,7 @@ func TestMySQL_CreateLease(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to create lease: %+v", err)
 		}
-		want, err := getLeaseFromSQL(testDB, test.input.MacAddress)
+		want, err := getLeaseFromSQL(testDB, test.input.ID)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
 		}
@@ -101,18 +102,18 @@ func TestMySQL_GetLeaseByMACAddress(t *testing.T) {
 	}
 
 	tests := []struct {
-		input types.HardwareAddr
+		input int
 		want  ipam.Lease
 		err   bool
 	}{
 		{
-			input: parseMAC(testMACAddr),
+			input: 1,
 			want:  testLease,
 			err:   false,
 		},
 	}
 	for _, test := range tests {
-		got, err := testDatastore.GetLeaseByMACAddress(context.Background(), test.input)
+		got, err := testDatastore.GetLeaseByID(context.Background(), test.input)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
 		}
@@ -233,12 +234,12 @@ func TestMySQL_DeleteLease(t *testing.T) {
 	}
 
 	tests := []struct {
-		input types.HardwareAddr
+		input int
 		want  *ipam.Lease
 		err   bool
 	}{
 		{
-			input: parseMAC("ca:03:18:00:00:00"),
+			input: 1,
 			want:  nil,
 			err:   true,
 		},
@@ -280,14 +281,14 @@ func parseMAC(s string) types.HardwareAddr {
 	return types.HardwareAddr(mac)
 }
 
-func getLeaseFromSQL(testDB *sqlx.DB, mac types.HardwareAddr) (*ipam.Lease, error) {
+func getLeaseFromSQL(testDB *sqlx.DB, leaseID int) (*ipam.Lease, error) {
 	var l ipam.Lease
-	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE mac_address = ?`
+	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE id = ?`
 	stmt, err := testDB.Preparex(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare: %w", err)
 	}
-	err = stmt.Get(&l, mac)
+	err = stmt.Get(&l, leaseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get lease: %w", err)
 	}
