@@ -107,7 +107,7 @@ message InterfaceAttachment {
   string bridge_id          = 3;
   int64  average            = 4;
   string name               = 5;
-  int32  lease_id           = 6;
+  string lease_id           = 6;
 }
 
 // Request / Response
@@ -269,7 +269,7 @@ message CreateLeaseResponse {
 }
 
 message GetLeaseRequest {
-  int32 id = 1;
+  string uuid = 1;
 }
 
 message GetLeaseResponse {
@@ -358,7 +358,7 @@ message AttachInterfaceRequest {
   string bridge_id          = 2;
   int64  average            = 3;
   string name               = 4;
-  int32  lease_id           = 5;
+  string lease_id           = 5;
 }
 
 message AttachInterfaceResponse {

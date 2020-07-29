@@ -190,7 +190,7 @@ func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lea
 	return s.datastore.CreateLease(ctx, lease)
 }
 
-func (s server) GetLease(ctx context.Context, leaseID int) (*ipam.Lease, error) {
+func (s server) GetLease(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error) {
 	return s.datastore.GetLeaseByID(ctx, leaseID)
 }
 

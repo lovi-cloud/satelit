@@ -19,7 +19,7 @@ type IPAM interface {
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
 
 	CreateLease(ctx context.Context, addressID uuid.UUID) (*Lease, error)
-	GetLease(ctx context.Context, leaseID int) (*Lease, error)
+	GetLease(ctx context.Context, leaseID uuid.UUID) (*Lease, error)
 	ListLease(ctx context.Context) ([]Lease, error)
 	DeleteLease(ctx context.Context, leaseID int) error
 }

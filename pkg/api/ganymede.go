@@ -183,8 +183,12 @@ func (s *SatelitServer) AttachInterface(ctx context.Context, req *pb.AttachInter
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req bridge id: %+v", err)
 	}
+	leaseID, err := s.parseRequestUUID(req.LeaseId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req bridge id: %+v", err)
+	}
 
-	attachment, err := s.Ganymede.AttachInterface(ctx, vmID, bridgeID, int(req.LeaseId), int(req.Average), req.Name)
+	attachment, err := s.Ganymede.AttachInterface(ctx, vmID, bridgeID, leaseID, int(req.Average), req.Name)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to attach interface: %+v", err)
 	}

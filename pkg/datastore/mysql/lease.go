@@ -5,13 +5,15 @@ import (
 	"database/sql"
 	"fmt"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/ipam"
 )
 
 // CreateLease create a lease
 func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error) {
-	query := `INSERT INTO lease(mac_address, address_id) VALUES (?, ?)`
+	query := `INSERT INTO lease(uuid, mac_address, address_id) VALUES (?, ?, ?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -26,8 +28,8 @@ func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease,
 }
 
 // GetLeaseByID retrieves lease according to the mac given
-func (m *MySQL) GetLeaseByID(ctx context.Context, leaseID int) (*ipam.Lease, error) {
-	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE id = ?`
+func (m *MySQL) GetLeaseByID(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error) {
+	query := `SELECT uuid, mac_address, address_id, created_at, updated_at FROM lease WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -59,7 +61,7 @@ func (m *MySQL) GetDHCPLeaseByMACAddress(ctx context.Context, mac types.Hardware
 
 // ListLease retrieves all leases
 func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
-	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease`
+	query := `SELECT uuid, mac_address, address_id, created_at, updated_at FROM lease`
 
 	var leases []ipam.Lease
 	if err := m.Conn.SelectContext(ctx, &leases, query); err != nil && err != sql.ErrNoRows {
@@ -73,7 +75,7 @@ func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 
 // DeleteLease deletes a lease
 func (m *MySQL) DeleteLease(ctx context.Context, leaseID int) error {
-	query := `DELETE FROM lease WHERE id = ?`
+	query := `DELETE FROM lease WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)

@@ -12,7 +12,12 @@ import (
 // CreateBridge is
 func (m *MySQL) CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*ganymede.Bridge, error) {
 	query := `INSERT INTO bridge(uuid, vlan_id, name) VALUES(?, ?, ?)`
-	_, err := m.Conn.ExecContext(ctx, query, bridge.UUID, bridge.VLANID, bridge.Name)
+	stmt, err := m.Conn.PreparexContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+
+	_, err = stmt.ExecContext(ctx, bridge.UUID, bridge.VLANID, bridge.Name)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute insert query: %w", err)
 	}
@@ -22,8 +27,8 @@ func (m *MySQL) CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*gany
 
 // GetBridge is
 func (m *MySQL) GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error) {
-	query := `SELECT uuid, vlan_id, name, created_at, updated_at FROM bridge where id = ?`
-	stmt, err := m.Conn.Preparex(query)
+	query := `SELECT uuid, vlan_id, name, created_at, updated_at FROM bridge where uuid = ?`
+	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -50,7 +55,7 @@ func (m *MySQL) ListBridge(ctx context.Context) ([]ganymede.Bridge, error) {
 
 // DeleteBridge is
 func (m *MySQL) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
-	query := `DELETE FROM bridge WHERE id = ?`
+	query := `DELETE FROM bridge WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)
