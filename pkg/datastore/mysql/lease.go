@@ -25,16 +25,16 @@ func (m *MySQL) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease,
 	return &lease, nil
 }
 
-// GetLeaseByMACAddress retrieves lease according to the mac given
-func (m *MySQL) GetLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.Lease, error) {
-	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE mac_address = ?`
+// GetLeaseByID retrieves lease according to the mac given
+func (m *MySQL) GetLeaseByID(ctx context.Context, leaseID int) (*ipam.Lease, error) {
+	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE id = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
 	}
 
 	var lease ipam.Lease
-	if err := stmt.GetContext(ctx, &lease, mac); err != nil {
+	if err := stmt.GetContext(ctx, &lease, leaseID); err != nil {
 		return nil, fmt.Errorf("failed to get lease: %w", err)
 	}
 
@@ -72,14 +72,14 @@ func (m *MySQL) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 }
 
 // DeleteLease deletes a lease
-func (m *MySQL) DeleteLease(ctx context.Context, mac types.HardwareAddr) error {
-	query := `DELETE FROM lease WHERE mac_address = ?`
+func (m *MySQL) DeleteLease(ctx context.Context, leaseID int) error {
+	query := `DELETE FROM lease WHERE id = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return fmt.Errorf("failed to create statement: %w", err)
 	}
 
-	_, err = stmt.ExecContext(ctx, mac)
+	_, err = stmt.ExecContext(ctx, leaseID)
 	if err != nil {
 		return fmt.Errorf("failed to delete lease: %w", err)
 	}
