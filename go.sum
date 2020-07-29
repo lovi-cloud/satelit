@@ -18,6 +18,7 @@ github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+Ce
 github.com/cenkalti/backoff/v3 v3.0.0 h1:ske+9nBpD9qZsTBoF41nW5L+AIuFBKMeze18XQ3eG1c=
 github.com/cenkalti/backoff/v3 v3.0.0/go.mod h1:cIeZDE3IrqwwJl6VUwCN6trj1oXrTS4rc0ij+ULvLYs=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+github.com/ceph/go-ceph v0.0.0-20180104205452-bd5bc6d4cb3e/go.mod h1:DhWkbjUxN0QRc0xQvpI9QhzqQSzYysRuZVcqSfiStds=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
@@ -100,7 +101,9 @@ github.com/google/go-cmp v0.5.0 h1:/QaMHBdZ26BB3SSst0Iwl10Epc+xhTquomWX0oZEB6w=
 github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
 github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
+github.com/gorilla/mux v1.7.2/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
+github.com/gostor/gotgt v0.2.0/go.mod h1:mWaWioeT1uRrXz42CpgKZNtIEdZFgENaYwqwZ4El2Pc=
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=
 github.com/grpc-ecosystem/go-grpc-middleware v1.2.1-0.20200613074404-b28fb2bb3547 h1:zE4xkYW7dL0puBtHZioli17Kyu7cIqPXBb7CBi2/TkU=
 github.com/grpc-ecosystem/go-grpc-middleware v1.2.1-0.20200613074404-b28fb2bb3547/go.mod h1:EaizFBKfUKtMIF5iaDEhniwNedqGo9FuLFzppDr3uwI=
@@ -222,6 +225,7 @@ github.com/whywaita/go-dorado-sdk v0.8.1 h1:6UIZXOUikGIjYDgFZK2d2uaVtNcacg/l7qrS
 github.com/whywaita/go-dorado-sdk v0.8.1/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
 github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
 github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
+github.com/whywaita/go-os-brick v0.0.5/go.mod h1:R8e7Ti7TnHq3RUsSvcPD7utqUyQU3qH42VEQKRpFkhE=
 github.com/whywaita/satelit v0.0.0-20200622124415-3e4c5c4c0572/go.mod h1:ekOZG6jElxIEd38UMaxyowOhiYFBulaZwMVug5sfINU=
 github.com/whywaita/teleskop v0.0.0-20200625084654-4b2f236a75c4 h1:7ZmbpLftYRkTIVENqoaqEJv9raJHBPH/vGp11eaSmrQ=
 github.com/whywaita/teleskop v0.0.0-20200625084654-4b2f236a75c4/go.mod h1:B6nvI1cf0kWvAevR6nSJ/VzqDs4tp1OZUWK7uu/+D6A=
@@ -272,6 +276,7 @@ golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73r
 golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190522155817-f3200d17e092/go.mod h1:HSz+uSET+XFnRR8LxR5pz3Of3rY3CfYBVs4xY44aLks=
+golang.org/x/net v0.0.0-20190611141213-3f473d35a33a/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20191003171128-d98b1b443823 h1:Ypyv6BNJh07T1pUSrehkLemqPKXhus2MkfktJ91kRh4=
 golang.org/x/net v0.0.0-20191003171128-d98b1b443823/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
