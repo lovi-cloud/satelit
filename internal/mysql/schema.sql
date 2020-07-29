@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS address (
 );
 
 CREATE TABLE IF NOT EXISTS lease (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    uuid VARCHAR(255) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     mac_address VARCHAR(17) NOT NULL,
     address_id VARCHAR(36) NOT NULL UNIQUE,
     created_at timestamp not null default current_timestamp,
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS bridge (
 );
 
 CREATE TABLE IF NOT EXISTS interface_attachment (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    uuid VARCHAR(255) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     virtual_machine_id VARCHAR(255) NOT NULL,
     bridge_id VARCHAR(36) NOT NULL,
     average INT NOT NULL,
