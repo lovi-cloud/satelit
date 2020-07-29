@@ -4,6 +4,10 @@ on:
     branches:
       - "**"
   pull_request: {}
+
+env:
+  GOPRIVATE: "github.com/whywaita/*"
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -35,5 +39,3 @@ jobs:
       - name: test
         run: |
           make test
-        env:
-          GOPRIVATE: "github.com/whywaita/*"
