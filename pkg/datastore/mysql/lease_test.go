@@ -71,7 +71,7 @@ func TestMySQL_CreateLease(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to create lease: %+v", err)
 		}
-		want, err := getLeaseFromSQL(testDB, test.input.ID)
+		want, err := getLeaseFromSQL(testDB, test.input.UUID)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
 		}

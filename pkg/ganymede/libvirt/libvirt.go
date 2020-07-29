@@ -124,7 +124,7 @@ func (l *Libvirt) CreateBridge(ctx context.Context, vlanID uint32) (*ganymede.Br
 		return nil, fmt.Errorf("failed to retrieve teleskop clients: %w", err)
 	}
 
-	eg, ctx := errgroup.WithContext(context.Background())
+	eg := errgroup.Group{}
 	for _, client := range clients {
 		client := client
 		eg.Go(func() error {
@@ -258,6 +258,7 @@ func (l *Libvirt) AttachInterface(ctx context.Context, vmID, bridgeID, leaseID u
 	}
 
 	attachment, err := l.ds.AttachInterface(ctx, ganymede.InterfaceAttachment{
+		UUID:             uuid.NewV4(),
 		VirtualMachineID: vm.UUID,
 		BridgeID:         bridge.UUID,
 		Average:          average,
@@ -272,7 +273,7 @@ func (l *Libvirt) AttachInterface(ctx context.Context, vmID, bridgeID, leaseID u
 }
 
 // DetachInterface is
-func (l *Libvirt) DetachInterface(ctx context.Context, attachmentID int) error {
+func (l *Libvirt) DetachInterface(ctx context.Context, attachmentID uuid.UUID) error {
 	attachment, err := l.ds.GetAttachment(ctx, attachmentID)
 	if err != nil {
 		return fmt.Errorf("failed to get target attachment: %w", err)
@@ -307,7 +308,7 @@ func (l *Libvirt) DetachInterface(ctx context.Context, attachmentID int) error {
 		return err
 	}
 
-	err = l.ds.DetachInterface(ctx, attachment.ID)
+	err = l.ds.DetachInterface(ctx, attachment.UUID)
 	if err != nil {
 		return err
 	}
@@ -316,7 +317,7 @@ func (l *Libvirt) DetachInterface(ctx context.Context, attachmentID int) error {
 }
 
 // GetAttachment is
-func (l *Libvirt) GetAttachment(ctx context.Context, attachmentID int) (*ganymede.InterfaceAttachment, error) {
+func (l *Libvirt) GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*ganymede.InterfaceAttachment, error) {
 	return l.ds.GetAttachment(ctx, attachmentID)
 }
 

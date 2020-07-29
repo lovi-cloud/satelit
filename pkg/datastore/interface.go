@@ -39,7 +39,7 @@ type Datastore interface {
 	GetLeaseByID(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error)
 	GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
-	DeleteLease(ctx context.Context, leaseID int) error
+	DeleteLease(ctx context.Context, leaseID uuid.UUID) error
 
 	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
@@ -51,7 +51,7 @@ type Datastore interface {
 	DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error
 
 	AttachInterface(ctx context.Context, attachment ganymede.InterfaceAttachment) (*ganymede.InterfaceAttachment, error)
-	DetachInterface(ctx context.Context, attachmentID int) error
-	GetAttachment(ctx context.Context, attachmentID int) (*ganymede.InterfaceAttachment, error)
+	DetachInterface(ctx context.Context, attachmentID uuid.UUID) error
+	GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*ganymede.InterfaceAttachment, error)
 	ListAttachment(ctx context.Context) ([]ganymede.InterfaceAttachment, error)
 }

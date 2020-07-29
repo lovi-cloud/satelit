@@ -82,7 +82,7 @@ message Address {
 }
 
 message Lease {
-  int32  id          = 1;
+  string uuid        = 1;
   string mac_address = 2;
   string address_id  = 3;
 }
@@ -102,7 +102,7 @@ message Bridge {
 }
 
 message InterfaceAttachment {
-  int32  id                 = 1;
+  string uuid               = 1;
   string virtual_machine_id = 2;
   string bridge_id          = 3;
   int64  average            = 4;
@@ -283,7 +283,7 @@ message ListLeaseResponse {
 }
 
 message DeleteLeaseRequest {
-  int32 id = 1;
+  string uuid = 1;
 }
 
 message DeleteLeaseResponse {}
@@ -366,13 +366,13 @@ message AttachInterfaceResponse {
 }
 
 message DetachInterfaceRequest {
-  int32 atttachment_id = 1;
+  string atttachment_id = 1;
 }
 
 message DetachInterfaceResponse {}
 
 message GetAttachmentRequest {
-  int32 attachment_id = 2;
+  string attachment_id = 1;
 }
 
 message GetAttachmentResponse {

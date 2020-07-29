@@ -21,8 +21,8 @@ type Ganymede interface {
 	DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error
 
 	AttachInterface(ctx context.Context, vmID, bridgeID, leaseID uuid.UUID, average int, name string) (*InterfaceAttachment, error)
-	DetachInterface(ctx context.Context, attachmentID int) error
-	GetAttachment(ctx context.Context, attachmentID int) (*InterfaceAttachment, error)
+	DetachInterface(ctx context.Context, attachmentID uuid.UUID) error
+	GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*InterfaceAttachment, error)
 	ListAttachment(ctx context.Context) ([]InterfaceAttachment, error)
 }
 
@@ -77,7 +77,7 @@ func (b *Bridge) ToPb() *pb.Bridge {
 
 // InterfaceAttachment is
 type InterfaceAttachment struct {
-	ID               int       `db:"id"`
+	UUID             uuid.UUID `db:"uuid"`
 	VirtualMachineID uuid.UUID `db:"virtual_machine_id"`
 	BridgeID         uuid.UUID `db:"bridge_id"`
 	Average          int       `db:"average"`
@@ -94,7 +94,7 @@ func (i *InterfaceAttachment) ToPb() *pb.InterfaceAttachment {
 	}
 
 	return &pb.InterfaceAttachment{
-		Id:               int32(i.ID),
+		Uuid:             i.UUID.String(),
 		VirtualMachineId: i.VirtualMachineID.String(),
 		BridgeId:         i.BridgeID.String(),
 		Average:          int64(i.Average),
