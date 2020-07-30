@@ -55,7 +55,7 @@ func (s *SatelitServer) Run() error {
 		grpc_middleware.WithStreamServerChain(
 			grpc_ctxtags.StreamServerInterceptor(),
 			grpc_zap.PayloadStreamServerInterceptor(logger.Logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
-				return true
+				return false
 			}),
 			grpc_zap.StreamServerInterceptor(logger.Logger, opts...),
 		),
@@ -72,12 +72,7 @@ func (s *SatelitServer) Run() error {
 
 // parseRequestUUID return uuid.UUID from gRPC request string
 func (s *SatelitServer) parseRequestUUID(reqUUID string) (uuid.UUID, error) {
-	u := uuid.FromStringOrNil(reqUUID)
-	if u == uuid.Nil {
-		return uuid.Nil, fmt.Errorf("failed to parse uuid from string (uuid: %s)", reqUUID)
-	}
-
-	return u, nil
+	return uuid.FromString(reqUUID)
 }
 
 var pool = sync.Pool{

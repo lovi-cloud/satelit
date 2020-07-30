@@ -38,6 +38,8 @@ service Satelit {
       returns (DeleteVirtualMachineResponse) {}
 
   rpc CreateBridge(CreateBridgeRequest) returns (CreateBridgeResponse) {}
+  rpc CreateInternalBridge(CreateInternalBridgeRequest)
+      returns (CreateInternalBridgeResponse) {}
   rpc GetBridge(GetBridgeRequest) returns (GetBridgeResponse) {}
   rpc ListBridge(ListBridgeRequest) returns (ListBridgeResponse) {}
   rpc DeleteBridge(DeleteBridgeRequest) returns (DeleteBridgeResponse) {}
@@ -67,6 +69,7 @@ message Image {
 message Subnet {
   string uuid            = 1;
   string name            = 2;
+  uint32 vlan_id         = 9;
   string network         = 3;
   string start           = 4;
   string end             = 5;
@@ -199,6 +202,7 @@ message DeleteImageResponse {}
 message CreateSubnetRequest {
   string name            = 1;
   string network         = 2;
+  uint32 vlan_id         = 8;
   string start           = 3;
   string end             = 4;
   string gateway         = 5;
@@ -326,10 +330,19 @@ message DeleteVirtualMachineRequest {
 message DeleteVirtualMachineResponse {}
 
 message CreateBridgeRequest {
-  int32 vlan_id = 1;
+  string name    = 1;
+  int32  vlan_id = 2;
 }
 
 message CreateBridgeResponse {
+  Bridge bridge = 1;
+}
+
+message CreateInternalBridgeRequest {
+  string name = 1;
+}
+
+message CreateInternalBridgeResponse {
   Bridge bridge = 1;
 }
 

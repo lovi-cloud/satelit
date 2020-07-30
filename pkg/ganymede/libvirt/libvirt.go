@@ -118,7 +118,18 @@ func (l *Libvirt) DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) erro
 }
 
 // CreateBridge is
-func (l *Libvirt) CreateBridge(ctx context.Context, vlanID uint32) (*ganymede.Bridge, error) {
+func (l *Libvirt) CreateBridge(ctx context.Context, name string, vlanID uint32) (*ganymede.Bridge, error) {
+	subnet, err := l.ds.GetSubnetByVLAN(ctx, vlanID)
+	if err != nil {
+		return nil, err
+	}
+	if subnet.MetadataServer == nil {
+		return nil, fmt.Errorf("invalid subnet vlan_id=%d: metadata server must not be null", vlanID)
+	}
+
+	mask, _ := subnet.Network.Mask.Size()
+	addr := fmt.Sprintf("%s/%d", subnet.MetadataServer.String(), mask)
+
 	clients, err := teleskop.ListClient()
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve teleskop clients: %w", err)
@@ -135,14 +146,17 @@ func (l *Libvirt) CreateBridge(ctx context.Context, vlanID uint32) (*ganymede.Br
 			if err != nil {
 				return err
 			}
+
 			_, err = client.AddBridge(ctx, &agentpb.AddBridgeRequest{
-				Name: fmt.Sprintf("br%d", vlanID),
+				Name:         name,
+				MetadataCidr: addr,
+				InternalOnly: false,
 			})
 			if err != nil {
 				return err
 			}
 			_, err = client.AddInterfaceToBridge(ctx, &agentpb.AddInterfaceToBridgeRequest{
-				Bridge:    fmt.Sprintf("br%d", vlanID),
+				Bridge:    name,
 				Interface: fmt.Sprintf("bond0.%d", vlanID),
 			})
 			if err != nil {
@@ -158,7 +172,45 @@ func (l *Libvirt) CreateBridge(ctx context.Context, vlanID uint32) (*ganymede.Br
 	bridge, err := l.ds.CreateBridge(ctx, ganymede.Bridge{
 		UUID:   uuid.NewV4(),
 		VLANID: vlanID,
-		Name:   fmt.Sprintf("br%d", vlanID),
+		Name:   name,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to write bridge: %w", err)
+	}
+
+	return bridge, nil
+}
+
+// CreateInternalBridge is
+func (l *Libvirt) CreateInternalBridge(ctx context.Context, name string) (*ganymede.Bridge, error) {
+	clients, err := teleskop.ListClient()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve teleskop clients: %w", err)
+	}
+
+	eg := errgroup.Group{}
+	for _, client := range clients {
+		client := client
+		eg.Go(func() error {
+			_, err = client.AddBridge(ctx, &agentpb.AddBridgeRequest{
+				Name:         name,
+				MetadataCidr: "",
+				InternalOnly: true,
+			})
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+
+	bridge, err := l.ds.CreateBridge(ctx, ganymede.Bridge{
+		UUID:   uuid.NewV4(),
+		VLANID: 0,
+		Name:   name,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to write bridge: %w", err)
@@ -189,7 +241,7 @@ func (l *Libvirt) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
 		return fmt.Errorf("failed to retrieve teleskop clients: %w", err)
 	}
 
-	eg, ctx := errgroup.WithContext(ctx)
+	var eg errgroup.Group
 	for _, client := range clients {
 		client := client
 		eg.Go(func() error {

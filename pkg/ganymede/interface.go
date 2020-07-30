@@ -15,7 +15,8 @@ type Ganymede interface {
 	StartVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 	DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 
-	CreateBridge(ctx context.Context, vlanID uint32) (*Bridge, error)
+	CreateBridge(ctx context.Context, name string, vlanID uint32) (*Bridge, error)
+	CreateInternalBridge(ctx context.Context, name string) (*Bridge, error)
 	GetBridge(ctx context.Context, bridgeID uuid.UUID) (*Bridge, error)
 	ListBridge(ctx context.Context) ([]Bridge, error)
 	DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error
