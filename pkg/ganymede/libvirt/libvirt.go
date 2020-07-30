@@ -158,6 +158,7 @@ func (l *Libvirt) CreateBridge(ctx context.Context, vlanID uint32) (*ganymede.Br
 	bridge, err := l.ds.CreateBridge(ctx, ganymede.Bridge{
 		UUID:   uuid.NewV4(),
 		VLANID: vlanID,
+		Name:   fmt.Sprintf("br%d", vlanID),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to write bridge: %w", err)

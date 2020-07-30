@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
+	"os"
 
 	uuid "github.com/satori/go.uuid"
 	pb "github.com/whywaita/satelit/api/satelit"
@@ -179,6 +181,7 @@ func (s *SatelitServer) AttachInterface(ctx context.Context, req *pb.AttachInter
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req vm id: %+v", err)
 	}
+	fmt.Fprintf(os.Stderr, "bridge: %s\n", req.BridgeId)
 	bridgeID, err := s.parseRequestUUID(req.BridgeId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req bridge id: %+v", err)
