@@ -69,6 +69,7 @@ github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LB
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/go-test/deep v1.0.6 h1:UHSEyLZUwX9Qoi99vVwvewiMC8mM2bf7XEM2nqvzEn8=
 github.com/go-test/deep v1.0.6/go.mod h1:QV8Hv/iy04NyLBxAdO9njL0iVPN1S4d/A3NVv1V36o8=
+github.com/go-test/deep v1.0.7/go.mod h1:QV8Hv/iy04NyLBxAdO9njL0iVPN1S4d/A3NVv1V36o8=
 github.com/goccy/go-yaml v1.4.3/go.mod h1:PsEEJ29nIFZL07P/c8dv4P6rQkVFFXafQee85U+ERHA=
 github.com/goccy/go-yaml v1.7.16 h1:/nZKtd1YXamN6OBuZb4zRV7zhHGmQt88U6wDzQU8xLQ=
 github.com/goccy/go-yaml v1.7.16/go.mod h1:wS4gNoLalDSJxo/SpngzPQ2BN4uuZVLCmbM4S3vd4+Y=
@@ -225,7 +226,9 @@ github.com/whywaita/go-dorado-sdk v0.8.1 h1:6UIZXOUikGIjYDgFZK2d2uaVtNcacg/l7qrS
 github.com/whywaita/go-dorado-sdk v0.8.1/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
 github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
 github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
+github.com/whywaita/go-os-brick v0.0.5 h1:TmPrtLoBJ9cXDeSq1xnCjTynAdcz2R0Be8dY+dRpEME=
 github.com/whywaita/go-os-brick v0.0.5/go.mod h1:R8e7Ti7TnHq3RUsSvcPD7utqUyQU3qH42VEQKRpFkhE=
+github.com/whywaita/go-os-brick v0.0.6/go.mod h1:SqVT1Gtz6a9eie4tNQsgxECkJ5LWongNFhw6iuj2IKg=
 github.com/whywaita/satelit v0.0.0-20200622124415-3e4c5c4c0572/go.mod h1:ekOZG6jElxIEd38UMaxyowOhiYFBulaZwMVug5sfINU=
 github.com/whywaita/teleskop v0.0.0-20200625084654-4b2f236a75c4 h1:7ZmbpLftYRkTIVENqoaqEJv9raJHBPH/vGp11eaSmrQ=
 github.com/whywaita/teleskop v0.0.0-20200625084654-4b2f236a75c4/go.mod h1:B6nvI1cf0kWvAevR6nSJ/VzqDs4tp1OZUWK7uu/+D6A=
