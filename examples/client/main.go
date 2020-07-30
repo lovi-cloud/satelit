@@ -51,18 +51,21 @@ func run() error {
 
 // SampleStartVirtualMachine is sample of AddVirtualMachine / StartVirtualMachine
 func SampleStartVirtualMachine(ctx context.Context, client pb.SatelitClient, imageUUID string) error {
+	fmt.Println("AddVirtualMachine")
 	resp1, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
-		Name:          "cirros-boot-test",
-		Vcpus:         1,
-		MemoryKib:     2 * 1024 * 1024,
-		RootVolumeGb:  32,
-		SourceImageId: imageUUID,
+		Name:           "cirros-boot-test",
+		Vcpus:          1,
+		MemoryKib:      2 * 1024 * 1024,
+		RootVolumeGb:   32,
+		SourceImageId:  imageUUID,
+		HypervisorName: "hv001",
 	})
 	if err != nil {
 		return err
 	}
 	vmUUID := resp1.Uuid
 
+	fmt.Println("StartVirtualMachine")
 	resp2, err := client.StartVirtualMachine(ctx, &pb.StartVirtualMachineRequest{Uuid: vmUUID})
 	if err != nil {
 		return err
