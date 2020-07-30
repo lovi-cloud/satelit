@@ -233,7 +233,7 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 // AttachVolumeSatelit attach volume to satelit by Dorado
 // return (host lun id, attached device name, error)
 func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID string, hostname string) (int, string, error) {
-	iqn, err := d.datastore.GetIQN(ctx, hostname)
+	iqn, err := osbrick.GetIQN(ctx)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
 	}
