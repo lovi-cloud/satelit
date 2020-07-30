@@ -27,6 +27,7 @@ type Datastore interface {
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)
 	GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error)
+	GetSubnetByVLAN(ctx context.Context, vlanID uint32) (*ipam.Subnet, error)
 	ListSubnet(ctx context.Context) ([]ipam.Subnet, error)
 	DeleteSubnet(ctx context.Context, uuid uuid.UUID) error
 

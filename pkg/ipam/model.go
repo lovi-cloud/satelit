@@ -12,6 +12,7 @@ import (
 type Subnet struct {
 	UUID           uuid.UUID   `db:"uuid"`
 	Name           string      `db:"name"`
+	VLANID         uint32      `db:"vlan_id"`
 	Network        types.IPNet `db:"network"`
 	Start          types.IP    `db:"start"`
 	End            types.IP    `db:"end"`

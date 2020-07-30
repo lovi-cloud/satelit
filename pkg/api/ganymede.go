@@ -3,8 +3,6 @@ package api
 import (
 	"context"
 	"errors"
-	"fmt"
-	"os"
 
 	uuid "github.com/satori/go.uuid"
 	pb "github.com/whywaita/satelit/api/satelit"
@@ -118,12 +116,24 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 
 // CreateBridge is
 func (s *SatelitServer) CreateBridge(ctx context.Context, req *pb.CreateBridgeRequest) (*pb.CreateBridgeResponse, error) {
-	bridge, err := s.Ganymede.CreateBridge(ctx, uint32(req.VlanId))
+	bridge, err := s.Ganymede.CreateBridge(ctx, req.Name, uint32(req.VlanId))
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.CreateBridgeResponse{
+		Bridge: bridge.ToPb(),
+	}, nil
+}
+
+// CreateInternalBridge is
+func (s *SatelitServer) CreateInternalBridge(ctx context.Context, req *pb.CreateInternalBridgeRequest) (*pb.CreateInternalBridgeResponse, error) {
+	bridge, err := s.Ganymede.CreateInternalBridge(ctx, req.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.CreateInternalBridgeResponse{
 		Bridge: bridge.ToPb(),
 	}, nil
 }
@@ -181,14 +191,13 @@ func (s *SatelitServer) AttachInterface(ctx context.Context, req *pb.AttachInter
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req vm id: %+v", err)
 	}
-	fmt.Fprintf(os.Stderr, "bridge: %s\n", req.BridgeId)
 	bridgeID, err := s.parseRequestUUID(req.BridgeId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req bridge id: %+v", err)
 	}
 	leaseID, err := s.parseRequestUUID(req.LeaseId)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req bridge id: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req lease id: %+v", err)
 	}
 
 	attachment, err := s.Ganymede.AttachInterface(ctx, vmID, bridgeID, leaseID, int(req.Average), req.Name)

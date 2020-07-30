@@ -29,7 +29,7 @@ func New(d datastore.Datastore) ipam.IPAM {
 }
 
 // CreateSubnet create a subnet
-func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gateway, dnsServer, metadataServer string) (*ipam.Subnet, error) {
+func (s server) CreateSubnet(ctx context.Context, name string, vlanID uint32, prefix, start, end, gateway, dnsServer, metadataServer string) (*ipam.Subnet, error) {
 	_, prefixNet, err := net.ParseCIDR(prefix)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse prefix: %w", err)
@@ -58,6 +58,7 @@ func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gate
 	subnet := ipam.Subnet{
 		UUID:           uuid.NewV4(),
 		Name:           name,
+		VLANID:         vlanID,
 		Network:        types.IPNet(*prefixNet),
 		Start:          types.IP(startAddr),
 		End:            types.IP(endAddr),
