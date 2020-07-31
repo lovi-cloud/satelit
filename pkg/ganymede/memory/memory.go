@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"fmt"
+	"time"
 
 	uuid "github.com/satori/go.uuid"
 
@@ -64,4 +65,70 @@ func (m *Memory) DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 	}
 
 	return nil
+}
+
+// CreateBridge is
+func (m *Memory) CreateBridge(ctx context.Context, name string, vlanID uint32) (*ganymede.Bridge, error) {
+	return m.ds.CreateBridge(ctx, ganymede.Bridge{
+		UUID:      uuid.NewV4(),
+		VLANID:    vlanID,
+		Name:      name,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+}
+
+// CreateInternalBridge is
+func (m *Memory) CreateInternalBridge(ctx context.Context, name string) (*ganymede.Bridge, error) {
+	return m.ds.CreateBridge(ctx, ganymede.Bridge{
+		UUID:      uuid.NewV4(),
+		VLANID:    0,
+		Name:      name,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+}
+
+// GetBridge is
+func (m *Memory) GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error) {
+	return m.ds.GetBridge(ctx, bridgeID)
+}
+
+// ListBridge is
+func (m *Memory) ListBridge(ctx context.Context) ([]ganymede.Bridge, error) {
+	return m.ds.ListBridge(ctx)
+}
+
+// DeleteBridge is
+func (m *Memory) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
+	return m.ds.DeleteBridge(ctx, bridgeID)
+}
+
+// AttachInterface is
+func (m *Memory) AttachInterface(ctx context.Context, vmID, bridgeID, leaseID uuid.UUID, average int, name string) (*ganymede.InterfaceAttachment, error) {
+	return m.ds.AttachInterface(ctx, ganymede.InterfaceAttachment{
+		UUID:             uuid.NewV4(),
+		VirtualMachineID: vmID,
+		BridgeID:         bridgeID,
+		Average:          average,
+		Name:             name,
+		LeaseID:          leaseID,
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+	})
+}
+
+// DetachInterface is
+func (m *Memory) DetachInterface(ctx context.Context, attachmentID uuid.UUID) error {
+	return m.ds.DetachInterface(ctx, attachmentID)
+}
+
+// GetAttachment is
+func (m *Memory) GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*ganymede.InterfaceAttachment, error) {
+	return m.ds.GetAttachment(ctx, attachmentID)
+}
+
+// ListAttachment is
+func (m *Memory) ListAttachment(ctx context.Context) ([]ganymede.InterfaceAttachment, error) {
+	return m.ds.ListAttachment(ctx)
 }

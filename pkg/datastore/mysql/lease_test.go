@@ -17,6 +17,7 @@ import (
 const (
 	testSubnetID  = "bba39c58-4af7-46aa-ab3d-eac7ab7b581b"
 	testAddressID = "1d2f0d83-1508-4af0-bdcb-c52c34733923"
+	testLeaseID   = "3e3e4f46-cd5d-4cf7-86a3-6b7af5d754e9"
 	testMACAddr   = "ca:03:18:00:00:00"
 )
 
@@ -38,7 +39,7 @@ var testAddress = ipam.Address{
 }
 
 var testLease = ipam.Lease{
-	ID:         1,
+	UUID:       uuid.FromStringOrNil(testLeaseID),
 	MacAddress: parseMAC(testMACAddr),
 	AddressID:  testAddress.UUID,
 }
@@ -102,12 +103,12 @@ func TestMySQL_GetLeaseByMACAddress(t *testing.T) {
 	}
 
 	tests := []struct {
-		input int
+		input uuid.UUID
 		want  ipam.Lease
 		err   bool
 	}{
 		{
-			input: 1,
+			input: uuid.FromStringOrNil(testLeaseID),
 			want:  testLease,
 			err:   false,
 		},
@@ -234,12 +235,12 @@ func TestMySQL_DeleteLease(t *testing.T) {
 	}
 
 	tests := []struct {
-		input int
+		input uuid.UUID
 		want  *ipam.Lease
 		err   bool
 	}{
 		{
-			input: 1,
+			input: uuid.FromStringOrNil(testLeaseID),
 			want:  nil,
 			err:   true,
 		},
@@ -281,9 +282,9 @@ func parseMAC(s string) types.HardwareAddr {
 	return types.HardwareAddr(mac)
 }
 
-func getLeaseFromSQL(testDB *sqlx.DB, leaseID int) (*ipam.Lease, error) {
+func getLeaseFromSQL(testDB *sqlx.DB, leaseID uuid.UUID) (*ipam.Lease, error) {
 	var l ipam.Lease
-	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE id = ?`
+	query := `SELECT uuid, mac_address, address_id, created_at, updated_at FROM lease WHERE uuid = ?`
 	stmt, err := testDB.Preparex(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare: %w", err)
