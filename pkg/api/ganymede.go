@@ -248,8 +248,8 @@ func (s *SatelitServer) ListAttachment(ctx context.Context, req *pb.ListAttachme
 	}
 
 	attachments := make([]*pb.InterfaceAttachment, len(as))
-	for i, a := range attachments {
-		attachments[i] = a
+	for i, a := range as {
+		attachments[i] = a.ToPb()
 	}
 
 	return &pb.ListAttachmentResponse{
