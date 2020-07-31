@@ -19,24 +19,28 @@ import (
 type Memory struct {
 	mutex *sync.Mutex
 
-	volumes         map[string]europa.Volume
-	images          map[uuid.UUID]europa.BaseImage
-	subnets         map[uuid.UUID]ipam.Subnet
-	addresses       map[uuid.UUID]ipam.Address
-	leases          map[string]ipam.Lease
-	virtualMachines map[uuid.UUID]ganymede.VirtualMachine
+	volumes             map[string]europa.Volume
+	images              map[uuid.UUID]europa.BaseImage
+	subnets             map[uuid.UUID]ipam.Subnet
+	addresses           map[uuid.UUID]ipam.Address
+	leases              map[uuid.UUID]ipam.Lease
+	virtualMachines     map[uuid.UUID]ganymede.VirtualMachine
+	bridges             map[uuid.UUID]ganymede.Bridge
+	interfaceAttachment map[uuid.UUID]ganymede.InterfaceAttachment
 }
 
 // New create Memory
 func New() *Memory {
 	return &Memory{
-		mutex:           &sync.Mutex{},
-		volumes:         map[string]europa.Volume{},
-		images:          map[uuid.UUID]europa.BaseImage{},
-		subnets:         map[uuid.UUID]ipam.Subnet{},
-		addresses:       map[uuid.UUID]ipam.Address{},
-		leases:          map[string]ipam.Lease{},
-		virtualMachines: map[uuid.UUID]ganymede.VirtualMachine{},
+		mutex:               &sync.Mutex{},
+		volumes:             map[string]europa.Volume{},
+		images:              map[uuid.UUID]europa.BaseImage{},
+		subnets:             map[uuid.UUID]ipam.Subnet{},
+		addresses:           map[uuid.UUID]ipam.Address{},
+		leases:              map[uuid.UUID]ipam.Lease{},
+		virtualMachines:     map[uuid.UUID]ganymede.VirtualMachine{},
+		bridges:             map[uuid.UUID]ganymede.Bridge{},
+		interfaceAttachment: map[uuid.UUID]ganymede.InterfaceAttachment{},
 	}
 }
 
@@ -245,22 +249,9 @@ func (m *Memory) CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease
 	now := time.Now()
 	lease.CreatedAt = now
 	lease.UpdatedAt = now
-	m.leases[lease.MacAddress.String()] = lease
+	m.leases[lease.UUID] = lease
 
 	return &lease, nil
-}
-
-// GetLeaseByMACAddress retrieves lease according to the mac given
-func (m *Memory) GetLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.Lease, error) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	val, ok := m.leases[mac.String()]
-	if !ok {
-		return nil, fmt.Errorf("failed to find lease mac_address=%s", mac.String())
-	}
-
-	return &val, nil
 }
 
 // GetDHCPLeaseByMACAddress retrieves DHCPLease according to the mac given
@@ -268,8 +259,14 @@ func (m *Memory) GetDHCPLeaseByMACAddress(ctx context.Context, mac types.Hardwar
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	lease, ok := m.leases[mac.String()]
-	if !ok {
+	var lease *ipam.Lease
+	for _, l := range m.leases {
+		if lease.MacAddress.String() == mac.String() {
+			lease = &l
+			break
+		}
+	}
+	if lease == nil {
 		return nil, fmt.Errorf("failed to find lease mac_address=%s", mac.String())
 	}
 	address, ok := m.addresses[lease.AddressID]
@@ -304,15 +301,15 @@ func (m *Memory) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 }
 
 // DeleteLease deletes a lease
-func (m *Memory) DeleteLease(ctx context.Context, mac types.HardwareAddr) error {
+func (m *Memory) DeleteLease(ctx context.Context, leaseID uuid.UUID) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	_, ok := m.leases[mac.String()]
+	_, ok := m.leases[leaseID]
 	if !ok {
-		return fmt.Errorf("failed to find lease mac_address=%s", mac.String())
+		return fmt.Errorf("failed to find lease mac_address=%s", leaseID.String())
 	}
-	delete(m.leases, mac.String())
+	delete(m.leases, leaseID)
 
 	return nil
 }
@@ -353,4 +350,131 @@ func (m *Memory) DeleteVirtualMachine(vmID uuid.UUID) error {
 	delete(m.virtualMachines, vmID)
 
 	return nil
+}
+
+// GetSubnetByVLAN is
+func (m *Memory) GetSubnetByVLAN(ctx context.Context, vlanID uint32) (*ipam.Subnet, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	for _, s := range m.subnets {
+		if s.VLANID == vlanID {
+			return &s, nil
+		}
+	}
+
+	return nil, fmt.Errorf("failed to find subnet vlan_id=%d", vlanID)
+}
+
+// GetLeaseByID is
+func (m *Memory) GetLeaseByID(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	val, ok := m.leases[leaseID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find lease id=%s", leaseID)
+	}
+
+	return &val, nil
+}
+
+// CreateBridge is
+func (m *Memory) CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*ganymede.Bridge, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.bridges[bridge.UUID] = bridge
+
+	return &bridge, nil
+}
+
+// GetBridge is
+func (m *Memory) GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	val, ok := m.bridges[bridgeID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find bridge id=%s", bridgeID)
+	}
+
+	return &val, nil
+}
+
+// ListBridge is
+func (m *Memory) ListBridge(ctx context.Context) ([]ganymede.Bridge, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var bridges []ganymede.Bridge
+	for _, b := range m.bridges {
+		bridges = append(bridges, b)
+	}
+
+	return bridges, nil
+}
+
+// DeleteBridge is
+func (m *Memory) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.bridges[bridgeID]
+	if !ok {
+		return fmt.Errorf("failed to find bridge id=%s", bridgeID)
+	}
+	delete(m.bridges, bridgeID)
+
+	return nil
+}
+
+// AttachInterface is
+func (m *Memory) AttachInterface(ctx context.Context, attachment ganymede.InterfaceAttachment) (*ganymede.InterfaceAttachment, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.interfaceAttachment[attachment.UUID] = attachment
+
+	return &attachment, nil
+}
+
+// DetachInterface is
+func (m *Memory) DetachInterface(ctx context.Context, attachmentID uuid.UUID) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.interfaceAttachment[attachmentID]
+	if !ok {
+		return fmt.Errorf("failed to find attachment id=%s", attachmentID)
+	}
+	delete(m.interfaceAttachment, attachmentID)
+
+	return nil
+}
+
+// GetAttachment is
+func (m *Memory) GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*ganymede.InterfaceAttachment, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	val, ok := m.interfaceAttachment[attachmentID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find attachment id=%s", attachmentID)
+	}
+
+	return &val, nil
+}
+
+// ListAttachment is
+func (m *Memory) ListAttachment(ctx context.Context) ([]ganymede.InterfaceAttachment, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var as []ganymede.InterfaceAttachment
+	for _, a := range m.interfaceAttachment {
+		as = append(as, a)
+	}
+
+	return as, nil
 }
