@@ -245,20 +245,22 @@ func (l *Libvirt) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
 	for _, client := range clients {
 		client := client
 		eg.Go(func() error {
-			_, err := client.DeleteInterfaceFromBridge(ctx, &agentpb.DeleteInterfaceFromBridgeRequest{
-				Bridge:    bridge.Name,
-				Interface: fmt.Sprintf("bond0.%d", bridge.VLANID),
-			})
-			if err != nil {
-				return err
-			}
+			if bridge.VLANID != 0 {
+				_, err := client.DeleteInterfaceFromBridge(ctx, &agentpb.DeleteInterfaceFromBridgeRequest{
+					Bridge:    bridge.Name,
+					Interface: fmt.Sprintf("bond0.%d", bridge.VLANID),
+				})
+				if err != nil {
+					return err
+				}
 
-			_, err = client.DeleteVLANInterface(ctx, &agentpb.DeleteVLANInterfaceRequest{
-				VlanId:          bridge.VLANID,
-				ParentInterface: "bond0",
-			})
-			if err != nil {
-				return err
+				_, err = client.DeleteVLANInterface(ctx, &agentpb.DeleteVLANInterfaceRequest{
+					VlanId:          bridge.VLANID,
+					ParentInterface: "bond0",
+				})
+				if err != nil {
+					return err
+				}
 			}
 
 			_, err = client.DeleteBridge(ctx, &agentpb.DeleteBridgeRequest{
