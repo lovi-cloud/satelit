@@ -26,7 +26,7 @@ func (m *MySQL) AttachInterface(ctx context.Context, attachment ganymede.Interfa
 
 // DetachInterface is
 func (m *MySQL) DetachInterface(ctx context.Context, attachmentID uuid.UUID) error {
-	query := `DELETE FROM interface_attachemnt from uuid = ?`
+	query := `DELETE FROM interface_attachment WHERE uuid = ?`
 	stmt, err := m.Conn.Preparex(query)
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %w", err)
