@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS virtual_machine (
 
 CREATE TABLE IF NOT EXISTS bridge (
     uuid       VARCHAR(36)  NOT NULL PRIMARY KEY,
-    vlan_id    INT UNSIGNED NOT NULL UNIQUE,
+    vlan_id    INT UNSIGNED NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP    NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP    NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
