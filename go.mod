@@ -12,8 +12,8 @@ require (
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/whywaita/go-dorado-sdk v0.8.1
-	github.com/whywaita/go-os-brick v0.0.6
+	github.com/whywaita/go-dorado-sdk v0.8.2-0.20200804003427-0766513fcb97
+	github.com/whywaita/go-os-brick v0.0.7-0.20200804082126-02e0184996a0
 	github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa
 	go.uber.org/zap v1.15.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect

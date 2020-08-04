@@ -226,11 +226,15 @@ github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df/go.mod h1:JP3t17
 github.com/whywaita/go-dorado-sdk v0.7.0/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
 github.com/whywaita/go-dorado-sdk v0.8.1 h1:6UIZXOUikGIjYDgFZK2d2uaVtNcacg/l7qrS3pmkv6I=
 github.com/whywaita/go-dorado-sdk v0.8.1/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
+github.com/whywaita/go-dorado-sdk v0.8.2-0.20200804003427-0766513fcb97 h1:eTEh5MjpdK22Wk5WdZtCc0fTtqfXy6rRpuIZ9joRTy4=
+github.com/whywaita/go-dorado-sdk v0.8.2-0.20200804003427-0766513fcb97/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
 github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
 github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
 github.com/whywaita/go-os-brick v0.0.6-0.20200729104728-8daf538f9081/go.mod h1:R8e7Ti7TnHq3RUsSvcPD7utqUyQU3qH42VEQKRpFkhE=
 github.com/whywaita/go-os-brick v0.0.6 h1:6ebd5N6dWlX8vr8GSzmNcCjrpTzdvuwqHEUBwfsA4PU=
 github.com/whywaita/go-os-brick v0.0.6/go.mod h1:SqVT1Gtz6a9eie4tNQsgxECkJ5LWongNFhw6iuj2IKg=
+github.com/whywaita/go-os-brick v0.0.7-0.20200804082126-02e0184996a0 h1:zC8dLWd9ZhXAb9WKc0JEIpW+jrftA3hNoU00YI0+bRo=
+github.com/whywaita/go-os-brick v0.0.7-0.20200804082126-02e0184996a0/go.mod h1:SqVT1Gtz6a9eie4tNQsgxECkJ5LWongNFhw6iuj2IKg=
 github.com/whywaita/satelit v0.0.0-20200629011315-af9b8a815397/go.mod h1:wBAQMYTXiIAr0wMr6pJxy+P+ULtLfdEYPhJd11m/TaY=
 github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa h1:vlnYupjXyYDZsy+nXFTX2yKmKr3a13lAa3V8R5I95eA=
 github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa/go.mod h1:xz/DRKMp9nVLH7biAFcmVturFKzFG8pDJqWcmB9BYUw=
