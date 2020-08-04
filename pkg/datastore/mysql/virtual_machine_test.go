@@ -1,12 +1,14 @@
 package mysql_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
 	"github.com/go-test/deep"
 	"github.com/jmoiron/sqlx"
 	uuid "github.com/satori/go.uuid"
+	"github.com/whywaita/satelit/internal/mysql/types"
 
 	"github.com/whywaita/satelit/internal/testutils"
 	"github.com/whywaita/satelit/pkg/europa"
@@ -199,6 +201,98 @@ func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 			t.Fatalf("failed to delete virtual machine: %+v", err)
 		}
 		got, err := getVirtualMachineFromSQL(testDB, test.input)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+		}
+	}
+}
+
+func TestMySQL_GetHostnameByAddress(t *testing.T) {
+	testDatastore, teardown := testutils.GetTestDatastore()
+	defer teardown()
+
+	bridge, err := testDatastore.CreateBridge(context.Background(), ganymede.Bridge{
+		UUID:   uuid.FromStringOrNil(testBridgeID),
+		VLANID: 1000,
+		Name:   "testbr1000",
+	})
+	if err != nil {
+		t.Fatalf("failed to create bridge: %+v", err)
+	}
+
+	err = testDatastore.PutImage(testImage)
+	if err != nil {
+		t.Fatalf("failed to put image: %+v\n", err)
+	}
+
+	err = testDatastore.PutVolume(europa.Volume{
+		ID:          testRootVolumeID,
+		Attached:    false,
+		HostName:    "dorad000",
+		CapacityGB:  20,
+		BaseImageID: testImage.UUID,
+		HostLUNID:   0,
+	})
+	if err != nil {
+		t.Fatalf("failed to put volume: %+v\n", err)
+	}
+
+	err = testDatastore.PutVirtualMachine(ganymede.VirtualMachine{
+		UUID:           uuid.FromStringOrNil(testVirtualMachineID),
+		Name:           "test000",
+		Vcpus:          1,
+		MemoryKiB:      2 * 1024 * 1024,
+		HypervisorName: "hv000",
+		RootVolumeID:   testRootVolumeID,
+	})
+	if err != nil {
+		t.Fatalf("failed to put virtual machine: %+v\n", err)
+	}
+
+	_, err = testDatastore.CreateSubnet(context.Background(), testSubnet)
+	if err != nil {
+		t.Fatalf("failed to create test subnet: %+v", err)
+	}
+	_, err = testDatastore.CreateAddress(context.Background(), testAddress)
+	if err != nil {
+		t.Fatalf("failed to create test address: %+v", err)
+	}
+	lease, err := testDatastore.CreateLease(context.Background(), testLease)
+	if err != nil {
+		t.Fatalf("failed to create test lease: %+v", err)
+	}
+
+	_, err = testDatastore.AttachInterface(context.Background(), ganymede.InterfaceAttachment{
+		UUID:             uuid.FromStringOrNil(testAttachmentID),
+		VirtualMachineID: uuid.FromStringOrNil(testVirtualMachineID),
+		BridgeID:         bridge.UUID,
+		Average:          1 * 1024 * 1024,
+		Name:             "vnet000",
+		LeaseID:          lease.UUID,
+	})
+	if err != nil {
+		t.Fatalf("failed to create test attachment: %+v", err)
+	}
+
+	tests := []struct {
+		input types.IP
+		want  string
+		err   bool
+	}{
+		{
+			input: testAddress.IP,
+			want:  "test000",
+			err:   false,
+		},
+	}
+	for _, test := range tests {
+		got, err := testDatastore.GetHostnameByAddress(test.input)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
 		}

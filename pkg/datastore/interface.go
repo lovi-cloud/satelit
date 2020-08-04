@@ -45,6 +45,7 @@ type Datastore interface {
 	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
 	DeleteVirtualMachine(vmID uuid.UUID) error
+	GetHostnameByAddress(address types.IP) (string, error)
 
 	CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*ganymede.Bridge, error)
 	GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error)
