@@ -256,6 +256,7 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 	}
 	volume.Attached = true
 	volume.HostName = hostname
+	volume.HostLUNID = hostLUNID
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
@@ -279,6 +280,7 @@ func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) erro
 
 	volume.Attached = false
 	volume.HostName = ""
+	volume.HostLUNID = 0
 
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
@@ -311,6 +313,7 @@ func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 
 	volume.Attached = false
 	volume.HostName = ""
+	volume.HostLUNID = 0
 
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
