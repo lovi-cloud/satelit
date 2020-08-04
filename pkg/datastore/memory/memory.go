@@ -352,6 +352,53 @@ func (m *Memory) DeleteVirtualMachine(vmID uuid.UUID) error {
 	return nil
 }
 
+// GetHostnameByAddress is
+func (m *Memory) GetHostnameByAddress(address types.IP) (string, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var targetAddress *ipam.Address
+	for _, a := range m.addresses {
+		if a.IP.String() == address.String() {
+			targetAddress = &a
+			break
+		}
+	}
+	if targetAddress == nil {
+		return "", fmt.Errorf("failed to get hostname by address")
+	}
+
+	var targetLease *ipam.Lease
+	for _, l := range m.leases {
+		if l.AddressID == targetAddress.UUID {
+			targetLease = &l
+			break
+		}
+	}
+	if targetLease == nil {
+		return "", fmt.Errorf("failed to get hostname by address")
+	}
+
+	var targetAttachment *ganymede.InterfaceAttachment
+	for _, i := range m.interfaceAttachment {
+		if i.LeaseID == targetLease.UUID {
+			targetAttachment = &i
+			break
+		}
+	}
+	if targetAttachment == nil {
+		return "", fmt.Errorf("failed to get hostname by address")
+	}
+
+	for _, v := range m.virtualMachines {
+		if v.UUID == targetAttachment.VirtualMachineID {
+			return v.Name, nil
+		}
+	}
+
+	return "", fmt.Errorf("failed to get hostname by address")
+}
+
 // GetSubnetByVLAN is
 func (m *Memory) GetSubnetByVLAN(ctx context.Context, vlanID uint32) (*ipam.Subnet, error) {
 	m.mutex.Lock()
