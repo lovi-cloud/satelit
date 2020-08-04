@@ -210,6 +210,100 @@ func (x *GetDHCPLeaseResponse) GetLease() *DHCPLease {
 	return nil
 }
 
+type GetHostnameByAddressRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (x *GetHostnameByAddressRequest) Reset() {
+	*x = GetHostnameByAddressRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelitDatastore_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetHostnameByAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHostnameByAddressRequest) ProtoMessage() {}
+
+func (x *GetHostnameByAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelitDatastore_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHostnameByAddressRequest.ProtoReflect.Descriptor instead.
+func (*GetHostnameByAddressRequest) Descriptor() ([]byte, []int) {
+	return file_satelitDatastore_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetHostnameByAddressRequest) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+type GetHostnameByAddressResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Hostname string `protobuf:"bytes,1,opt,name=hostname,proto3" json:"hostname,omitempty"`
+}
+
+func (x *GetHostnameByAddressResponse) Reset() {
+	*x = GetHostnameByAddressResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelitDatastore_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetHostnameByAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHostnameByAddressResponse) ProtoMessage() {}
+
+func (x *GetHostnameByAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelitDatastore_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHostnameByAddressResponse.ProtoReflect.Descriptor instead.
+func (*GetHostnameByAddressResponse) Descriptor() ([]byte, []int) {
+	return file_satelitDatastore_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetHostnameByAddressResponse) GetHostname() string {
+	if x != nil {
+		return x.Hostname
+	}
+	return ""
+}
+
 var File_satelitDatastore_proto protoreflect.FileDescriptor
 
 var file_satelitDatastore_proto_rawDesc = []byte{
@@ -234,15 +328,29 @@ var file_satelitDatastore_proto_rawDesc = []byte{
 	0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x28, 0x0a, 0x05,
 	0x6c, 0x65, 0x61, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x73, 0x61,
 	0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x52,
-	0x05, 0x6c, 0x65, 0x61, 0x73, 0x65, 0x32, 0x61, 0x0a, 0x10, 0x53, 0x61, 0x74, 0x65, 0x6c, 0x69,
-	0x74, 0x44, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x12, 0x4d, 0x0a, 0x0c, 0x47, 0x65,
-	0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74,
-	0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c,
-	0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x2e, 0x3b, 0x73,
-	0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x05, 0x6c, 0x65, 0x61, 0x73, 0x65, 0x22, 0x37, 0x0a, 0x1b, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73,
+	0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x22,
+	0x3a, 0x0a, 0x1c, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x1a, 0x0a, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x32, 0xc8, 0x01, 0x0a, 0x10,
+	0x53, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x44, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65,
+	0x12, 0x4d, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65,
+	0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x48,
+	0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d,
+	0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50,
+	0x4c, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x65, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x24, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69,
+	0x74, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79, 0x41,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e,
+	0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e,
+	0x61, 0x6d, 0x65, 0x42, 0x79, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65,
+	0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -257,18 +365,22 @@ func file_satelitDatastore_proto_rawDescGZIP() []byte {
 	return file_satelitDatastore_proto_rawDescData
 }
 
-var file_satelitDatastore_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_satelitDatastore_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_satelitDatastore_proto_goTypes = []interface{}{
-	(*DHCPLease)(nil),            // 0: satelit.DHCPLease
-	(*GetDHCPLeaseRequest)(nil),  // 1: satelit.GetDHCPLeaseRequest
-	(*GetDHCPLeaseResponse)(nil), // 2: satelit.GetDHCPLeaseResponse
+	(*DHCPLease)(nil),                    // 0: satelit.DHCPLease
+	(*GetDHCPLeaseRequest)(nil),          // 1: satelit.GetDHCPLeaseRequest
+	(*GetDHCPLeaseResponse)(nil),         // 2: satelit.GetDHCPLeaseResponse
+	(*GetHostnameByAddressRequest)(nil),  // 3: satelit.GetHostnameByAddressRequest
+	(*GetHostnameByAddressResponse)(nil), // 4: satelit.GetHostnameByAddressResponse
 }
 var file_satelitDatastore_proto_depIdxs = []int32{
 	0, // 0: satelit.GetDHCPLeaseResponse.lease:type_name -> satelit.DHCPLease
 	1, // 1: satelit.SatelitDatastore.GetDHCPLease:input_type -> satelit.GetDHCPLeaseRequest
-	2, // 2: satelit.SatelitDatastore.GetDHCPLease:output_type -> satelit.GetDHCPLeaseResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
+	3, // 2: satelit.SatelitDatastore.GetHostnameByAddress:input_type -> satelit.GetHostnameByAddressRequest
+	2, // 3: satelit.SatelitDatastore.GetDHCPLease:output_type -> satelit.GetDHCPLeaseResponse
+	4, // 4: satelit.SatelitDatastore.GetHostnameByAddress:output_type -> satelit.GetHostnameByAddressResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -316,6 +428,30 @@ func file_satelitDatastore_proto_init() {
 				return nil
 			}
 		}
+		file_satelitDatastore_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetHostnameByAddressRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelitDatastore_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetHostnameByAddressResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -323,7 +459,7 @@ func file_satelitDatastore_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_satelitDatastore_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -350,6 +486,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SatelitDatastoreClient interface {
 	GetDHCPLease(ctx context.Context, in *GetDHCPLeaseRequest, opts ...grpc.CallOption) (*GetDHCPLeaseResponse, error)
+	GetHostnameByAddress(ctx context.Context, in *GetHostnameByAddressRequest, opts ...grpc.CallOption) (*GetHostnameByAddressResponse, error)
 }
 
 type satelitDatastoreClient struct {
@@ -369,9 +506,19 @@ func (c *satelitDatastoreClient) GetDHCPLease(ctx context.Context, in *GetDHCPLe
 	return out, nil
 }
 
+func (c *satelitDatastoreClient) GetHostnameByAddress(ctx context.Context, in *GetHostnameByAddressRequest, opts ...grpc.CallOption) (*GetHostnameByAddressResponse, error) {
+	out := new(GetHostnameByAddressResponse)
+	err := c.cc.Invoke(ctx, "/satelit.SatelitDatastore/GetHostnameByAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SatelitDatastoreServer is the server API for SatelitDatastore service.
 type SatelitDatastoreServer interface {
 	GetDHCPLease(context.Context, *GetDHCPLeaseRequest) (*GetDHCPLeaseResponse, error)
+	GetHostnameByAddress(context.Context, *GetHostnameByAddressRequest) (*GetHostnameByAddressResponse, error)
 }
 
 // UnimplementedSatelitDatastoreServer can be embedded to have forward compatible implementations.
@@ -380,6 +527,9 @@ type UnimplementedSatelitDatastoreServer struct {
 
 func (*UnimplementedSatelitDatastoreServer) GetDHCPLease(context.Context, *GetDHCPLeaseRequest) (*GetDHCPLeaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDHCPLease not implemented")
+}
+func (*UnimplementedSatelitDatastoreServer) GetHostnameByAddress(context.Context, *GetHostnameByAddressRequest) (*GetHostnameByAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHostnameByAddress not implemented")
 }
 
 func RegisterSatelitDatastoreServer(s *grpc.Server, srv SatelitDatastoreServer) {
@@ -404,6 +554,24 @@ func _SatelitDatastore_GetDHCPLease_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SatelitDatastore_GetHostnameByAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHostnameByAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitDatastoreServer).GetHostnameByAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.SatelitDatastore/GetHostnameByAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitDatastoreServer).GetHostnameByAddress(ctx, req.(*GetHostnameByAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SatelitDatastore_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "satelit.SatelitDatastore",
 	HandlerType: (*SatelitDatastoreServer)(nil),
@@ -411,6 +579,10 @@ var _SatelitDatastore_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDHCPLease",
 			Handler:    _SatelitDatastore_GetDHCPLease_Handler,
+		},
+		{
+			MethodName: "GetHostnameByAddress",
+			Handler:    _SatelitDatastore_GetHostnameByAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

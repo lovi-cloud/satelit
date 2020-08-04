@@ -5,6 +5,8 @@ option  go_package = ".;satelit_datastore";
 
 service SatelitDatastore {
   rpc GetDHCPLease(GetDHCPLeaseRequest) returns (GetDHCPLeaseResponse) {}
+  rpc GetHostnameByAddress(GetHostnameByAddressRequest)
+      returns (GetHostnameByAddressResponse) {}
 }
 
 message DHCPLease {
@@ -22,4 +24,12 @@ message GetDHCPLeaseRequest {
 
 message GetDHCPLeaseResponse {
   DHCPLease lease = 1;
+}
+
+message GetHostnameByAddressRequest {
+  string address = 1;
+}
+
+message GetHostnameByAddressResponse {
+  string hostname = 1;
 }
