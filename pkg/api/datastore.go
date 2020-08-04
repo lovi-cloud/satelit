@@ -99,3 +99,22 @@ func (s *SatelitDatastore) GetHostnameByAddress(ctx context.Context, req *pb.Get
 		Hostname: hostname,
 	}, nil
 }
+
+// GetISUCONUserKeys is
+func (s *SatelitDatastore) GetISUCONUserKeys(ctx context.Context, req *pb.GetISUCONUserKeysRequest) (*pb.GetISUCONUserKeysResponse, error) {
+	address := net.ParseIP(req.Address)
+	if address == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request address")
+	}
+
+	return &pb.GetISUCONUserKeysResponse{
+		Keys: strings.Split(strings.TrimSpace(adminKeys), "\n"),
+	}, nil
+}
+
+// GetISUCONAdminKeys is
+func (s *SatelitDatastore) GetISUCONAdminKeys(ctx context.Context, req *pb.GetISUCONAdminKeysRequest) (*pb.GetISUCONAdminKeysResponse, error) {
+	return &pb.GetISUCONAdminKeysResponse{
+		Keys: strings.Split(strings.TrimSpace(adminKeys), "\n"),
+	}, nil
+}
