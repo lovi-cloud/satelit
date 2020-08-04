@@ -7,6 +7,10 @@ service SatelitDatastore {
   rpc GetDHCPLease(GetDHCPLeaseRequest) returns (GetDHCPLeaseResponse) {}
   rpc GetHostnameByAddress(GetHostnameByAddressRequest)
       returns (GetHostnameByAddressResponse) {}
+  rpc GetISUCONUserKeys(GetISUCONUserKeysRequest)
+      returns (GetISUCONUserKeysResponse) {}
+  rpc GetISUCONAdminKeys(GetISUCONAdminKeysRequest)
+      returns (GetISUCONAdminKeysResponse) {}
 }
 
 message DHCPLease {
@@ -32,4 +36,18 @@ message GetHostnameByAddressRequest {
 
 message GetHostnameByAddressResponse {
   string hostname = 1;
+}
+
+message GetISUCONUserKeysRequest {
+  string address = 1;
+}
+
+message GetISUCONUserKeysResponse {
+  repeated string keys = 1;
+}
+
+message GetISUCONAdminKeysRequest {}
+
+message GetISUCONAdminKeysResponse {
+  repeated string keys = 1;
 }

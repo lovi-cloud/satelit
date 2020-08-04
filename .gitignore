@@ -1,2 +1,3 @@
 configs/satelit.yaml
 satelit-*
+pkg/api/key.go

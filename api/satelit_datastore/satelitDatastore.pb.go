@@ -304,6 +304,185 @@ func (x *GetHostnameByAddressResponse) GetHostname() string {
 	return ""
 }
 
+type GetISUCONUserKeysRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (x *GetISUCONUserKeysRequest) Reset() {
+	*x = GetISUCONUserKeysRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelitDatastore_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetISUCONUserKeysRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetISUCONUserKeysRequest) ProtoMessage() {}
+
+func (x *GetISUCONUserKeysRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelitDatastore_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetISUCONUserKeysRequest.ProtoReflect.Descriptor instead.
+func (*GetISUCONUserKeysRequest) Descriptor() ([]byte, []int) {
+	return file_satelitDatastore_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetISUCONUserKeysRequest) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+type GetISUCONUserKeysResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Keys []string `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
+}
+
+func (x *GetISUCONUserKeysResponse) Reset() {
+	*x = GetISUCONUserKeysResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelitDatastore_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetISUCONUserKeysResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetISUCONUserKeysResponse) ProtoMessage() {}
+
+func (x *GetISUCONUserKeysResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelitDatastore_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetISUCONUserKeysResponse.ProtoReflect.Descriptor instead.
+func (*GetISUCONUserKeysResponse) Descriptor() ([]byte, []int) {
+	return file_satelitDatastore_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetISUCONUserKeysResponse) GetKeys() []string {
+	if x != nil {
+		return x.Keys
+	}
+	return nil
+}
+
+type GetISUCONAdminKeysRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetISUCONAdminKeysRequest) Reset() {
+	*x = GetISUCONAdminKeysRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelitDatastore_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetISUCONAdminKeysRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetISUCONAdminKeysRequest) ProtoMessage() {}
+
+func (x *GetISUCONAdminKeysRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_satelitDatastore_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetISUCONAdminKeysRequest.ProtoReflect.Descriptor instead.
+func (*GetISUCONAdminKeysRequest) Descriptor() ([]byte, []int) {
+	return file_satelitDatastore_proto_rawDescGZIP(), []int{7}
+}
+
+type GetISUCONAdminKeysResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Keys []string `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
+}
+
+func (x *GetISUCONAdminKeysResponse) Reset() {
+	*x = GetISUCONAdminKeysResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_satelitDatastore_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetISUCONAdminKeysResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetISUCONAdminKeysResponse) ProtoMessage() {}
+
+func (x *GetISUCONAdminKeysResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_satelitDatastore_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetISUCONAdminKeysResponse.ProtoReflect.Descriptor instead.
+func (*GetISUCONAdminKeysResponse) Descriptor() ([]byte, []int) {
+	return file_satelitDatastore_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetISUCONAdminKeysResponse) GetKeys() []string {
+	if x != nil {
+		return x.Keys
+	}
+	return nil
+}
+
 var File_satelitDatastore_proto protoreflect.FileDescriptor
 
 var file_satelitDatastore_proto_rawDesc = []byte{
@@ -335,22 +514,45 @@ var file_satelitDatastore_proto_rawDesc = []byte{
 	0x3a, 0x0a, 0x1c, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79,
 	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
 	0x1a, 0x0a, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x32, 0xc8, 0x01, 0x0a, 0x10,
-	0x53, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x44, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65,
-	0x12, 0x4d, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65,
-	0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x48,
-	0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d,
-	0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50,
-	0x4c, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
-	0x65, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79,
-	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x24, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69,
-	0x74, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79, 0x41,
-	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e,
+	0x09, 0x52, 0x08, 0x68, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x34, 0x0a, 0x18, 0x47,
+	0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x55, 0x73, 0x65, 0x72, 0x4b, 0x65, 0x79, 0x73,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x22, 0x2f, 0x0a, 0x19, 0x47, 0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x55, 0x73,
+	0x65, 0x72, 0x4b, 0x65, 0x79, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12,
+	0x0a, 0x04, 0x6b, 0x65, 0x79, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x65,
+	0x79, 0x73, 0x22, 0x1b, 0x0a, 0x19, 0x47, 0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x41,
+	0x64, 0x6d, 0x69, 0x6e, 0x4b, 0x65, 0x79, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
+	0x30, 0x0a, 0x1a, 0x47, 0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x41, 0x64, 0x6d, 0x69,
+	0x6e, 0x4b, 0x65, 0x79, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a,
+	0x04, 0x6b, 0x65, 0x79, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x65, 0x79,
+	0x73, 0x32, 0x87, 0x03, 0x0a, 0x10, 0x53, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x44, 0x61, 0x74,
+	0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x12, 0x4d, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43,
+	0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x12, 0x1c, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74,
+	0x2e, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47,
+	0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x65, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74,
+	0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x24, 0x2e,
 	0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e,
-	0x61, 0x6d, 0x65, 0x42, 0x79, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65,
-	0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6d, 0x65, 0x42, 0x79, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65,
+	0x74, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x79, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x11,
+	0x47, 0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x55, 0x73, 0x65, 0x72, 0x4b, 0x65, 0x79,
+	0x73, 0x12, 0x21, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x49,
+	0x53, 0x55, 0x43, 0x4f, 0x4e, 0x55, 0x73, 0x65, 0x72, 0x4b, 0x65, 0x79, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47,
+	0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x55, 0x73, 0x65, 0x72, 0x4b, 0x65, 0x79, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x5f, 0x0a, 0x12, 0x47, 0x65,
+	0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4b, 0x65, 0x79, 0x73,
+	0x12, 0x22, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x53,
+	0x55, 0x43, 0x4f, 0x4e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4b, 0x65, 0x79, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x23, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x2e, 0x47,
+	0x65, 0x74, 0x49, 0x53, 0x55, 0x43, 0x4f, 0x4e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4b, 0x65, 0x79,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x2e,
+	0x3b, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f,
+	0x72, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -365,22 +567,30 @@ func file_satelitDatastore_proto_rawDescGZIP() []byte {
 	return file_satelitDatastore_proto_rawDescData
 }
 
-var file_satelitDatastore_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_satelitDatastore_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_satelitDatastore_proto_goTypes = []interface{}{
 	(*DHCPLease)(nil),                    // 0: satelit.DHCPLease
 	(*GetDHCPLeaseRequest)(nil),          // 1: satelit.GetDHCPLeaseRequest
 	(*GetDHCPLeaseResponse)(nil),         // 2: satelit.GetDHCPLeaseResponse
 	(*GetHostnameByAddressRequest)(nil),  // 3: satelit.GetHostnameByAddressRequest
 	(*GetHostnameByAddressResponse)(nil), // 4: satelit.GetHostnameByAddressResponse
+	(*GetISUCONUserKeysRequest)(nil),     // 5: satelit.GetISUCONUserKeysRequest
+	(*GetISUCONUserKeysResponse)(nil),    // 6: satelit.GetISUCONUserKeysResponse
+	(*GetISUCONAdminKeysRequest)(nil),    // 7: satelit.GetISUCONAdminKeysRequest
+	(*GetISUCONAdminKeysResponse)(nil),   // 8: satelit.GetISUCONAdminKeysResponse
 }
 var file_satelitDatastore_proto_depIdxs = []int32{
 	0, // 0: satelit.GetDHCPLeaseResponse.lease:type_name -> satelit.DHCPLease
 	1, // 1: satelit.SatelitDatastore.GetDHCPLease:input_type -> satelit.GetDHCPLeaseRequest
 	3, // 2: satelit.SatelitDatastore.GetHostnameByAddress:input_type -> satelit.GetHostnameByAddressRequest
-	2, // 3: satelit.SatelitDatastore.GetDHCPLease:output_type -> satelit.GetDHCPLeaseResponse
-	4, // 4: satelit.SatelitDatastore.GetHostnameByAddress:output_type -> satelit.GetHostnameByAddressResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
+	5, // 3: satelit.SatelitDatastore.GetISUCONUserKeys:input_type -> satelit.GetISUCONUserKeysRequest
+	7, // 4: satelit.SatelitDatastore.GetISUCONAdminKeys:input_type -> satelit.GetISUCONAdminKeysRequest
+	2, // 5: satelit.SatelitDatastore.GetDHCPLease:output_type -> satelit.GetDHCPLeaseResponse
+	4, // 6: satelit.SatelitDatastore.GetHostnameByAddress:output_type -> satelit.GetHostnameByAddressResponse
+	6, // 7: satelit.SatelitDatastore.GetISUCONUserKeys:output_type -> satelit.GetISUCONUserKeysResponse
+	8, // 8: satelit.SatelitDatastore.GetISUCONAdminKeys:output_type -> satelit.GetISUCONAdminKeysResponse
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -452,6 +662,54 @@ func file_satelitDatastore_proto_init() {
 				return nil
 			}
 		}
+		file_satelitDatastore_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetISUCONUserKeysRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelitDatastore_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetISUCONUserKeysResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelitDatastore_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetISUCONAdminKeysRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_satelitDatastore_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetISUCONAdminKeysResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -459,7 +717,7 @@ func file_satelitDatastore_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_satelitDatastore_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -487,6 +745,8 @@ const _ = grpc.SupportPackageIsVersion6
 type SatelitDatastoreClient interface {
 	GetDHCPLease(ctx context.Context, in *GetDHCPLeaseRequest, opts ...grpc.CallOption) (*GetDHCPLeaseResponse, error)
 	GetHostnameByAddress(ctx context.Context, in *GetHostnameByAddressRequest, opts ...grpc.CallOption) (*GetHostnameByAddressResponse, error)
+	GetISUCONUserKeys(ctx context.Context, in *GetISUCONUserKeysRequest, opts ...grpc.CallOption) (*GetISUCONUserKeysResponse, error)
+	GetISUCONAdminKeys(ctx context.Context, in *GetISUCONAdminKeysRequest, opts ...grpc.CallOption) (*GetISUCONAdminKeysResponse, error)
 }
 
 type satelitDatastoreClient struct {
@@ -515,10 +775,30 @@ func (c *satelitDatastoreClient) GetHostnameByAddress(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *satelitDatastoreClient) GetISUCONUserKeys(ctx context.Context, in *GetISUCONUserKeysRequest, opts ...grpc.CallOption) (*GetISUCONUserKeysResponse, error) {
+	out := new(GetISUCONUserKeysResponse)
+	err := c.cc.Invoke(ctx, "/satelit.SatelitDatastore/GetISUCONUserKeys", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *satelitDatastoreClient) GetISUCONAdminKeys(ctx context.Context, in *GetISUCONAdminKeysRequest, opts ...grpc.CallOption) (*GetISUCONAdminKeysResponse, error) {
+	out := new(GetISUCONAdminKeysResponse)
+	err := c.cc.Invoke(ctx, "/satelit.SatelitDatastore/GetISUCONAdminKeys", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SatelitDatastoreServer is the server API for SatelitDatastore service.
 type SatelitDatastoreServer interface {
 	GetDHCPLease(context.Context, *GetDHCPLeaseRequest) (*GetDHCPLeaseResponse, error)
 	GetHostnameByAddress(context.Context, *GetHostnameByAddressRequest) (*GetHostnameByAddressResponse, error)
+	GetISUCONUserKeys(context.Context, *GetISUCONUserKeysRequest) (*GetISUCONUserKeysResponse, error)
+	GetISUCONAdminKeys(context.Context, *GetISUCONAdminKeysRequest) (*GetISUCONAdminKeysResponse, error)
 }
 
 // UnimplementedSatelitDatastoreServer can be embedded to have forward compatible implementations.
@@ -530,6 +810,12 @@ func (*UnimplementedSatelitDatastoreServer) GetDHCPLease(context.Context, *GetDH
 }
 func (*UnimplementedSatelitDatastoreServer) GetHostnameByAddress(context.Context, *GetHostnameByAddressRequest) (*GetHostnameByAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHostnameByAddress not implemented")
+}
+func (*UnimplementedSatelitDatastoreServer) GetISUCONUserKeys(context.Context, *GetISUCONUserKeysRequest) (*GetISUCONUserKeysResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetISUCONUserKeys not implemented")
+}
+func (*UnimplementedSatelitDatastoreServer) GetISUCONAdminKeys(context.Context, *GetISUCONAdminKeysRequest) (*GetISUCONAdminKeysResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetISUCONAdminKeys not implemented")
 }
 
 func RegisterSatelitDatastoreServer(s *grpc.Server, srv SatelitDatastoreServer) {
@@ -572,6 +858,42 @@ func _SatelitDatastore_GetHostnameByAddress_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SatelitDatastore_GetISUCONUserKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetISUCONUserKeysRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitDatastoreServer).GetISUCONUserKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.SatelitDatastore/GetISUCONUserKeys",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitDatastoreServer).GetISUCONUserKeys(ctx, req.(*GetISUCONUserKeysRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SatelitDatastore_GetISUCONAdminKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetISUCONAdminKeysRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitDatastoreServer).GetISUCONAdminKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit.SatelitDatastore/GetISUCONAdminKeys",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitDatastoreServer).GetISUCONAdminKeys(ctx, req.(*GetISUCONAdminKeysRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SatelitDatastore_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "satelit.SatelitDatastore",
 	HandlerType: (*SatelitDatastoreServer)(nil),
@@ -583,6 +905,14 @@ var _SatelitDatastore_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHostnameByAddress",
 			Handler:    _SatelitDatastore_GetHostnameByAddress_Handler,
+		},
+		{
+			MethodName: "GetISUCONUserKeys",
+			Handler:    _SatelitDatastore_GetISUCONUserKeys_Handler,
+		},
+		{
+			MethodName: "GetISUCONAdminKeys",
+			Handler:    _SatelitDatastore_GetISUCONAdminKeys_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
