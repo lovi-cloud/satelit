@@ -364,6 +364,14 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
 	}
+	defer func() {
+		volumeID := v.ID
+		if err != nil {
+			if err := d.DeleteVolume(ctx, volumeID); err != nil {
+				logger.Logger.Warn(fmt.Sprintf("failed to DeleteVolume: %v", err))
+			}
+		}
+	}()
 
 	hostname, err := os.Hostname()
 	if err != nil {
