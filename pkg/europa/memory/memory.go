@@ -223,6 +223,9 @@ func (m *Memory) UploadImage(ctx context.Context, image []byte, name, descriptio
 
 // DeleteImage delete from in-memory
 func (m *Memory) DeleteImage(ctx context.Context, id uuid.UUID) error {
-	// TODO: implement
+	m.Mu.Lock()
+	delete(m.Images, id)
+	m.Mu.Unlock()
+
 	return nil
 }

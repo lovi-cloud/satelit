@@ -214,8 +214,6 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
 	}
 
-	// TODO: send to operation attach volume to teleskop
-
 	volume, err := d.datastore.GetVolume(id)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
@@ -267,15 +265,33 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 
 // DetachVolume detach volume by Dorado
 func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) error {
-	// TODO: send to detach operation
-
-	if err := d.client.DetachVolume(ctx, hyperMetroPairID); err != nil {
-		return fmt.Errorf("failed to detach volume (ID: %s): %w", hyperMetroPairID, err)
-	}
-
 	volume, err := d.datastore.GetVolume(hyperMetroPairID)
 	if err != nil {
 		return fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
+	}
+	if volume.HostName == "" {
+		return fmt.Errorf("not attached (ID: %s)", hyperMetroPairID)
+	}
+
+	targetPortalIPs, err := d.client.GetPortalIPAddresses(ctx, d.local.portGroupID, d.remote.portGroupID)
+	if err != nil {
+		return fmt.Errorf("failed to get portal ip addresses: %w", err)
+	}
+
+	teleskopClient, err := teleskop.GetClient(volume.HostName)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+	_, err = teleskopClient.DisconnectBlockDevice(ctx, &agentpb.DisconnectBlockDeviceRequest{
+		PortalAddresses: targetPortalIPs,
+		HostLunId:       uint32(volume.HostLUNID),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to detach from teleskop: %w", err)
+	}
+
+	if err := d.client.DetachVolume(ctx, hyperMetroPairID); err != nil {
+		return fmt.Errorf("failed to detach volume (ID: %s): %w", hyperMetroPairID, err)
 	}
 
 	volume.Attached = false
