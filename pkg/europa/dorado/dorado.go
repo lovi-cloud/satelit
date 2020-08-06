@@ -214,8 +214,6 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
 	}
 
-	// TODO: send to operation attach volume to teleskop
-
 	volume, err := d.datastore.GetVolume(id)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
@@ -256,6 +254,7 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 	}
 	volume.Attached = true
 	volume.HostName = hostname
+	volume.HostLUNID = hostLUNID
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
@@ -266,20 +265,38 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 
 // DetachVolume detach volume by Dorado
 func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) error {
-	err := d.client.DetachVolume(ctx, hyperMetroPairID)
-	if err != nil {
-		return fmt.Errorf("failed to detach volume (ID: %s): %w", hyperMetroPairID, err)
-	}
-
-	// TODO: send to detach operation
-
 	volume, err := d.datastore.GetVolume(hyperMetroPairID)
 	if err != nil {
 		return fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
 	}
+	if volume.HostName == "" {
+		return fmt.Errorf("not attached (ID: %s)", hyperMetroPairID)
+	}
+
+	targetPortalIPs, err := d.client.GetPortalIPAddresses(ctx, d.local.portGroupID, d.remote.portGroupID)
+	if err != nil {
+		return fmt.Errorf("failed to get portal ip addresses: %w", err)
+	}
+
+	teleskopClient, err := teleskop.GetClient(volume.HostName)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+	_, err = teleskopClient.DisconnectBlockDevice(ctx, &agentpb.DisconnectBlockDeviceRequest{
+		PortalAddresses: targetPortalIPs,
+		HostLunId:       uint32(volume.HostLUNID),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to detach from teleskop: %w", err)
+	}
+
+	if err := d.client.DetachVolume(ctx, hyperMetroPairID); err != nil {
+		return fmt.Errorf("failed to detach volume (ID: %s): %w", hyperMetroPairID, err)
+	}
 
 	volume.Attached = false
 	volume.HostName = ""
+	volume.HostLUNID = 0
 
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
@@ -291,20 +308,18 @@ func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) erro
 
 // DetachVolumeSatelit detach volume from satelit server
 func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID string, hostLUNID int) error {
-	err := d.client.DetachVolume(ctx, hyperMetroPairID)
-	if err != nil {
-		return fmt.Errorf("failed to delete dorado attach mapping (ID: %s): %w", hyperMetroPairID, err)
-	}
-
 	// detach volume
 	targetPortalIPs, err := d.client.GetPortalIPAddresses(ctx, d.local.portGroupID, d.remote.portGroupID)
 	if err != nil {
 		return fmt.Errorf("failed to get portal ip addresses: %w", err)
 	}
 
-	err = osbrick.DisconnectVolume(ctx, targetPortalIPs, hostLUNID)
-	if err != nil {
+	if err := osbrick.DisconnectVolume(ctx, targetPortalIPs, hostLUNID); err != nil {
 		return fmt.Errorf("failed to detach volume: %w", err)
+	}
+
+	if err := d.client.DetachVolume(ctx, hyperMetroPairID); err != nil {
+		return fmt.Errorf("failed to delete dorado attach mapping (ID: %s): %w", hyperMetroPairID, err)
 	}
 
 	volume, err := d.datastore.GetVolume(hyperMetroPairID)
@@ -314,6 +329,7 @@ func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 
 	volume.Attached = false
 	volume.HostName = ""
+	volume.HostLUNID = 0
 
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
@@ -364,6 +380,14 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	if err != nil {
 		return nil, fmt.Errorf("failed to create volume (name: %s): %w", u.String(), err)
 	}
+	defer func() {
+		volumeID := v.ID
+		if err != nil {
+			if err := d.DeleteVolume(ctx, volumeID); err != nil {
+				logger.Logger.Warn(fmt.Sprintf("failed to DeleteVolume: %v", err))
+			}
+		}
+	}()
 
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -374,9 +398,6 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	if err != nil {
 		return nil, fmt.Errorf("failed to attach volume: %w", err)
 	}
-	defer func() {
-		d.DetachVolumeSatelit(ctx, v.ID, hostLUNID)
-	}()
 
 	// exec qemu-img convert
 	err = qcow2.ToRaw(ctx, tmpfile.Name(), deviceName)
@@ -389,6 +410,10 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 		Name:          name,
 		Description:   description,
 		CacheVolumeID: v.ID,
+	}
+
+	if err := d.DetachVolumeSatelit(ctx, v.ID, hostLUNID); err != nil {
+		return nil, fmt.Errorf("failed to detach volume: %w", err)
 	}
 
 	return bi, nil

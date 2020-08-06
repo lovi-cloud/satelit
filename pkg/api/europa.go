@@ -159,6 +159,14 @@ func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 		return status.Errorf(codes.Internal, "failed to upload image to europa: %+v", err)
 	}
 	logger.Logger.Debug("uploaded image to europa")
+	defer func() {
+		uuid := image.UUID
+		if err != nil {
+			if err := s.Europa.DeleteImage(ctx, uuid); err != nil {
+				logger.Logger.Warn(fmt.Sprint("failed to delete image: %w", err))
+			}
+		}
+	}()
 
 	err = stream.SendAndClose(&pb.UploadImageResponse{Image: image.ToPb()})
 	if err != nil {
