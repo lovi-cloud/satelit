@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"golang.org/x/sync/errgroup"
+
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/whywaita/satelit/internal/client/teleskop"
@@ -113,4 +115,268 @@ func (l *Libvirt) DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) erro
 	}
 
 	return nil
+}
+
+// CreateBridge is
+func (l *Libvirt) CreateBridge(ctx context.Context, name string, vlanID uint32) (*ganymede.Bridge, error) {
+	subnet, err := l.ds.GetSubnetByVLAN(ctx, vlanID)
+	if err != nil {
+		return nil, err
+	}
+	if subnet.MetadataServer == nil {
+		return nil, fmt.Errorf("invalid subnet vlan_id=%d: metadata server must not be null", vlanID)
+	}
+
+	mask, _ := subnet.Network.Mask.Size()
+	addr := fmt.Sprintf("%s/%d", subnet.MetadataServer.String(), mask)
+
+	clients, err := teleskop.ListClient()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve teleskop clients: %w", err)
+	}
+
+	eg := errgroup.Group{}
+	for _, client := range clients {
+		client := client
+		eg.Go(func() error {
+			_, err := client.AddVLANInterface(ctx, &agentpb.AddVLANInterfaceRequest{
+				VlanId:          vlanID,
+				ParentInterface: "bond0",
+			})
+			if err != nil {
+				return err
+			}
+
+			_, err = client.AddBridge(ctx, &agentpb.AddBridgeRequest{
+				Name:         name,
+				MetadataCidr: addr,
+				InternalOnly: false,
+			})
+			if err != nil {
+				return err
+			}
+			_, err = client.AddInterfaceToBridge(ctx, &agentpb.AddInterfaceToBridgeRequest{
+				Bridge:    name,
+				Interface: fmt.Sprintf("bond0.%d", vlanID),
+			})
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+
+	bridge, err := l.ds.CreateBridge(ctx, ganymede.Bridge{
+		UUID:   uuid.NewV4(),
+		VLANID: vlanID,
+		Name:   name,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to write bridge: %w", err)
+	}
+
+	return bridge, nil
+}
+
+// CreateInternalBridge is
+func (l *Libvirt) CreateInternalBridge(ctx context.Context, name string) (*ganymede.Bridge, error) {
+	clients, err := teleskop.ListClient()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve teleskop clients: %w", err)
+	}
+
+	eg := errgroup.Group{}
+	for _, client := range clients {
+		client := client
+		eg.Go(func() error {
+			_, err = client.AddBridge(ctx, &agentpb.AddBridgeRequest{
+				Name:         name,
+				MetadataCidr: "",
+				InternalOnly: true,
+			})
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+
+	bridge, err := l.ds.CreateBridge(ctx, ganymede.Bridge{
+		UUID:   uuid.NewV4(),
+		VLANID: 0,
+		Name:   name,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to write bridge: %w", err)
+	}
+
+	return bridge, nil
+}
+
+// GetBridge is
+func (l *Libvirt) GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error) {
+	return l.ds.GetBridge(ctx, bridgeID)
+}
+
+// ListBridge is
+func (l *Libvirt) ListBridge(ctx context.Context) ([]ganymede.Bridge, error) {
+	return l.ds.ListBridge(ctx)
+}
+
+// DeleteBridge is
+func (l *Libvirt) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
+	bridge, err := l.ds.GetBridge(ctx, bridgeID)
+	if err != nil {
+		return fmt.Errorf("failed to find target bridge: %w", err)
+	}
+
+	clients, err := teleskop.ListClient()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve teleskop clients: %w", err)
+	}
+
+	var eg errgroup.Group
+	for _, client := range clients {
+		client := client
+		eg.Go(func() error {
+			if bridge.VLANID != 0 {
+				_, err := client.DeleteInterfaceFromBridge(ctx, &agentpb.DeleteInterfaceFromBridgeRequest{
+					Bridge:    bridge.Name,
+					Interface: fmt.Sprintf("bond0.%d", bridge.VLANID),
+				})
+				if err != nil {
+					return err
+				}
+
+				_, err = client.DeleteVLANInterface(ctx, &agentpb.DeleteVLANInterfaceRequest{
+					VlanId:          bridge.VLANID,
+					ParentInterface: "bond0",
+				})
+				if err != nil {
+					return err
+				}
+			}
+
+			_, err = client.DeleteBridge(ctx, &agentpb.DeleteBridgeRequest{
+				Name: bridge.Name,
+			})
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return err
+	}
+
+	return l.ds.DeleteBridge(ctx, bridgeID)
+}
+
+// AttachInterface is
+func (l *Libvirt) AttachInterface(ctx context.Context, vmID, bridgeID, leaseID uuid.UUID, average int, name string) (*ganymede.InterfaceAttachment, error) {
+	vm, err := l.ds.GetVirtualMachine(vmID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get target vm: %w", err)
+	}
+	bridge, err := l.ds.GetBridge(ctx, bridgeID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get target bridge: %w", err)
+	}
+	lease, err := l.ds.GetLeaseByID(ctx, leaseID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get target lease: %w", err)
+	}
+
+	client, err := teleskop.GetClient(vm.HypervisorName)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = client.AttachInterface(ctx, &agentpb.AttachInterfaceRequest{
+		Uuid:            vm.UUID.String(),
+		Bridge:          bridge.Name,
+		InboundAverage:  uint32(average),
+		OutboundAverage: uint32(average),
+		Name:            name,
+		MacAddress:      lease.MacAddress.String(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	attachment, err := l.ds.AttachInterface(ctx, ganymede.InterfaceAttachment{
+		UUID:             uuid.NewV4(),
+		VirtualMachineID: vm.UUID,
+		BridgeID:         bridge.UUID,
+		Average:          average,
+		Name:             name,
+		LeaseID:          lease.UUID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to write attachment: %w", err)
+	}
+
+	return attachment, nil
+}
+
+// DetachInterface is
+func (l *Libvirt) DetachInterface(ctx context.Context, attachmentID uuid.UUID) error {
+	attachment, err := l.ds.GetAttachment(ctx, attachmentID)
+	if err != nil {
+		return fmt.Errorf("failed to get target attachment: %w", err)
+	}
+	vm, err := l.ds.GetVirtualMachine(attachment.VirtualMachineID)
+	if err != nil {
+		return fmt.Errorf("failed to get target vm: %w", err)
+	}
+	bridge, err := l.ds.GetBridge(ctx, attachment.BridgeID)
+	if err != nil {
+		return fmt.Errorf("failed to get target bridge: %w", err)
+	}
+	lease, err := l.ds.GetLeaseByID(ctx, attachment.LeaseID)
+	if err != nil {
+		return fmt.Errorf("failed to get target lease: %w", err)
+	}
+
+	client, err := teleskop.GetClient(vm.HypervisorName)
+	if err != nil {
+		return err
+	}
+
+	_, err = client.DetachInterface(ctx, &agentpb.DetachInterfaceRequest{
+		Uuid:            vm.UUID.String(),
+		Bridge:          bridge.Name,
+		InboundAverage:  uint32(attachment.Average),
+		OutboundAverage: uint32(attachment.Average),
+		Name:            attachment.Name,
+		MacAddress:      lease.MacAddress.String(),
+	})
+	if err != nil {
+		return err
+	}
+
+	err = l.ds.DetachInterface(ctx, attachment.UUID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetAttachment is
+func (l *Libvirt) GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*ganymede.InterfaceAttachment, error) {
+	return l.ds.GetAttachment(ctx, attachmentID)
+}
+
+// ListAttachment is
+func (l *Libvirt) ListAttachment(ctx context.Context) ([]ganymede.InterfaceAttachment, error) {
+	return l.ds.ListAttachment(ctx)
 }

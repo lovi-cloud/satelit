@@ -17,6 +17,7 @@ import (
 const (
 	testSubnetID  = "bba39c58-4af7-46aa-ab3d-eac7ab7b581b"
 	testAddressID = "1d2f0d83-1508-4af0-bdcb-c52c34733923"
+	testLeaseID   = "3e3e4f46-cd5d-4cf7-86a3-6b7af5d754e9"
 	testMACAddr   = "ca:03:18:00:00:00"
 )
 
@@ -38,6 +39,7 @@ var testAddress = ipam.Address{
 }
 
 var testLease = ipam.Lease{
+	UUID:       uuid.FromStringOrNil(testLeaseID),
 	MacAddress: parseMAC(testMACAddr),
 	AddressID:  testAddress.UUID,
 }
@@ -70,7 +72,7 @@ func TestMySQL_CreateLease(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to create lease: %+v", err)
 		}
-		want, err := getLeaseFromSQL(testDB, test.input.MacAddress)
+		want, err := getLeaseFromSQL(testDB, test.input.UUID)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
 		}
@@ -101,18 +103,18 @@ func TestMySQL_GetLeaseByMACAddress(t *testing.T) {
 	}
 
 	tests := []struct {
-		input types.HardwareAddr
+		input uuid.UUID
 		want  ipam.Lease
 		err   bool
 	}{
 		{
-			input: parseMAC(testMACAddr),
+			input: uuid.FromStringOrNil(testLeaseID),
 			want:  testLease,
 			err:   false,
 		},
 	}
 	for _, test := range tests {
-		got, err := testDatastore.GetLeaseByMACAddress(context.Background(), test.input)
+		got, err := testDatastore.GetLeaseByID(context.Background(), test.input)
 		if !test.err && err != nil {
 			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
 		}
@@ -233,12 +235,12 @@ func TestMySQL_DeleteLease(t *testing.T) {
 	}
 
 	tests := []struct {
-		input types.HardwareAddr
+		input uuid.UUID
 		want  *ipam.Lease
 		err   bool
 	}{
 		{
-			input: parseMAC("ca:03:18:00:00:00"),
+			input: uuid.FromStringOrNil(testLeaseID),
 			want:  nil,
 			err:   true,
 		},
@@ -280,14 +282,14 @@ func parseMAC(s string) types.HardwareAddr {
 	return types.HardwareAddr(mac)
 }
 
-func getLeaseFromSQL(testDB *sqlx.DB, mac types.HardwareAddr) (*ipam.Lease, error) {
+func getLeaseFromSQL(testDB *sqlx.DB, leaseID uuid.UUID) (*ipam.Lease, error) {
 	var l ipam.Lease
-	query := `SELECT mac_address, address_id, created_at, updated_at FROM lease WHERE mac_address = ?`
+	query := `SELECT uuid, mac_address, address_id, created_at, updated_at FROM lease WHERE uuid = ?`
 	stmt, err := testDB.Preparex(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare: %w", err)
 	}
-	err = stmt.Get(&l, mac)
+	err = stmt.Get(&l, leaseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get lease: %w", err)
 	}

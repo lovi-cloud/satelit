@@ -14,6 +14,9 @@ func (m *MySQL) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
 
 	query := `SELECT uuid, name, description, volume_id, created_at, updated_at FROM image WHERE uuid = ?`
 	stmt, err := m.Conn.Preparex(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
 	err = stmt.Get(&image, imageID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute get query: %w", err)
@@ -28,6 +31,9 @@ func (m *MySQL) ListImage() ([]europa.BaseImage, error) {
 
 	query := `SELECT uuid, name, description, volume_id, created_at, updated_at FROM image`
 	stmt, err := m.Conn.Preparex(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
 	err = stmt.Select(&images)
 	if err != nil {
 		return nil, fmt.Errorf("failed to SELCT image table: %w", err)
@@ -41,6 +47,9 @@ func (m *MySQL) ListImage() ([]europa.BaseImage, error) {
 func (m *MySQL) PutImage(image europa.BaseImage) error {
 	query := `INSERT INTO image(uuid, name, volume_id, description) VALUES (?, ?, ?, ?)`
 	stmt, err := m.Conn.Preparex(query)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %w", err)
+	}
 	_, err = stmt.Exec(image.UUID, image.Name, image.CacheVolumeID, image.Description)
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
@@ -53,6 +62,9 @@ func (m *MySQL) PutImage(image europa.BaseImage) error {
 func (m *MySQL) DeleteImage(imageID uuid.UUID) error {
 	query := `DELETE FROM image WHERE uuid = ?`
 	stmt, err := m.Conn.Preparex(query)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %w", err)
+	}
 	_, err = stmt.Exec(imageID)
 	if err != nil {
 		return fmt.Errorf("failed to execute delete query: %w", err)

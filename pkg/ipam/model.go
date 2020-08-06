@@ -12,6 +12,7 @@ import (
 type Subnet struct {
 	UUID           uuid.UUID   `db:"uuid"`
 	Name           string      `db:"name"`
+	VLANID         uint32      `db:"vlan_id"`
 	Network        types.IPNet `db:"network"`
 	Start          types.IP    `db:"start"`
 	End            types.IP    `db:"end"`
@@ -33,6 +34,7 @@ type Address struct {
 
 // A Lease is DHCP lease information
 type Lease struct {
+	UUID       uuid.UUID          `db:"uuid"`
 	MacAddress types.HardwareAddr `db:"mac_address"`
 	AddressID  uuid.UUID          `db:"address_id"`
 	CreatedAt  time.Time          `db:"created_at"`

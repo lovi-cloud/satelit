@@ -27,6 +27,7 @@ type Datastore interface {
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)
 	GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error)
+	GetSubnetByVLAN(ctx context.Context, vlanID uint32) (*ipam.Subnet, error)
 	ListSubnet(ctx context.Context) ([]ipam.Subnet, error)
 	DeleteSubnet(ctx context.Context, uuid uuid.UUID) error
 
@@ -36,12 +37,23 @@ type Datastore interface {
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error
 
 	CreateLease(ctx context.Context, lease ipam.Lease) (*ipam.Lease, error)
-	GetLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.Lease, error)
+	GetLeaseByID(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error)
 	GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
-	DeleteLease(ctx context.Context, mac types.HardwareAddr) error
+	DeleteLease(ctx context.Context, leaseID uuid.UUID) error
 
 	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
 	DeleteVirtualMachine(vmID uuid.UUID) error
+	GetHostnameByAddress(address types.IP) (string, error)
+
+	CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*ganymede.Bridge, error)
+	GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error)
+	ListBridge(ctx context.Context) ([]ganymede.Bridge, error)
+	DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error
+
+	AttachInterface(ctx context.Context, attachment ganymede.InterfaceAttachment) (*ganymede.InterfaceAttachment, error)
+	DetachInterface(ctx context.Context, attachmentID uuid.UUID) error
+	GetAttachment(ctx context.Context, attachmentID uuid.UUID) (*ganymede.InterfaceAttachment, error)
+	ListAttachment(ctx context.Context) ([]ganymede.InterfaceAttachment, error)
 }

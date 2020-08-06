@@ -3,6 +3,8 @@ package mysql
 import (
 	"fmt"
 
+	"github.com/whywaita/satelit/internal/mysql/types"
+
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/whywaita/satelit/pkg/ganymede"
@@ -40,4 +42,20 @@ func (m *MySQL) DeleteVirtualMachine(vmID uuid.UUID) error {
 	}
 
 	return nil
+}
+
+// GetHostnameByAddress is
+func (m *MySQL) GetHostnameByAddress(address types.IP) (string, error) {
+	query := `SELECT v.name FROM address AS a JOIN subnet AS s ON a.subnet_id = s.uuid JOIN lease AS l ON a.uuid = l.address_id JOIN interface_attachment AS i ON l.uuid = i.lease_id JOIN virtual_machine AS v ON i.virtual_machine_id = v.uuid WHERE ip = ?`
+	stmt, err := m.Conn.Preparex(query)
+	if err != nil {
+		return "", fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	var hostname string
+	err = stmt.Get(&hostname, address)
+	if err != nil {
+		return "", fmt.Errorf("failed to get hostname by address: %w", err)
+	}
+
+	return hostname, nil
 }

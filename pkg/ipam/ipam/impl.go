@@ -29,7 +29,7 @@ func New(d datastore.Datastore) ipam.IPAM {
 }
 
 // CreateSubnet create a subnet
-func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gateway, dnsServer, metadataServer string) (*ipam.Subnet, error) {
+func (s server) CreateSubnet(ctx context.Context, name string, vlanID uint32, prefix, start, end, gateway, dnsServer, metadataServer string) (*ipam.Subnet, error) {
 	_, prefixNet, err := net.ParseCIDR(prefix)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse prefix: %w", err)
@@ -58,6 +58,7 @@ func (s server) CreateSubnet(ctx context.Context, name, prefix, start, end, gate
 	subnet := ipam.Subnet{
 		UUID:           uuid.NewV4(),
 		Name:           name,
+		VLANID:         vlanID,
 		Network:        types.IPNet(*prefixNet),
 		Start:          types.IP(startAddr),
 		End:            types.IP(endAddr),
@@ -184,22 +185,23 @@ func (s server) CreateLease(ctx context.Context, addressID uuid.UUID) (*ipam.Lea
 	}
 
 	lease := ipam.Lease{
+		UUID:       uuid.NewV4(),
 		MacAddress: types.HardwareAddr(*mac),
 		AddressID:  addressID,
 	}
 	return s.datastore.CreateLease(ctx, lease)
 }
 
-func (s server) GetLease(ctx context.Context, mac net.HardwareAddr) (*ipam.Lease, error) {
-	return s.datastore.GetLeaseByMACAddress(ctx, types.HardwareAddr(mac))
+func (s server) GetLease(ctx context.Context, leaseID uuid.UUID) (*ipam.Lease, error) {
+	return s.datastore.GetLeaseByID(ctx, leaseID)
 }
 
 func (s server) ListLease(ctx context.Context) ([]ipam.Lease, error) {
 	return s.datastore.ListLease(ctx)
 }
 
-func (s server) DeleteLease(ctx context.Context, mac net.HardwareAddr) error {
-	return s.datastore.DeleteLease(ctx, types.HardwareAddr(mac))
+func (s server) DeleteLease(ctx context.Context, leaseID uuid.UUID) error {
+	return s.datastore.DeleteLease(ctx, leaseID)
 }
 
 func getNextAddress(ip net.IP) net.IP {

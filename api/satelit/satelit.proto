@@ -36,6 +36,19 @@ service Satelit {
       returns (ShowVirtualMachineResponse) {}
   rpc DeleteVirtualMachine(DeleteVirtualMachineRequest)
       returns (DeleteVirtualMachineResponse) {}
+
+  rpc CreateBridge(CreateBridgeRequest) returns (CreateBridgeResponse) {}
+  rpc CreateInternalBridge(CreateInternalBridgeRequest)
+      returns (CreateInternalBridgeResponse) {}
+  rpc GetBridge(GetBridgeRequest) returns (GetBridgeResponse) {}
+  rpc ListBridge(ListBridgeRequest) returns (ListBridgeResponse) {}
+  rpc DeleteBridge(DeleteBridgeRequest) returns (DeleteBridgeResponse) {}
+  rpc AttachInterface(AttachInterfaceRequest)
+      returns (AttachInterfaceResponse) {}
+  rpc DetachInterface(DetachInterfaceRequest)
+      returns (DetachInterfaceResponse) {}
+  rpc GetAttachment(GetAttachmentRequest) returns (GetAttachmentResponse) {}
+  rpc ListAttachment(ListAttachmentRequest) returns (ListAttachmentResponse) {}
 }
 
 // type
@@ -56,6 +69,7 @@ message Image {
 message Subnet {
   string uuid            = 1;
   string name            = 2;
+  uint32 vlan_id         = 9;
   string network         = 3;
   string start           = 4;
   string end             = 5;
@@ -71,8 +85,9 @@ message Address {
 }
 
 message Lease {
-  string mac_address = 1;
-  string address_id  = 2;
+  string uuid        = 1;
+  string mac_address = 2;
+  string address_id  = 3;
 }
 
 message VirtualMachine {
@@ -81,6 +96,21 @@ message VirtualMachine {
   uint32 vcpus           = 3;
   uint64 memory_kib      = 4;
   string hypervisor_name = 5;
+}
+
+message Bridge {
+  string uuid    = 1;
+  uint32 vlan_id = 2;
+  string name    = 3;
+}
+
+message InterfaceAttachment {
+  string uuid               = 1;
+  string virtual_machine_id = 2;
+  string bridge_id          = 3;
+  int64  average            = 4;
+  string name               = 5;
+  string lease_id           = 6;
 }
 
 // Request / Response
@@ -172,6 +202,7 @@ message DeleteImageResponse {}
 message CreateSubnetRequest {
   string name            = 1;
   string network         = 2;
+  uint32 vlan_id         = 8;
   string start           = 3;
   string end             = 4;
   string gateway         = 5;
@@ -242,7 +273,7 @@ message CreateLeaseResponse {
 }
 
 message GetLeaseRequest {
-  string mac_address = 1;
+  string uuid = 1;
 }
 
 message GetLeaseResponse {
@@ -256,7 +287,7 @@ message ListLeaseResponse {
 }
 
 message DeleteLeaseRequest {
-  string mac_address = 1;
+  string uuid = 1;
 }
 
 message DeleteLeaseResponse {}
@@ -297,3 +328,72 @@ message DeleteVirtualMachineRequest {
 }
 
 message DeleteVirtualMachineResponse {}
+
+message CreateBridgeRequest {
+  string name    = 1;
+  int32  vlan_id = 2;
+}
+
+message CreateBridgeResponse {
+  Bridge bridge = 1;
+}
+
+message CreateInternalBridgeRequest {
+  string name = 1;
+}
+
+message CreateInternalBridgeResponse {
+  Bridge bridge = 1;
+}
+
+message GetBridgeRequest {
+  string uuid = 1;
+}
+
+message GetBridgeResponse {
+  Bridge bridge = 1;
+}
+
+message ListBridgeRequest {}
+
+message ListBridgeResponse {
+  repeated Bridge bridges = 1;
+}
+
+message DeleteBridgeRequest {
+  string uuid = 1;
+}
+
+message DeleteBridgeResponse {}
+
+message AttachInterfaceRequest {
+  string virtual_machine_id = 1;
+  string bridge_id          = 2;
+  int64  average            = 3;
+  string name               = 4;
+  string lease_id           = 5;
+}
+
+message AttachInterfaceResponse {
+  InterfaceAttachment interface_attachment = 1;
+}
+
+message DetachInterfaceRequest {
+  string atttachment_id = 1;
+}
+
+message DetachInterfaceResponse {}
+
+message GetAttachmentRequest {
+  string attachment_id = 1;
+}
+
+message GetAttachmentResponse {
+  InterfaceAttachment interface_attachment = 1;
+}
+
+message ListAttachmentRequest {}
+
+message ListAttachmentResponse {
+  repeated InterfaceAttachment interface_attachments = 1;
+}

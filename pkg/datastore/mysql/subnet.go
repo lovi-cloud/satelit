@@ -11,13 +11,13 @@ import (
 
 // CreateSubnet create a subnet
 func (m *MySQL) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error) {
-	query := `INSERT INTO subnet(uuid, name, network, start, end, gateway, dns_server, metadata_server) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO subnet(uuid, name, vlan_id, network, start, end, gateway, dns_server, metadata_server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
 	}
 
-	_, err = stmt.ExecContext(ctx, subnet.UUID, subnet.Name, subnet.Network, subnet.Start, subnet.End, subnet.Gateway, subnet.DNSServer, subnet.MetadataServer)
+	_, err = stmt.ExecContext(ctx, subnet.UUID, subnet.Name, subnet.VLANID, subnet.Network, subnet.Start, subnet.End, subnet.Gateway, subnet.DNSServer, subnet.MetadataServer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -27,7 +27,7 @@ func (m *MySQL) CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Sub
 
 // GetSubnetByID retrieves address according to the id given
 func (m *MySQL) GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error) {
-	query := `SELECT uuid, name, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet WHERE uuid = ?`
+	query := `SELECT uuid, name, vlan_id, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet WHERE uuid = ?`
 	stmt, err := m.Conn.PreparexContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create statement: %w", err)
@@ -41,9 +41,25 @@ func (m *MySQL) GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet
 	return &subnet, nil
 }
 
+// GetSubnetByVLAN is
+func (m *MySQL) GetSubnetByVLAN(ctx context.Context, vlanID uint32) (*ipam.Subnet, error) {
+	query := `SELECT uuid, name, vlan_id, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet WHERE vlan_id = ?`
+	stmt, err := m.Conn.PreparexContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create statement: %w", err)
+	}
+
+	var subnet ipam.Subnet
+	if err := stmt.GetContext(ctx, &subnet, vlanID); err != nil {
+		return nil, fmt.Errorf("failed to get subnet: %w", err)
+	}
+
+	return &subnet, nil
+}
+
 // ListSubnet retrieves all subnets
 func (m *MySQL) ListSubnet(ctx context.Context) ([]ipam.Subnet, error) {
-	query := `SELECT uuid, name, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet`
+	query := `SELECT uuid, name, vlan_id, network, start, end, gateway, dns_server, metadata_server, created_at, updated_at FROM subnet`
 
 	var subnets []ipam.Subnet
 	if err := m.Conn.SelectContext(ctx, &subnets, query); err != nil && err != sql.ErrNoRows {
