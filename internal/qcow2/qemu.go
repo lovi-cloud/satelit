@@ -21,11 +21,11 @@ func qemuimgConvertBase(ctx context.Context, args []string) ([]byte, error) {
 
 // ToRaw convert os image.
 func ToRaw(ctx context.Context, src, dest string) error {
-	args := []string{"-O", "raw", "-t", "none", src, dest}
+	args := []string{"-O", "raw", "-t", "none", "-f", "qcow2", src, dest}
 
-	_, err := qemuimgConvertBase(ctx, args)
+	out, err := qemuimgConvertBase(ctx, args)
 	if err != nil {
-		return fmt.Errorf("failed to execute convert command: %w", err)
+		return fmt.Errorf("failed to execute convert command (out: %s): %w", string(out), err)
 	}
 
 	return nil

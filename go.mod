@@ -12,14 +12,14 @@ require (
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.6.0 // indirect
-	github.com/whywaita/go-dorado-sdk v0.8.1
-	github.com/whywaita/go-os-brick v0.0.6
-	github.com/whywaita/teleskop v0.0.0-20200625084654-4b2f236a75c4
+	github.com/whywaita/go-dorado-sdk v0.8.2
+	github.com/whywaita/go-os-brick v0.0.7
+	github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa
 	go.uber.org/zap v1.15.0
+	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
-	google.golang.org/genproto v0.0.0-20200626011028-ee7919e894b5 // indirect
+	golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1 // indirect
+	google.golang.org/genproto v0.0.0-20200729003335-053ba62fc06f // indirect
 	google.golang.org/grpc v1.30.0
 	google.golang.org/protobuf v1.25.0
 )

@@ -8,18 +8,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/whywaita/satelit/internal/config"
-
 	pb "github.com/whywaita/satelit/api/satelit"
 )
-
-func init() {
-	conf := "./../../configs/satelit.yaml"
-	err := config.Load(&conf)
-	if err != nil {
-		panic(err)
-	}
-}
 
 func main() {
 	if err := run(); err != nil {

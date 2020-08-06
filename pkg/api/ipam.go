@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"net"
 
 	pb "github.com/whywaita/satelit/api/satelit"
 
@@ -12,7 +11,7 @@ import (
 
 // CreateSubnet create a subnet
 func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRequest) (*pb.CreateSubnetResponse, error) {
-	subnet, err := s.IPAM.CreateSubnet(ctx, req.Name, req.Network, req.Start, req.End, req.Gateway, req.DnsServer, req.MetadataServer)
+	subnet, err := s.IPAM.CreateSubnet(ctx, req.Name, req.VlanId, req.Network, req.Start, req.End, req.Gateway, req.DnsServer, req.MetadataServer)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create subnet: %+v", err)
 	}
@@ -21,6 +20,7 @@ func (s *SatelitServer) CreateSubnet(ctx context.Context, req *pb.CreateSubnetRe
 		Subnet: &pb.Subnet{
 			Uuid:           subnet.UUID.String(),
 			Name:           subnet.Name,
+			VlanId:         subnet.VLANID,
 			Network:        subnet.Network.String(),
 			Start:          subnet.Start.String(),
 			End:            subnet.End.String(),
@@ -46,6 +46,7 @@ func (s *SatelitServer) GetSubnet(ctx context.Context, req *pb.GetSubnetRequest)
 		Subnet: &pb.Subnet{
 			Uuid:           subnet.UUID.String(),
 			Name:           subnet.Name,
+			VlanId:         subnet.VLANID,
 			Network:        subnet.Network.String(),
 			Start:          subnet.Start.String(),
 			End:            subnet.End.String(),
@@ -68,6 +69,7 @@ func (s *SatelitServer) ListSubnet(ctx context.Context, req *pb.ListSubnetReques
 		tmp[i] = &pb.Subnet{
 			Uuid:           subnet.UUID.String(),
 			Name:           subnet.Name,
+			VlanId:         subnet.VLANID,
 			Network:        subnet.Network.String(),
 			Start:          subnet.Start.String(),
 			End:            subnet.End.String(),
@@ -186,6 +188,7 @@ func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequ
 
 	return &pb.CreateLeaseResponse{
 		Lease: &pb.Lease{
+			Uuid:       lease.UUID.String(),
 			MacAddress: lease.MacAddress.String(),
 			AddressId:  lease.AddressID.String(),
 		},
@@ -194,17 +197,18 @@ func (s *SatelitServer) CreateLease(ctx context.Context, req *pb.CreateLeaseRequ
 
 // GetLease retrieves address according to the parameters given.
 func (s *SatelitServer) GetLease(ctx context.Context, req *pb.GetLeaseRequest) (*pb.GetLeaseResponse, error) {
-	mac, err := net.ParseMAC(req.MacAddress)
+	leaseID, err := s.parseRequestUUID(req.Uuid)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to parse mac address: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request lease id: %+v", err)
 	}
-	lease, err := s.IPAM.GetLease(ctx, mac)
+	lease, err := s.IPAM.GetLease(ctx, leaseID)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "failed to retrieve lease: %+v", err)
 	}
 
 	return &pb.GetLeaseResponse{
 		Lease: &pb.Lease{
+			Uuid:       lease.UUID.String(),
 			MacAddress: lease.MacAddress.String(),
 			AddressId:  lease.AddressID.String(),
 		},
@@ -221,6 +225,7 @@ func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest)
 	tmp := make([]*pb.Lease, len(leases))
 	for i, lease := range leases {
 		tmp[i] = &pb.Lease{
+			Uuid:       lease.UUID.String(),
 			MacAddress: lease.MacAddress.String(),
 			AddressId:  lease.AddressID.String(),
 		}
@@ -233,12 +238,11 @@ func (s *SatelitServer) ListLease(ctx context.Context, req *pb.ListLeaseRequest)
 
 // DeleteLease deletes lease
 func (s *SatelitServer) DeleteLease(ctx context.Context, req *pb.DeleteLeaseRequest) (*pb.DeleteLeaseResponse, error) {
-	mac, err := net.ParseMAC(req.MacAddress)
+	leaseID, err := s.parseRequestUUID(req.Uuid)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to parse mac address: %+v", err)
+		return nil, err
 	}
-
-	if err := s.IPAM.DeleteLease(ctx, mac); err != nil {
+	if err := s.IPAM.DeleteLease(ctx, leaseID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete lease: %+v", err)
 	}
 
