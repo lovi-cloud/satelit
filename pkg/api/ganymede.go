@@ -3,6 +3,9 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
+
+	"github.com/whywaita/satelit/internal/logger"
 
 	uuid "github.com/satori/go.uuid"
 	pb "github.com/whywaita/satelit/api/satelit"
@@ -25,11 +28,27 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create volume from image: %+v", err)
 	}
+	defer func() {
+		volumeID := volume.ID
+		if err != nil {
+			if err := s.Europa.DeleteVolume(ctx, volumeID); err != nil {
+				logger.Logger.Warn(fmt.Sprintf("failed to DeleteVolume: %v", err))
+			}
+		}
+	}()
 
 	_, deviceName, err := s.Europa.AttachVolumeTeleskop(ctx, volume.ID, req.HypervisorName)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to attach volume: %+v", err)
 	}
+	defer func() {
+		volumeID := volume.ID
+		if err != nil {
+			if err := s.Europa.DetachVolume(ctx, volumeID); err != nil {
+				logger.Logger.Warn(fmt.Sprintf("failed to DetachVolume: %v", err))
+			}
+		}
+	}()
 
 	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName, volume.ID)
 	if err != nil {
