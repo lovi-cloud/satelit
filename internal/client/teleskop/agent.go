@@ -16,7 +16,8 @@ var (
 
 // Error const
 var (
-	ErrTeleskopAgentNotFound = errors.New("a teleskop agent is not registered")
+	ErrTeleskopAgentNotFound     = errors.New("a teleskop agent is not registered")
+	ErrTeleskopAgentAlreadyExist = errors.New("a teleskop agent is already exist")
 )
 
 // New create teleskop map
@@ -68,4 +69,22 @@ func ListClient() ([]agentpb.AgentClient, error) {
 	}
 
 	return cs, nil
+}
+
+// AddClient add new teleskop Client
+func AddClient(hostname, endpoint string) error {
+	mu.Lock()
+	defer mu.Unlock()
+	_, ok := client[hostname]
+	if ok {
+		return ErrTeleskopAgentAlreadyExist
+	}
+
+	conn, err := grpc.Dial(endpoint, grpc.WithInsecure())
+	if err != nil {
+		return fmt.Errorf("failed to dial teleskop endpoint: %w", err)
+	}
+	client[hostname] = agentpb.NewAgentClient(conn)
+
+	return nil
 }
