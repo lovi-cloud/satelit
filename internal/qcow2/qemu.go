@@ -8,24 +8,23 @@ import (
 
 // NOTE(whywaita): move to go-os-brick later.
 
-func qemuimgConvertBase(ctx context.Context, args []string) ([]byte, error) {
+func qemuimgConvertBase(ctx context.Context, args []string) error {
 	c := []string{"convert"}
 	a := append(c, args...)
 	out, err := exec.CommandContext(ctx, "qemu-img", a...).CombinedOutput()
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute qemu-img convert command (args: %s, out: %s): %w", args, string(out), err)
+		return fmt.Errorf("failed to execute qemu-img convert command (args: %s, out: %s): %w", args, string(out), err)
 	}
 
-	return out, nil
+	return nil
 }
 
 // ToRaw convert os image.
 func ToRaw(ctx context.Context, src, dest string) error {
 	args := []string{"-O", "raw", "-t", "none", "-f", "qcow2", src, dest}
 
-	out, err := qemuimgConvertBase(ctx, args)
-	if err != nil {
-		return fmt.Errorf("failed to execute convert command (out: %s): %w", string(out), err)
+	if err := qemuimgConvertBase(ctx, args); err != nil {
+		return fmt.Errorf("failed to execute convert command: %w", err)
 	}
 
 	return nil
