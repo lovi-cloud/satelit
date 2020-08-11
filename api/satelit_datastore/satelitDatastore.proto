@@ -12,6 +12,8 @@ service SatelitDatastore {
   rpc GetISUCONAdminKeys(GetISUCONAdminKeysRequest)
       returns (GetISUCONAdminKeysResponse) {}
   rpc ListBridge(ListBridgeRequest) returns (ListBridgeResponse) {}
+  rpc RegisterTeleskopAgent(RegisterTeleskopAgentRequest)
+      returns (RegisterTeleskopAgentResponse) {}
 }
 
 message DHCPLease {
@@ -65,3 +67,10 @@ message ListBridgeResponse {
   }
   repeated Bridge bridges = 1;
 }
+
+message RegisterTeleskopAgentRequest {
+  string hostname = 1;
+  string endpoint = 2;
+}
+
+message RegisterTeleskopAgentResponse {}

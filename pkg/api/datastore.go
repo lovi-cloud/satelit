@@ -6,6 +6,8 @@ import (
 	"net"
 	"strings"
 
+	"github.com/whywaita/satelit/internal/client/teleskop"
+
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
@@ -151,4 +153,13 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 	return &pb.ListBridgeResponse{
 		Bridges: resp,
 	}, nil
+}
+
+// RegisterTeleskopAgent is
+func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.RegisterTeleskopAgentRequest) (*pb.RegisterTeleskopAgentResponse, error) {
+	err := teleskop.AddClient(req.Hostname, req.Endpoint)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agnet: %+v", err)
+	}
+	return &pb.RegisterTeleskopAgentResponse{}, nil
 }
