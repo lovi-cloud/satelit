@@ -13,7 +13,7 @@ func qemuimgConvertBase(ctx context.Context, args []string) ([]byte, error) {
 	a := append(c, args...)
 	out, err := exec.CommandContext(ctx, "qemu-img", a...).CombinedOutput()
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute qemu-img convert command (args: %s): %w", args, err)
+		return out, fmt.Errorf("failed to execute qemu-img convert command (args: %s): %w", args, err)
 	}
 
 	return out, nil
