@@ -6,6 +6,8 @@ import (
 	"net"
 	"strings"
 
+	"github.com/whywaita/satelit/internal/client/teleskop"
+
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
@@ -117,4 +119,47 @@ func (s *SatelitDatastore) GetISUCONAdminKeys(ctx context.Context, req *pb.GetIS
 	return &pb.GetISUCONAdminKeysResponse{
 		Keys: strings.Split(strings.TrimSpace(adminKeys), "\n"),
 	}, nil
+}
+
+// ListBridge is
+func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeRequest) (*pb.ListBridgeResponse, error) {
+	bridges, err := s.Datastore.ListBridge(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get bridge list: %+v", err)
+	}
+
+	resp := make([]*pb.ListBridgeResponse_Bridge, len(bridges))
+	for i, bridge := range bridges {
+		resp[i] = &pb.ListBridgeResponse_Bridge{
+			Name:            bridge.Name,
+			VlanId:          bridge.VLANID,
+			ParentInterface: "bond0",
+		}
+		if bridge.VLANID == 0 {
+			resp[i].MetadataCidr = ""
+			resp[i].InternalOnly = true
+			continue
+		}
+
+		subnet, err := s.Datastore.GetSubnetByVLAN(ctx, bridge.VLANID)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get subnet by vlan=%d: %+v", bridge.VLANID, err)
+		}
+		mask, _ := subnet.Network.Mask.Size()
+		resp[i].MetadataCidr = fmt.Sprintf("%s/%d", subnet.MetadataServer.String(), mask)
+		resp[i].InternalOnly = false
+	}
+
+	return &pb.ListBridgeResponse{
+		Bridges: resp,
+	}, nil
+}
+
+// RegisterTeleskopAgent is
+func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.RegisterTeleskopAgentRequest) (*pb.RegisterTeleskopAgentResponse, error) {
+	err := teleskop.AddClient(req.Hostname, req.Endpoint)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agnet: %+v", err)
+	}
+	return &pb.RegisterTeleskopAgentResponse{}, nil
 }
