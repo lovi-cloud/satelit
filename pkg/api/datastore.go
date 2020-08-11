@@ -128,10 +128,6 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 
 	resp := make([]*pb.ListBridgeResponse_Bridge, len(bridges))
 	for i, bridge := range bridges {
-		subnet, err := s.Datastore.GetSubnetByVLAN(ctx, bridge.VLANID)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "failed to get subnet by vlan=%d: %+v", bridge.VLANID, err)
-		}
 		resp[i] = &pb.ListBridgeResponse_Bridge{
 			Name:            bridge.Name,
 			VlanId:          bridge.VLANID,
@@ -140,11 +136,16 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 		if bridge.VLANID == 0 {
 			resp[i].MetadataCidr = ""
 			resp[i].InternalOnly = true
-		} else {
-			mask, _ := subnet.Network.Mask.Size()
-			resp[i].MetadataCidr = fmt.Sprintf("%s/%d", subnet.MetadataServer.String(), mask)
-			resp[i].InternalOnly = false
+			continue
 		}
+
+		subnet, err := s.Datastore.GetSubnetByVLAN(ctx, bridge.VLANID)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get subnet by vlan=%d: %+v", bridge.VLANID, err)
+		}
+		mask, _ := subnet.Network.Mask.Size()
+		resp[i].MetadataCidr = fmt.Sprintf("%s/%d", subnet.MetadataServer.String(), mask)
+		resp[i].InternalOnly = false
 	}
 
 	return &pb.ListBridgeResponse{
