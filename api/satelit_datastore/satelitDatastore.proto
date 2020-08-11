@@ -11,6 +11,7 @@ service SatelitDatastore {
       returns (GetISUCONUserKeysResponse) {}
   rpc GetISUCONAdminKeys(GetISUCONAdminKeysRequest)
       returns (GetISUCONAdminKeysResponse) {}
+  rpc ListBridge(ListBridgeRequest) returns (ListBridgeResponse) {}
 }
 
 message DHCPLease {
@@ -50,4 +51,17 @@ message GetISUCONAdminKeysRequest {}
 
 message GetISUCONAdminKeysResponse {
   repeated string keys = 1;
+}
+
+message ListBridgeRequest {}
+
+message ListBridgeResponse {
+  message Bridge {
+    string name             = 1;
+    uint32 vlan_id          = 2;
+    string parent_interface = 3;
+    string metadata_cidr    = 4;
+    bool   internal_only    = 5;
+  }
+  repeated Bridge bridges = 1;
 }

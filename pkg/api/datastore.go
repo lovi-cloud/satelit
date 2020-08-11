@@ -118,3 +118,36 @@ func (s *SatelitDatastore) GetISUCONAdminKeys(ctx context.Context, req *pb.GetIS
 		Keys: strings.Split(strings.TrimSpace(adminKeys), "\n"),
 	}, nil
 }
+
+// ListBridge is
+func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeRequest) (*pb.ListBridgeResponse, error) {
+	bridges, err := s.Datastore.ListBridge(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get bridge list: %+v", err)
+	}
+
+	resp := make([]*pb.ListBridgeResponse_Bridge, len(bridges))
+	for i, bridge := range bridges {
+		subnet, err := s.Datastore.GetSubnetByVLAN(ctx, bridge.VLANID)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get subnet by vlan=%d: %+v", bridge.VLANID, err)
+		}
+		resp[i] = &pb.ListBridgeResponse_Bridge{
+			Name:            bridge.Name,
+			VlanId:          bridge.VLANID,
+			ParentInterface: "bond0",
+		}
+		if bridge.VLANID == 0 {
+			resp[i].MetadataCidr = ""
+			resp[i].InternalOnly = true
+		} else {
+			mask, _ := subnet.Network.Mask.Size()
+			resp[i].MetadataCidr = fmt.Sprintf("%s/%d", subnet.MetadataServer.String(), mask)
+			resp[i].InternalOnly = false
+		}
+	}
+
+	return &pb.ListBridgeResponse{
+		Bridges: resp,
+	}, nil
+}
