@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package satelit;
+package satelit_datastore;
 option  go_package = ".;satelit_datastore";
 
 service SatelitDatastore {
