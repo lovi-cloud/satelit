@@ -12,7 +12,7 @@ require (
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/whywaita/go-dorado-sdk v0.8.3
+	github.com/whywaita/go-dorado-sdk v0.8.4
 	github.com/whywaita/go-os-brick v0.0.7
 	github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa
 	go.uber.org/zap v1.15.0
