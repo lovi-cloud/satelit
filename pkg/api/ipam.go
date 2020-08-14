@@ -2,6 +2,9 @@ package api
 
 import (
 	"context"
+	"net"
+
+	"github.com/whywaita/satelit/pkg/ipam"
 
 	pb "github.com/whywaita/satelit/api/satelit"
 
@@ -99,11 +102,22 @@ func (s *SatelitServer) DeleteSubnet(ctx context.Context, req *pb.DeleteSubnetRe
 
 // CreateAddress create a address
 func (s *SatelitServer) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
+	var err error
+	var address *ipam.Address
 	u, err := s.parseRequestUUID(req.SubnetId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request subnet id (need uuid): %+v", err)
 	}
-	address, err := s.IPAM.CreateAddress(ctx, u)
+
+	if req.FixedIp == "" {
+		address, err = s.IPAM.CreateAddress(ctx, u)
+	} else {
+		fixedIP := net.ParseIP(req.FixedIp)
+		if fixedIP == nil {
+			return nil, status.Errorf(codes.InvalidArgument, "failed to parse request fixed_ip")
+		}
+		address, err = s.IPAM.CreateFixedAddress(ctx, u, fixedIP)
+	}
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create address: %+v", err)
 	}

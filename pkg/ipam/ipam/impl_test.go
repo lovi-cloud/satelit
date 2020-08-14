@@ -211,6 +211,163 @@ func TestServerCreateAddress(t *testing.T) {
 
 }
 
+func TestServer_CreateFixedAddress(t *testing.T) {
+	server := New(memory.New())
+
+	subnet, err := server.CreateSubnet(context.Background(), "test000", 1000, "10.0.0.0/24", "10.0.0.100", "10.0.0.200", "10.0.0.1", "8.8.8.8", "10.0.0.15")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		fixedIP net.IP
+		want    *ipam.Address
+		err     bool
+	}{
+		{
+			fixedIP: net.ParseIP("10.0.0.111"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.111"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.0.0.123"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.123"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.0.0.100"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.100"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.0.0.200"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.200"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.1.0.222"),
+			want:    nil,
+			err:     true,
+		},
+		{
+			fixedIP: net.IP{},
+			want:    nil,
+			err:     true,
+		},
+	}
+	for _, test := range tests {
+		got, err := server.CreateFixedAddress(context.Background(), subnet.UUID, test.fixedIP)
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %v but: %v", test.fixedIP, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %v but not:", test.fixedIP)
+		}
+		if !addressEqual(got, test.want) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
+func TestServer_CreateFixedAddress2(t *testing.T) {
+	server := New(memory.New())
+
+	subnet, err := server.CreateSubnet(context.Background(), "test000", 1000, "10.0.0.0/24", "10.0.0.100", "10.0.0.200", "10.0.0.1", "8.8.8.8", "10.0.0.15")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		fixedIP net.IP
+		want    *ipam.Address
+		err     bool
+	}{
+		{
+			fixedIP: net.ParseIP("10.0.0.111"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.111"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.0.0.123"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.123"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.0.0.100"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.100"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: nil,
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.101"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.0.0.200"),
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.200"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: nil,
+			want: &ipam.Address{
+				IP:       parseIP("10.0.0.102"),
+				SubnetID: subnet.UUID,
+			},
+			err: false,
+		},
+		{
+			fixedIP: net.ParseIP("10.1.0.222"),
+			want:    nil,
+			err:     true,
+		},
+	}
+	for _, test := range tests {
+		var got *ipam.Address
+		var err error
+		if test.fixedIP == nil {
+			got, err = server.CreateAddress(context.Background(), subnet.UUID)
+		} else {
+			got, err = server.CreateFixedAddress(context.Background(), subnet.UUID, test.fixedIP)
+		}
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %v but: %v", test.fixedIP, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %v but not:", test.fixedIP)
+		}
+		if !addressEqual(got, test.want) {
+			t.Fatalf("want %q, but %q:", test.want, got)
+		}
+	}
+}
+
 func parseIP(s string) types.IP {
 	return types.IP(net.ParseIP(s))
 }
