@@ -236,6 +236,7 @@ message DeleteSubnetResponse {}
 
 message CreateAddressRequest {
   string subnet_id = 1;
+  string fixed_ip  = 2;
 }
 
 message CreateAddressResponse {
