@@ -269,6 +269,47 @@ func TestSatelitServer_CreateAddress(t *testing.T) {
 			},
 			err: false,
 		},
+		{
+			input: &pb.CreateAddressRequest{
+				SubnetId: subnetResp.Subnet.Uuid,
+				FixedIp:  "192.0.2.110",
+			},
+			want: &pb.CreateAddressResponse{
+				Address: &pb.Address{
+					Uuid:     "",
+					Ip:       "192.0.2.110",
+					SubnetId: subnetResp.Subnet.Uuid,
+				},
+			},
+			err: false,
+		},
+		{
+			input: &pb.CreateAddressRequest{
+				SubnetId: subnetResp.Subnet.Uuid,
+				FixedIp:  "192.0.2.120",
+			},
+			want: &pb.CreateAddressResponse{
+				Address: &pb.Address{
+					Uuid:     "",
+					Ip:       "192.0.2.120",
+					SubnetId: subnetResp.Subnet.Uuid,
+				},
+			},
+			err: false,
+		},
+		{
+			input: &pb.CreateAddressRequest{
+				SubnetId: subnetResp.Subnet.Uuid,
+			},
+			want: &pb.CreateAddressResponse{
+				Address: &pb.Address{
+					Uuid:     "",
+					Ip:       "192.0.2.101",
+					SubnetId: subnetResp.Subnet.Uuid,
+				},
+			},
+			err: false,
+		},
 	}
 	for _, test := range tests {
 		got, err := client.CreateAddress(ctx, test.input)
