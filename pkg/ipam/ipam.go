@@ -2,6 +2,7 @@ package ipam
 
 import (
 	"context"
+	"net"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -14,6 +15,7 @@ type IPAM interface {
 	DeleteSubnet(ctx context.Context, uuid uuid.UUID) error
 
 	CreateAddress(ctx context.Context, subnetID uuid.UUID) (*Address, error)
+	CreateFixedAddress(ctx context.Context, subnetID uuid.UUID, fixedIP net.IP) (*Address, error)
 	GetAddress(ctx context.Context, uuid uuid.UUID) (*Address, error)
 	ListAddressBySubnetID(ctx context.Context, subnetID uuid.UUID) ([]Address, error)
 	DeleteAddress(ctx context.Context, uuid uuid.UUID) error

@@ -163,6 +163,42 @@ func (s server) CreateAddress(ctx context.Context, subnetID uuid.UUID) (*ipam.Ad
 	return s.datastore.CreateAddress(ctx, address)
 }
 
+// CreateAddress create a address
+func (s server) CreateFixedAddress(ctx context.Context, subnetID uuid.UUID, fixedIP net.IP) (*ipam.Address, error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	subnet, err := s.datastore.GetSubnetByID(ctx, subnetID)
+	if err != nil {
+		return nil, err
+	}
+
+	addresses, err := s.datastore.ListAddressBySubnetID(ctx, subnetID)
+	if err != nil {
+		return nil, err
+	}
+
+	start := net.IP(subnet.Start)
+	end := net.IP(subnet.End)
+	network := net.IPNet(subnet.Network)
+	if !network.Contains(fixedIP) || bytes.Compare(start, fixedIP) > 0 || bytes.Compare(end, fixedIP) < 0 {
+		return nil, fmt.Errorf("invalid fiexd IP address is requested")
+	}
+
+	for _, address := range addresses {
+		if address.IP.String() == fixedIP.String() {
+			return nil, fmt.Errorf("requested fixed IP address is already exist")
+		}
+	}
+
+	address := ipam.Address{
+		UUID:     uuid.NewV4(),
+		IP:       types.IP(fixedIP),
+		SubnetID: subnetID,
+	}
+	return s.datastore.CreateAddress(ctx, address)
+}
+
 // GetAddress retrieves address according to the id given
 func (s server) GetAddress(ctx context.Context, uuid uuid.UUID) (*ipam.Address, error) {
 	return s.datastore.GetAddressByID(ctx, uuid)
