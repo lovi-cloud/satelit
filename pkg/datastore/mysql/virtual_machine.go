@@ -13,7 +13,7 @@ import (
 // GetVirtualMachine return virtual machine record
 func (m *MySQL) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
 	var vm ganymede.VirtualMachine
-	query := fmt.Sprintf(`SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id FROM virtual_machine WHERE uuid = '%s'`, vmID.String())
+	query := fmt.Sprintf(`SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec FROM virtual_machine WHERE uuid = '%s'`, vmID.String())
 	err := m.Conn.Get(&vm, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
@@ -24,8 +24,8 @@ func (m *MySQL) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, err
 
 // PutVirtualMachine write virtual machine record
 func (m *MySQL) PutVirtualMachine(vm ganymede.VirtualMachine) error {
-	query := `INSERT INTO virtual_machine(name, uuid, vcpus, memory_kib, hypervisor_name, root_volume_id) VALUES (?, ?, ?, ?, ?, ?)`
-	_, err := m.Conn.Exec(query, vm.Name, vm.UUID, vm.Vcpus, vm.MemoryKiB, vm.HypervisorName, vm.RootVolumeID)
+	query := `INSERT INTO virtual_machine(name, uuid, vcpus, memory_kib, hypervisor_name, root_volume_id, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	_, err := m.Conn.Exec(query, vm.Name, vm.UUID, vm.Vcpus, vm.MemoryKiB, vm.HypervisorName, vm.RootVolumeID, vm.ReadBytesSec, vm.WriteBytesSec, vm.ReadIOPSSec, vm.WriteIOPSSec)
 	if err != nil {
 		return fmt.Errorf("failed to execute insert query: %w", err)
 	}

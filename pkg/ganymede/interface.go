@@ -11,7 +11,7 @@ import (
 
 // A Ganymede is type definition of Virtual Machine.
 type Ganymede interface {
-	CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string) (*VirtualMachine, error)
+	CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string, readBytesSec, writeBytesSec, readIOPSSec, writeIOPSSec uint32) (*VirtualMachine, error)
 	StartVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 	DeleteVirtualMachine(ctx context.Context, vmID uuid.UUID) error
 
@@ -35,6 +35,10 @@ type VirtualMachine struct {
 	MemoryKiB      uint64    `db:"memory_kib"`
 	HypervisorName string    `db:"hypervisor_name"`
 	RootVolumeID   string    `db:"root_volume_id"`
+	ReadBytesSec   uint32    `db:"read_bytes_sec"`
+	WriteBytesSec  uint32    `db:"write_bytes_sec"`
+	ReadIOPSSec    uint32    `db:"read_iops_sec"`
+	WriteIOPSSec   uint32    `db:"write_iops_sec"`
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 }
@@ -51,6 +55,10 @@ func (vm *VirtualMachine) ToPb() *pb.VirtualMachine {
 		Vcpus:          vm.Vcpus,
 		MemoryKib:      vm.MemoryKiB,
 		HypervisorName: vm.HypervisorName,
+		ReadBytesSec:   vm.ReadBytesSec,
+		WriteBytesSec:  vm.WriteBytesSec,
+		ReadIopsSec:    vm.ReadIOPSSec,
+		WriteIopsSec:   vm.WriteIOPSSec,
 	}
 }
 
