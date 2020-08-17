@@ -324,6 +324,14 @@ func (m *Memory) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, er
 		return nil, fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
 	}
 
+	volume, ok := m.volumes[val.RootVolumeID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find volume for virtual machine root uuid=%s", val.RootVolumeID)
+	}
+
+	val.SourceImageID = volume.BaseImageID
+	val.RootVolumeGB = volume.CapacityGB
+
 	return &val, nil
 }
 

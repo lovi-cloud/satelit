@@ -32,7 +32,7 @@ func TestMySQL_GetVirtualMachine(t *testing.T) {
 	err = testDatastore.PutVolume(europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "hv000",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
@@ -71,10 +71,12 @@ func TestMySQL_GetVirtualMachine(t *testing.T) {
 				MemoryKiB:      2 * 1024 * 1024,
 				HypervisorName: "hv000",
 				RootVolumeID:   testRootVolumeID,
+				RootVolumeGB:   20,
 				ReadBytesSec:   100 * 1000 * 1000,
 				WriteBytesSec:  200 * 1000 * 1000,
 				ReadIOPSSec:    10000,
 				WriteIOPSSec:   5000,
+				SourceImageID:  testImage.UUID,
 			},
 			err: false,
 		},
@@ -106,7 +108,7 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 	err = testDatastore.PutVolume(europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "hv000",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
@@ -128,10 +130,12 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 				MemoryKiB:      2 * 1024 * 1024,
 				HypervisorName: "hv000",
 				RootVolumeID:   testRootVolumeID,
+				RootVolumeGB:   20,
 				ReadBytesSec:   100 * 1000 * 1000,
 				WriteBytesSec:  200 * 1000 * 1000,
 				ReadIOPSSec:    10000,
 				WriteIOPSSec:   5000,
+				SourceImageID:  testImage.UUID,
 			},
 			want: &ganymede.VirtualMachine{
 				UUID:           uuid.FromStringOrNil(testVirtualMachineID),
@@ -140,10 +144,12 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 				MemoryKiB:      2 * 1024 * 1024,
 				HypervisorName: "hv000",
 				RootVolumeID:   testRootVolumeID,
+				RootVolumeGB:   20,
 				ReadBytesSec:   100 * 1000 * 1000,
 				WriteBytesSec:  200 * 1000 * 1000,
 				ReadIOPSSec:    10000,
 				WriteIOPSSec:   5000,
+				SourceImageID:  testImage.UUID,
 			},
 			err: false,
 		},
@@ -179,7 +185,7 @@ func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 	err = testDatastore.PutVolume(europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "hv000",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
@@ -195,10 +201,12 @@ func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 		MemoryKiB:      2 * 1024 * 1024,
 		HypervisorName: "hv000",
 		RootVolumeID:   testRootVolumeID,
+		RootVolumeGB:   20,
 		ReadBytesSec:   100 * 1000 * 1000,
 		WriteBytesSec:  200 * 1000 * 1000,
 		ReadIOPSSec:    10000,
 		WriteIOPSSec:   5000,
+		SourceImageID:  testImage.UUID,
 	})
 	if err != nil {
 		t.Fatalf("failed to put virtual machine: %+v\n", err)
@@ -254,7 +262,7 @@ func TestMySQL_GetHostnameByAddress(t *testing.T) {
 	err = testDatastore.PutVolume(europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "hv000",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
@@ -330,7 +338,7 @@ func TestMySQL_GetHostnameByAddress(t *testing.T) {
 }
 
 func getVirtualMachineFromSQL(testDB *sqlx.DB, vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
-	query := `SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec FROM virtual_machine WHERE uuid = ?`
+	query := `SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, volume.capacity_gb, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec, volume.base_image_id FROM virtual_machine JOIN volume ON virtual_machine.root_volume_id = volume.id WHERE uuid = ?`
 	stmt, err := testDB.Preparex(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare statement: %w", err)
