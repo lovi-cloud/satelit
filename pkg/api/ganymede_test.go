@@ -162,6 +162,8 @@ func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
 					Vcpus:          1,
 					MemoryKib:      1 * 1024 * 1024,
 					HypervisorName: hypervisorName,
+					SourceImageId:  imageResp.Image.Id,
+					RootVolumeGb:   10,
 				},
 			},
 			err: false,
