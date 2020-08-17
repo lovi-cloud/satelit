@@ -96,6 +96,10 @@ message VirtualMachine {
   uint32 vcpus           = 3;
   uint64 memory_kib      = 4;
   string hypervisor_name = 5;
+  uint32 read_bytes_sec  = 6;
+  uint32 write_bytes_sec = 7;
+  uint32 read_iops_sec   = 8;
+  uint32 write_iops_sec  = 9;
 }
 
 message Bridge {
@@ -300,6 +304,10 @@ message AddVirtualMachineRequest {
   uint32 root_volume_gb  = 4;
   string source_image_id = 5;
   string hypervisor_name = 6;
+  uint32 read_bytes_sec  = 7;
+  uint32 write_bytes_sec = 8;
+  uint32 read_iops_sec   = 9;
+  uint32 write_iops_sec  = 10;
 }
 
 message AddVirtualMachineResponse {
