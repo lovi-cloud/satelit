@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	datastoreMemory "github.com/whywaita/satelit/pkg/datastore/memory"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -15,7 +17,7 @@ const (
 
 func TestMemoryVolumeOperation(t *testing.T) {
 	ctx := context.Background()
-	m := New()
+	m := New(datastoreMemory.New())
 
 	u := uuid.FromStringOrNil(testUUID)
 

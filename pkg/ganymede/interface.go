@@ -35,10 +35,12 @@ type VirtualMachine struct {
 	MemoryKiB      uint64    `db:"memory_kib"`
 	HypervisorName string    `db:"hypervisor_name"`
 	RootVolumeID   string    `db:"root_volume_id"`
+	RootVolumeGB   uint32    `db:"capacity_gb"`
 	ReadBytesSec   uint32    `db:"read_bytes_sec"`
 	WriteBytesSec  uint32    `db:"write_bytes_sec"`
 	ReadIOPSSec    uint32    `db:"read_iops_sec"`
 	WriteIOPSSec   uint32    `db:"write_iops_sec"`
+	SourceImageID  uuid.UUID `db:"base_image_id"`
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 }
@@ -55,10 +57,12 @@ func (vm *VirtualMachine) ToPb() *pb.VirtualMachine {
 		Vcpus:          vm.Vcpus,
 		MemoryKib:      vm.MemoryKiB,
 		HypervisorName: vm.HypervisorName,
+		RootVolumeGb:   vm.RootVolumeGB,
 		ReadBytesSec:   vm.ReadBytesSec,
 		WriteBytesSec:  vm.WriteBytesSec,
 		ReadIopsSec:    vm.ReadIOPSSec,
 		WriteIopsSec:   vm.WriteIOPSSec,
+		SourceImageId:  vm.SourceImageID.String(),
 	}
 }
 
