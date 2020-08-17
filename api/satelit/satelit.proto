@@ -96,6 +96,8 @@ message VirtualMachine {
   uint32 vcpus           = 3;
   uint64 memory_kib      = 4;
   string hypervisor_name = 5;
+  string source_image_id = 6;
+  uint32 root_volume_gb  = 7;
 }
 
 message Bridge {

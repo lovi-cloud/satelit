@@ -3,17 +3,16 @@ package mysql
 import (
 	"fmt"
 
-	"github.com/whywaita/satelit/internal/mysql/types"
-
 	uuid "github.com/satori/go.uuid"
 
+	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/ganymede"
 )
 
 // GetVirtualMachine return virtual machine record
 func (m *MySQL) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
 	var vm ganymede.VirtualMachine
-	query := fmt.Sprintf(`SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id FROM virtual_machine WHERE uuid = '%s'`, vmID.String())
+	query := fmt.Sprintf(`SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, volume.base_image_id, volume.capacity_gb FROM virtual_machine JOIN volume ON virtual_machine.root_volume_id = volume.id WHERE virtual_machine.uuid = '%s'`, vmID.String())
 	err := m.Conn.Get(&vm, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)

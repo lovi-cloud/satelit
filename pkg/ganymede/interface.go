@@ -35,6 +35,8 @@ type VirtualMachine struct {
 	MemoryKiB      uint64    `db:"memory_kib"`
 	HypervisorName string    `db:"hypervisor_name"`
 	RootVolumeID   string    `db:"root_volume_id"`
+	SourceImageID  uuid.UUID `db:"base_image_id"`
+	RootVolumeGB   uint32    `db:"capacity_gb"`
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 }
@@ -51,6 +53,8 @@ func (vm *VirtualMachine) ToPb() *pb.VirtualMachine {
 		Vcpus:          vm.Vcpus,
 		MemoryKib:      vm.MemoryKiB,
 		HypervisorName: vm.HypervisorName,
+		SourceImageId:  vm.SourceImageID.String(),
+		RootVolumeGb:   vm.RootVolumeGB,
 	}
 }
 
