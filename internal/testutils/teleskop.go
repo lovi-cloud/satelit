@@ -24,8 +24,9 @@ func NewDummyTeleskop() (string, func(), error) {
 	agent.RegisterAgentServer(server, &dummyTeleskop{})
 
 	go func() {
-		if err := server.Serve(lis); err != nil {
-			panic(err)
+		if err := server.Serve(lis); err != nil && err != grpc.ErrServerStopped {
+			fmt.Fprintf(os.Stderr, "%+v\n", err)
+			os.Exit(1)
 		}
 	}()
 
