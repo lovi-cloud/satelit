@@ -22,7 +22,7 @@ func New(ds datastore.Datastore) *Memory {
 }
 
 // CreateVirtualMachine add virtual machine
-func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string) (*ganymede.VirtualMachine, error) {
+func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string, readBytesSec, writeBytesSec, readIOPSSec, writeIOPSSec uint32) (*ganymede.VirtualMachine, error) {
 	u := uuid.NewV4()
 
 	vm := &ganymede.VirtualMachine{
@@ -32,6 +32,10 @@ func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus ui
 		MemoryKiB:      memoryKiB,
 		HypervisorName: hypervisorName,
 		RootVolumeID:   rootVolumeID,
+		ReadBytesSec:   readBytesSec,
+		WriteBytesSec:  writeBytesSec,
+		ReadIOPSSec:    readIOPSSec,
+		WriteIOPSSec:   writeIOPSSec,
 	}
 
 	err := m.ds.PutVirtualMachine(*vm)
