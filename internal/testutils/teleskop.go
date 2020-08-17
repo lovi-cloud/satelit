@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"os"
 
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/grpc"
@@ -125,4 +126,20 @@ func (d dummyTeleskop) DetachBlockDevice(ctx context.Context, req *agent.DetachB
 
 func (d dummyTeleskop) DetachInterface(ctx context.Context, req *agent.DetachInterfaceRequest) (*agent.DetachInterfaceResponse, error) {
 	return &agent.DetachInterfaceResponse{}, nil
+}
+
+func (d dummyTeleskop) GetVirtualMachineState(ctx context.Context, req *agent.GetVirtualMachineStateRequest) (*agent.GetVirtualMachineStateResponse, error) {
+	return &agent.GetVirtualMachineStateResponse{
+		State: &agent.VirtualMachineState{
+			Uuid:  req.Uuid,
+			Name:  req.Uuid,
+			State: agent.VirtualMachineState_RUNNING,
+		},
+	}, nil
+}
+
+func (d dummyTeleskop) ListVirtualMachineState(ctx context.Context, req *agent.ListVirtualMachineStateRequest) (*agent.ListVirtualMachineStateResponse, error) {
+	return &agent.ListVirtualMachineStateResponse{
+		States: []*agent.VirtualMachineState{},
+	}, nil
 }
