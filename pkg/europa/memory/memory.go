@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/whywaita/satelit/pkg/datastore"
+
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"github.com/whywaita/satelit/pkg/europa"
@@ -14,30 +16,27 @@ import (
 
 // A Memory is backend of europa by in-memory for testing.
 type Memory struct {
-	Volumes map[string]europa.Volume       // ID: Volume
-	Images  map[uuid.UUID]europa.BaseImage // ID: BaseImage
+	// im-memory storage engine (ex: Dorado)
+	Volumes map[string]europa.Volume // ID: Volume
 	Mu      sync.RWMutex
+
+	ds datastore.Datastore
 }
 
 // New create on memory backend
-func New() *Memory {
+func New(ds datastore.Datastore) *Memory {
 	vs := map[string]europa.Volume{}
-	images := map[uuid.UUID]europa.BaseImage{}
-	m := Memory{
-		Volumes: vs,
-		Images:  images,
-		Mu:      sync.RWMutex{},
-	}
 
-	return &m
+	return &Memory{
+		Volumes: vs,
+		ds:      ds,
+	}
 }
 
 // CreateVolume write volume information to in-memory
 func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB int) (*europa.Volume, error) {
-	id := name.String()
-
 	v := europa.Volume{
-		ID:         id,
+		ID:         name.String(),
 		CapacityGB: uint32(capacityGB),
 	}
 
@@ -45,15 +44,17 @@ func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB in
 	m.Volumes[v.ID] = v
 	m.Mu.Unlock()
 
+	if err := m.ds.PutVolume(v); err != nil {
+		return nil, err
+	}
+
 	return &v, nil
 }
 
 // CreateVolumeFromImage write volume info to in-memory
 func (m *Memory) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID uuid.UUID) (*europa.Volume, error) {
-	id := name.String()
-
 	v := europa.Volume{
-		ID:          id,
+		ID:          name.String(),
 		CapacityGB:  uint32(capacityGB),
 		BaseImageID: imageID,
 	}
@@ -61,6 +62,10 @@ func (m *Memory) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capa
 	m.Mu.Lock()
 	m.Volumes[v.ID] = v
 	m.Mu.Unlock()
+
+	if err := m.ds.PutVolume(v); err != nil {
+		return nil, err
+	}
 
 	return &v, nil
 }
@@ -71,32 +76,34 @@ func (m *Memory) DeleteVolume(ctx context.Context, id string) error {
 	delete(m.Volumes, id)
 	m.Mu.Unlock()
 
+	if err := m.ds.DeleteVolume(id); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // ListVolume return list of volume in-memory
 func (m *Memory) ListVolume(ctx context.Context) ([]europa.Volume, error) {
-	var vs []europa.Volume
+	var ids []string
 
 	m.Mu.RLock()
 	for _, v := range m.Volumes {
-		vs = append(vs, v)
+		ids = append(ids, v.ID)
 	}
 	m.Mu.RUnlock()
 
-	return vs, nil
+	volumes, err := m.ds.ListVolume(ids)
+	if err != nil {
+		return nil, err
+	}
+
+	return volumes, nil
 }
 
 // GetVolume get volume in-memory
 func (m *Memory) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
-	m.Mu.RLock()
-	v, ok := m.Volumes[id]
-	m.Mu.RUnlock()
-	if ok == false {
-		return nil, errors.New("not found")
-	}
-
-	return &v, nil
+	return m.ds.GetVolume(id)
 }
 
 // AttachVolumeTeleskop write attach information in-memory
@@ -127,6 +134,10 @@ func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) (
 	m.Volumes[id] = *newV
 	m.Mu.Unlock()
 
+	if err := m.ds.PutVolume(*newV); err != nil {
+		return 0, "", err
+	}
+
 	return 1, "/dev/xxa", nil
 }
 
@@ -144,6 +155,11 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	m.Mu.Lock()
 	m.Volumes[id] = *newV
 	m.Mu.Unlock()
+
+	if err := m.ds.PutVolume(*newV); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -162,28 +178,12 @@ func (m *Memory) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 
 // GetImage retrieves image
 func (m *Memory) GetImage(imageID uuid.UUID) (*europa.BaseImage, error) {
-	m.Mu.RLock()
-	i, ok := m.Images[imageID]
-	m.Mu.RUnlock()
-
-	if !ok {
-		return nil, errors.New("not found")
-	}
-
-	return &i, nil
+	return m.ds.GetImage(imageID)
 }
 
 // ListImage return image from in-memory
 func (m *Memory) ListImage() ([]europa.BaseImage, error) {
-	var images []europa.BaseImage
-
-	m.Mu.RLock()
-	for _, v := range m.Images {
-		images = append(images, v)
-	}
-	m.Mu.RUnlock()
-
-	return images, nil
+	return m.ds.ListImage()
 }
 
 // UploadImage upload image to in-memory
@@ -214,18 +214,15 @@ func (m *Memory) UploadImage(ctx context.Context, image []byte, name, descriptio
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
-	m.Mu.Lock()
-	m.Images[u] = *bi
-	m.Mu.Unlock()
+
+	if err := m.ds.PutImage(*bi); err != nil {
+		return nil, err
+	}
 
 	return bi, nil
 }
 
 // DeleteImage delete from in-memory
 func (m *Memory) DeleteImage(ctx context.Context, id uuid.UUID) error {
-	m.Mu.Lock()
-	delete(m.Images, id)
-	m.Mu.Unlock()
-
-	return nil
+	return m.ds.DeleteImage(id)
 }
