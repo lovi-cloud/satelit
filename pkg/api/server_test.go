@@ -44,9 +44,9 @@ func TestSanitizeImageSize(t *testing.T) {
 // NewMemorySatelit create in-memory Satelit API Server
 // for testing Satelit API
 func NewMemorySatelit() *SatelitServer {
-	europa := europaMemory.New()
 	ds := datastoreMemory.New()
 	ipamBackend := ipam.New(ds)
+	europa := europaMemory.New(ds)
 	ganymede := ganymedeMemory.New(ds)
 
 	return &SatelitServer{
@@ -66,9 +66,9 @@ func init() {
 	logger.New("debug")
 	server := NewMemorySatelit()
 	resetSatelit = func() {
-		server.Europa = europaMemory.New()
 		server.Datastore = datastoreMemory.New()
 		server.IPAM = ipam.New(server.Datastore)
+		server.Europa = europaMemory.New(server.Datastore)
 		server.Ganymede = ganymedeMemory.New(server.Datastore)
 	}
 
