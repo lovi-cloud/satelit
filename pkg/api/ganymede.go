@@ -50,7 +50,7 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 		}
 	}()
 
-	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName, volume.ID)
+	vm, err := s.Ganymede.CreateVirtualMachine(ctx, req.Name, req.Vcpus, req.MemoryKib, deviceName, req.HypervisorName, volume.ID, req.ReadBytesSec, req.WriteBytesSec, req.ReadIopsSec, req.WriteIopsSec)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create virtual machine: %+v", err)
 	}
