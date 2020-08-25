@@ -120,13 +120,26 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
 	}
 
-	err = s.Ganymede.DeleteVirtualMachine(ctx, vm.UUID)
+	client, err := teleskop.GetClient(vm.HypervisorName)
 	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "failed to get teleskop client: %+v", err)
+	}
+	resp, err := client.GetVirtualMachineState(ctx, &agentpb.GetVirtualMachineStateRequest{Uuid: vmID.String()})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine state: %+v", err)
+	}
+	if resp.State.State.Type() != agentpb.VirtualMachineState_SHUTOFF.Type() {
+		return nil, status.Errorf(codes.InvalidArgument, "%s is not shutdown. please `virsh destroy` before delete", vmID.String())
+	}
+
+	if err := s.Ganymede.DeleteVirtualMachine(ctx, vm.UUID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete virtual machine: %+v", err)
 	}
 
-	err = s.Europa.DeleteVolume(ctx, vm.RootVolumeID)
-	if err != nil {
+	if err := s.Europa.DetachVolume(ctx, vm.RootVolumeID); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to detach root volume: %+v", err)
+	}
+	if err := s.Europa.DeleteVolume(ctx, vm.RootVolumeID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete root volume: %+v", err)
 	}
 
