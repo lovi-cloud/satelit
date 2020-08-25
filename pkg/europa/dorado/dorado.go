@@ -220,6 +220,7 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 	}
 	volume.Attached = true
 	volume.HostName = hostname
+	volume.HostLUNID = hostLUNID
 	err = d.datastore.PutVolume(*volume)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", id, err)
