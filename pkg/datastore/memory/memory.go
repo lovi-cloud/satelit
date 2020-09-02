@@ -27,6 +27,9 @@ type Memory struct {
 	virtualMachines     map[uuid.UUID]ganymede.VirtualMachine
 	bridges             map[uuid.UUID]ganymede.Bridge
 	interfaceAttachment map[uuid.UUID]ganymede.InterfaceAttachment
+	hypervisors         map[int]ganymede.HyperVisor
+	hypervisorNumaNode  map[uuid.UUID]ganymede.NumaNode
+	hypervisorCorePair  map[uuid.UUID]ganymede.CorePair
 }
 
 // New create Memory
@@ -135,6 +138,53 @@ func (m *Memory) DeleteVolume(volumeID string) error {
 	m.mutex.Lock()
 	delete(m.volumes, volumeID)
 	m.mutex.Unlock()
+
+	return nil
+}
+
+// GetHypervisorByHostname retrieve hypervisor by hostname
+func (m *Memory) GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	for _, hv := range m.hypervisors {
+		if hv.Hostname == hostname {
+			return &hv, nil
+		}
+	}
+
+	return nil, errors.New("not found")
+}
+
+// PutHypervisor put hypervisor
+func (m *Memory) PutHypervisor(ctx context.Context, iqn, hostname string) (int, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := len(m.hypervisors) + 1 // AUTO INCREMENT
+
+	hv := ganymede.HyperVisor{
+		ID:       id,
+		IQN:      iqn,
+		Hostname: hostname,
+	}
+	m.hypervisors[id] = hv
+
+	return id, nil
+}
+
+// PutHypervisorCore put hypervisor cores
+func (m *Memory) PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNode, hypervisorID int) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	for _, node := range nodes {
+		m.hypervisorNumaNode[node.UUID] = node
+
+		for _, pair := range node.CorePairs {
+			m.hypervisorCorePair[pair.UUID] = pair
+		}
+	}
 
 	return nil
 }

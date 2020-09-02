@@ -24,6 +24,10 @@ type Datastore interface {
 	PutVolume(volume europa.Volume) error
 	DeleteVolume(volumeID string) error
 
+	GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error)
+	PutHypervisor(ctx context.Context, iqn, hostname string) (int, error)
+	PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNode, hypervisorID int) error
+
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)
 	GetSubnetByID(ctx context.Context, uuid uuid.UUID) (*ipam.Subnet, error)

@@ -6,6 +6,10 @@ import (
 	"net"
 	"strings"
 
+	uuid "github.com/satori/go.uuid"
+
+	"github.com/whywaita/satelit/pkg/ganymede"
+
 	"github.com/whywaita/satelit/internal/client/teleskop"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -155,11 +159,44 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 	}, nil
 }
 
-// RegisterTeleskopAgent is
+// RegisterTeleskopAgent register new teleskop agent
 func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.RegisterTeleskopAgentRequest) (*pb.RegisterTeleskopAgentResponse, error) {
 	err := teleskop.AddClient(req.Hostname, req.Endpoint)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agnet: %+v", err)
 	}
+
+	nodes := make([]ganymede.NumaNode, len(req.Nodes))
+	for _, n := range req.Nodes {
+		pairs := make([]ganymede.CorePair, len(n.Pairs))
+		for _, p := range n.Pairs {
+			pair := ganymede.CorePair{
+				UUID:         uuid.NewV4(),
+				PhysicalCore: p.PhysicalCore,
+				LogicalCore:  p.LogicalCore,
+			}
+			pairs = append(pairs, pair)
+		}
+
+		node := ganymede.NumaNode{
+			UUID:            uuid.NewV4(),
+			CorePairs:       pairs,
+			PhysicalCoreMin: n.PhysicalCoreMin,
+			PhysicalCoreMax: n.PhysicalCoreMax,
+			LogicalCoreMin:  n.LogicalCoreMin,
+			LogicalCoreMax:  n.LogicalCoreMax,
+		}
+		nodes = append(nodes, node)
+	}
+
+	hypervisorID, err := s.Datastore.PutHypervisor(ctx, "", req.Hostname) // TODO: write iqn
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to write hypervisor to datastore: %+v", err)
+	}
+
+	if err := s.Datastore.PutHypervisorCore(ctx, nodes, hypervisorID); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to write hypervisor cores to datastore: %+v", err)
+	}
+
 	return &pb.RegisterTeleskopAgentResponse{}, nil
 }

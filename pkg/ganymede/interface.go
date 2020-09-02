@@ -115,3 +115,29 @@ func (i *InterfaceAttachment) ToPb() *pb.InterfaceAttachment {
 		LeaseId:          i.LeaseID.String(),
 	}
 }
+
+// HyperVisor is host of virtual machines
+type HyperVisor struct {
+	ID        int       `db:"id"`
+	IQN       string    `db:"iqn"`
+	Hostname  string    `db:"hostname"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+}
+
+// NumaNode is CPU cores
+type NumaNode struct {
+	UUID            uuid.UUID `db:"uuid"`
+	CorePairs       []CorePair
+	PhysicalCoreMin uint32
+	PhysicalCoreMax uint32
+	LogicalCoreMin  uint32
+	LogicalCoreMax  uint32
+}
+
+// CorePair is pair of cpu core
+type CorePair struct {
+	UUID         uuid.UUID `db:"uuid"`
+	PhysicalCore uint32
+	LogicalCore  uint32
+}
