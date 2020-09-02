@@ -30,6 +30,7 @@ type Memory struct {
 	hypervisors         map[int]ganymede.HyperVisor
 	hypervisorNumaNode  map[uuid.UUID]ganymede.NumaNode
 	hypervisorCorePair  map[uuid.UUID]ganymede.CorePair
+	cpuPinningGroup     map[uuid.UUID]ganymede.CPUPinningGroup
 }
 
 // New create Memory
@@ -44,6 +45,10 @@ func New() *Memory {
 		virtualMachines:     map[uuid.UUID]ganymede.VirtualMachine{},
 		bridges:             map[uuid.UUID]ganymede.Bridge{},
 		interfaceAttachment: map[uuid.UUID]ganymede.InterfaceAttachment{},
+		hypervisors:         map[int]ganymede.HyperVisor{},
+		hypervisorNumaNode:  map[uuid.UUID]ganymede.NumaNode{},
+		hypervisorCorePair:  map[uuid.UUID]ganymede.CorePair{},
+		cpuPinningGroup:     map[uuid.UUID]ganymede.CPUPinningGroup{},
 	}
 }
 
@@ -185,6 +190,109 @@ func (m *Memory) PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNod
 			m.hypervisorCorePair[pair.UUID] = pair
 		}
 	}
+
+	return nil
+}
+
+// GetVirtualMachine return virtual machine record
+func (m *Memory) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	val, ok := m.virtualMachines[vmID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
+	}
+
+	volume, ok := m.volumes[val.RootVolumeID]
+	if !ok {
+		return nil, fmt.Errorf("failed to find volume for virtual machine root uuid=%s", val.RootVolumeID)
+	}
+
+	val.SourceImageID = volume.BaseImageID
+	val.RootVolumeGB = volume.CapacityGB
+
+	return &val, nil
+}
+
+// PutVirtualMachine write virtual machine record
+func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.virtualMachines[vm.UUID] = vm
+
+	return nil
+}
+
+// DeleteVirtualMachine delete virtual machine record
+func (m *Memory) DeleteVirtualMachine(vmID uuid.UUID) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.virtualMachines[vmID]
+	if !ok {
+		return fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
+	}
+
+	delete(m.virtualMachines, vmID)
+
+	return nil
+}
+
+// GetHostnameByAddress is
+func (m *Memory) GetHostnameByAddress(address types.IP) (string, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var targetAddress *ipam.Address
+	for _, a := range m.addresses {
+		if a.IP.String() == address.String() {
+			targetAddress = &a
+			break
+		}
+	}
+	if targetAddress == nil {
+		return "", fmt.Errorf("failed to get hostname by address")
+	}
+
+	var targetLease *ipam.Lease
+	for _, l := range m.leases {
+		if l.AddressID == targetAddress.UUID {
+			targetLease = &l
+			break
+		}
+	}
+	if targetLease == nil {
+		return "", fmt.Errorf("failed to get hostname by address")
+	}
+
+	var targetAttachment *ganymede.InterfaceAttachment
+	for _, i := range m.interfaceAttachment {
+		if i.LeaseID == targetLease.UUID {
+			targetAttachment = &i
+			break
+		}
+	}
+	if targetAttachment == nil {
+		return "", fmt.Errorf("failed to get hostname by address")
+	}
+
+	for _, v := range m.virtualMachines {
+		if v.UUID == targetAttachment.VirtualMachineID {
+			return v.Name, nil
+		}
+	}
+
+	return "", fmt.Errorf("failed to get hostname by address")
+}
+
+// PutCPUPinningGroup put cpu pinning group
+func (m *Memory) PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymede.CPUPinningGroup) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.cpuPinningGroup[cpuPinningGroup.UUID] = cpuPinningGroup
 
 	return nil
 }
@@ -362,99 +470,6 @@ func (m *Memory) DeleteLease(ctx context.Context, leaseID uuid.UUID) error {
 	delete(m.leases, leaseID)
 
 	return nil
-}
-
-// GetVirtualMachine return virtual machine record
-func (m *Memory) GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	val, ok := m.virtualMachines[vmID]
-	if !ok {
-		return nil, fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
-	}
-
-	volume, ok := m.volumes[val.RootVolumeID]
-	if !ok {
-		return nil, fmt.Errorf("failed to find volume for virtual machine root uuid=%s", val.RootVolumeID)
-	}
-
-	val.SourceImageID = volume.BaseImageID
-	val.RootVolumeGB = volume.CapacityGB
-
-	return &val, nil
-}
-
-// PutVirtualMachine write virtual machine record
-func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	m.virtualMachines[vm.UUID] = vm
-
-	return nil
-}
-
-// DeleteVirtualMachine delete virtual machine record
-func (m *Memory) DeleteVirtualMachine(vmID uuid.UUID) error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	_, ok := m.virtualMachines[vmID]
-	if !ok {
-		return fmt.Errorf("failed to find virtual machine uuid=%s", vmID)
-	}
-
-	delete(m.virtualMachines, vmID)
-
-	return nil
-}
-
-// GetHostnameByAddress is
-func (m *Memory) GetHostnameByAddress(address types.IP) (string, error) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	var targetAddress *ipam.Address
-	for _, a := range m.addresses {
-		if a.IP.String() == address.String() {
-			targetAddress = &a
-			break
-		}
-	}
-	if targetAddress == nil {
-		return "", fmt.Errorf("failed to get hostname by address")
-	}
-
-	var targetLease *ipam.Lease
-	for _, l := range m.leases {
-		if l.AddressID == targetAddress.UUID {
-			targetLease = &l
-			break
-		}
-	}
-	if targetLease == nil {
-		return "", fmt.Errorf("failed to get hostname by address")
-	}
-
-	var targetAttachment *ganymede.InterfaceAttachment
-	for _, i := range m.interfaceAttachment {
-		if i.LeaseID == targetLease.UUID {
-			targetAttachment = &i
-			break
-		}
-	}
-	if targetAttachment == nil {
-		return "", fmt.Errorf("failed to get hostname by address")
-	}
-
-	for _, v := range m.virtualMachines {
-		if v.UUID == targetAttachment.VirtualMachineID {
-			return v.Name, nil
-		}
-	}
-
-	return "", fmt.Errorf("failed to get hostname by address")
 }
 
 // GetSubnetByVLAN is

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/whywaita/satelit/pkg/ganymede"
+
 	"github.com/whywaita/satelit/internal/logger"
 
 	uuid "github.com/satori/go.uuid"
@@ -287,4 +289,28 @@ func (s *SatelitServer) ListAttachment(ctx context.Context, req *pb.ListAttachme
 	return &pb.ListAttachmentResponse{
 		InterfaceAttachments: attachments,
 	}, nil
+}
+
+// AddCPUPinningGroup add cpu pinning group
+// use same group's cpu cores if virtual machine joined a same cpu pinning group
+func (s *SatelitServer) AddCPUPinningGroup(ctx context.Context, req *pb.AddCPUPinningGroupRequest) (*pb.AddCPUPinningGroupResponse, error) {
+	div := req.CountOfCore % 2
+	if div != 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "count_of_core must be a multiple of two")
+	}
+
+	u := uuid.NewV4()
+	if err := s.Datastore.PutCPUPinningGroup(ctx, ganymede.CPUPinningGroup{
+		UUID:      u,
+		Name:      req.Name,
+		CountCore: int(req.CountOfCore),
+	}); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to put CPU Pinning Group: %+v", err)
+	}
+
+	return &pb.AddCPUPinningGroupResponse{CpuPinningGroup: &pb.CPUPinningGroup{
+		Uuid:        u.String(),
+		Name:        req.Name,
+		CountOfCore: req.CountOfCore,
+	}}, nil
 }

@@ -49,6 +49,9 @@ service Satelit {
       returns (DetachInterfaceResponse) {}
   rpc GetAttachment(GetAttachmentRequest) returns (GetAttachmentResponse) {}
   rpc ListAttachment(ListAttachmentRequest) returns (ListAttachmentResponse) {}
+
+  rpc AddCPUPinningGroup(AddCPUPinningGroupRequest)
+      returns (AddCPUPinningGroupResponse) {}
 }
 
 // type
@@ -117,6 +120,12 @@ message InterfaceAttachment {
   int64  average            = 4;
   string name               = 5;
   string lease_id           = 6;
+}
+
+message CPUPinningGroup {
+  string uuid          = 1;
+  string name          = 2;
+  uint32 count_of_core = 3;
 }
 
 // Request / Response
@@ -407,4 +416,13 @@ message ListAttachmentRequest {}
 
 message ListAttachmentResponse {
   repeated InterfaceAttachment interface_attachments = 1;
+}
+
+message AddCPUPinningGroupRequest {
+  string name          = 1;
+  uint32 count_of_core = 2;
+}
+
+message AddCPUPinningGroupResponse {
+  CPUPinningGroup cpu_pinning_group = 1;
 }

@@ -141,3 +141,11 @@ type CorePair struct {
 	PhysicalCore uint32
 	LogicalCore  uint32
 }
+
+// CPUPinningGroup is group of cpu cores.
+// use a same group's cpu core if joined a same group.
+type CPUPinningGroup struct {
+	UUID      uuid.UUID `db:"uuid"`
+	Name      string    `db:"name"`
+	CountCore int       `db:"count_of_core"`
+}
