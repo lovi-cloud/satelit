@@ -8,6 +8,40 @@ CREATE TABLE IF NOT EXISTS hypervisor (
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
 );
 
+-- Pinning Group
+CREATE TABLE IF NOT EXISTS cpu_pinning_group (
+    uuid VARCHAR(36) NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    request_core INT NOT NULL
+);
+
+-- already pinned and used CPU core
+CREATE TABLE IF NOT EXISTS cpu_core_pinned (
+    uuid VARCHAR(36) PRIMARY KEY,
+    pinning_group_id VARCHAR(36) NOT NULL,
+    hypervisor_cpu_pair_id VARCHAR(36) NOT NULL
+);
+
+-- all NUMA node had hypervisor_id (not delete when used)
+CREATE TABLE IF NOT EXISTS hypervisor_numa_node (
+    uuid VARCHAR(36) PRIMARY KEY,
+    physical_core_min INT NOT NULL,
+    physical_core_max INT NOT NULL,
+    logical_core_min INT NOT NULL,
+    logical_core_max INT NOT NULL,
+    hypervisor_id INT NOT NULL,
+    UNIQUE (hypervisor_id, physical_core_min) -- need to unique hypervisor_id and one of four values. physical_core_min don't have specific value in four values.
+);
+
+-- all cpu cores had numa_node_id (not delete when used)
+CREATE TABLE IF NOT EXISTS hypervisor_cpu_pair (
+    uuid VARCHAR(36) PRIMARY KEY,
+    numa_node_id VARCHAR(36),
+    physical_core_number INT NOT NULL,
+    logical_core_number INT NOT NULL,
+    UNIQUE (numa_node_id, physical_core_number, logical_core_number)
+);
+
 CREATE TABLE IF NOT EXISTS volume (
     id VARCHAR(255) NOT NULL PRIMARY KEY,
     attached BOOLEAN NOT NULL,
