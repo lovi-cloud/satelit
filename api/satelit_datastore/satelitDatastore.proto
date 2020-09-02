@@ -70,12 +70,12 @@ message ListBridgeResponse {
   repeated Bridge bridges = 1;
 }
 
-message NumaNode {
-  message CorePair {
-    uint32 physical_core = 1;
-    uint32 logical_core  = 2;
-  }
+message CorePair {
+  uint32 physical_core = 1;
+  uint32 logical_core  = 2;
+}
 
+message NumaNode {
   repeated CorePair pairs             = 1;
   uint32            physical_core_min = 2;
   uint32            physical_core_max = 3;
@@ -91,6 +91,11 @@ message RegisterTeleskopAgentRequest {
 
 message RegisterTeleskopAgentResponse {}
 
-// message GetCPUCoreByPinningGroupRequest {}
+// message GetCPUCoreByPinningGroupRequest {
+//  string hostname           = 1;
+//  string pinning_group_name = 2;
+//}
 //
-// message GetCPUCoreByPinningGroupResponse {}
+// message GetCPUCoreByPinningGroupResponse {
+//  repeated CorePair pairs = 1;
+//}

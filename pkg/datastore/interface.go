@@ -13,6 +13,7 @@ import (
 
 // A Datastore is type definition of data store.
 type Datastore interface {
+	// europa
 	GetIQN(ctx context.Context, hostname string) (string, error)
 	GetImage(imageID uuid.UUID) (*europa.BaseImage, error)
 	ListImage() ([]europa.BaseImage, error)
@@ -24,9 +25,17 @@ type Datastore interface {
 	PutVolume(volume europa.Volume) error
 	DeleteVolume(volumeID string) error
 
+	// ganymede
 	GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error)
 	PutHypervisor(ctx context.Context, iqn, hostname string) (int, error)
 	PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNode, hypervisorID int) error
+
+	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
+	PutVirtualMachine(vm ganymede.VirtualMachine) error
+	DeleteVirtualMachine(vmID uuid.UUID) error
+	GetHostnameByAddress(address types.IP) (string, error)
+
+	PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymede.CPUPinningGroup) error
 
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)
@@ -45,11 +54,6 @@ type Datastore interface {
 	GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
 	DeleteLease(ctx context.Context, leaseID uuid.UUID) error
-
-	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
-	PutVirtualMachine(vm ganymede.VirtualMachine) error
-	DeleteVirtualMachine(vmID uuid.UUID) error
-	GetHostnameByAddress(address types.IP) (string, error)
 
 	CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*ganymede.Bridge, error)
 	GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error)
