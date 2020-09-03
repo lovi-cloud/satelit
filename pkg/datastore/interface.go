@@ -28,7 +28,7 @@ type Datastore interface {
 	// ganymede
 	GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error)
 	PutHypervisor(ctx context.Context, iqn, hostname string) (int, error)
-	PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNode, hypervisorID int) error
+	PutHypervisorNUMANode(ctx context.Context, nodes []ganymede.NUMANode, hypervisorID int) error
 
 	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
@@ -36,6 +36,7 @@ type Datastore interface {
 	GetHostnameByAddress(address types.IP) (string, error)
 
 	PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymede.CPUPinningGroup) error
+	GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error)
 
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)

@@ -28,7 +28,7 @@ type Memory struct {
 	bridges             map[uuid.UUID]ganymede.Bridge
 	interfaceAttachment map[uuid.UUID]ganymede.InterfaceAttachment
 	hypervisors         map[int]ganymede.HyperVisor
-	hypervisorNumaNode  map[uuid.UUID]ganymede.NumaNode
+	hypervisorNumaNode  map[uuid.UUID]ganymede.NUMANode
 	hypervisorCorePair  map[uuid.UUID]ganymede.CorePair
 	cpuPinningGroup     map[uuid.UUID]ganymede.CPUPinningGroup
 }
@@ -46,7 +46,7 @@ func New() *Memory {
 		bridges:             map[uuid.UUID]ganymede.Bridge{},
 		interfaceAttachment: map[uuid.UUID]ganymede.InterfaceAttachment{},
 		hypervisors:         map[int]ganymede.HyperVisor{},
-		hypervisorNumaNode:  map[uuid.UUID]ganymede.NumaNode{},
+		hypervisorNumaNode:  map[uuid.UUID]ganymede.NUMANode{},
 		hypervisorCorePair:  map[uuid.UUID]ganymede.CorePair{},
 		cpuPinningGroup:     map[uuid.UUID]ganymede.CPUPinningGroup{},
 	}
@@ -178,8 +178,8 @@ func (m *Memory) PutHypervisor(ctx context.Context, iqn, hostname string) (int, 
 	return id, nil
 }
 
-// PutHypervisorCore put hypervisor cores
-func (m *Memory) PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNode, hypervisorID int) error {
+// PutHypervisorNUMANode put hypervisor cores
+func (m *Memory) PutHypervisorNUMANode(ctx context.Context, nodes []ganymede.NUMANode, hypervisorID int) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -295,6 +295,11 @@ func (m *Memory) PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymed
 	m.cpuPinningGroup[cpuPinningGroup.UUID] = cpuPinningGroup
 
 	return nil
+}
+
+// GetAvailableCorePair retrieves cpu pairs
+func (m *Memory) GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error) {
+	panic("implement me")
 }
 
 // CreateSubnet create a subnet

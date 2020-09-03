@@ -57,8 +57,8 @@ func (m *MySQL) PutHypervisor(ctx context.Context, iqn, hostname string) (int, e
 	return int(hypervisorID), nil
 }
 
-// PutHypervisorCore register cpu cores by hypervisor
-func (m *MySQL) PutHypervisorCore(ctx context.Context, nodes []ganymede.NumaNode, hypervisorID int) error {
+// PutHypervisorNUMANode register cpu cores by hypervisor
+func (m *MySQL) PutHypervisorNUMANode(ctx context.Context, nodes []ganymede.NUMANode, hypervisorID int) error {
 	for _, node := range nodes {
 		nodeQuery := `INSERT INTO hypervisor_numa_node(uuid, physical_core_min, physical_core_max, logical_core_min, logical_core_max, hypervisor_id) VALUES (?, ?, ?, ?, ?, ?)`
 		nodeStmt, err := m.Conn.Preparex(nodeQuery)

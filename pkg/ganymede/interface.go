@@ -125,8 +125,8 @@ type HyperVisor struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-// NumaNode is CPU cores
-type NumaNode struct {
+// NUMANode is CPU cores
+type NUMANode struct {
 	UUID            uuid.UUID `db:"uuid"`
 	CorePairs       []CorePair
 	PhysicalCoreMin uint32

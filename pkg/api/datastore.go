@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -162,13 +163,13 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 // RegisterTeleskopAgent register new teleskop agent
 func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.RegisterTeleskopAgentRequest) (*pb.RegisterTeleskopAgentResponse, error) {
 	err := teleskop.AddClient(req.Hostname, req.Endpoint)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agnet: %+v", err)
+	if err != nil && !errors.Is(err, teleskop.ErrTeleskopAgentAlreadyExist) {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agent: %+v", err)
 	}
 
-	nodes := make([]ganymede.NumaNode, len(req.Nodes))
+	var nodes []ganymede.NUMANode
 	for _, n := range req.Nodes {
-		pairs := make([]ganymede.CorePair, len(n.Pairs))
+		var pairs []ganymede.CorePair
 		for _, p := range n.Pairs {
 			pair := ganymede.CorePair{
 				UUID:         uuid.NewV4(),
@@ -178,7 +179,7 @@ func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.Re
 			pairs = append(pairs, pair)
 		}
 
-		node := ganymede.NumaNode{
+		node := ganymede.NUMANode{
 			UUID:            uuid.NewV4(),
 			CorePairs:       pairs,
 			PhysicalCoreMin: n.PhysicalCoreMin,
@@ -189,12 +190,12 @@ func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.Re
 		nodes = append(nodes, node)
 	}
 
-	hypervisorID, err := s.Datastore.PutHypervisor(ctx, "", req.Hostname) // TODO: write iqn
+	hypervisorID, err := s.Datastore.PutHypervisor(ctx, req.Iqn, req.Hostname)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to write hypervisor to datastore: %+v", err)
 	}
 
-	if err := s.Datastore.PutHypervisorCore(ctx, nodes, hypervisorID); err != nil {
+	if err := s.Datastore.PutHypervisorNUMANode(ctx, nodes, hypervisorID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to write hypervisor cores to datastore: %+v", err)
 	}
 
