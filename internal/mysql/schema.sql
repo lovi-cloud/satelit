@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS hypervisor (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     iqn VARCHAR(255) NOT NULL,
     hostname VARCHAR(255) NOT NULL,
+    UNIQUE (iqn, hostname),
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
 );

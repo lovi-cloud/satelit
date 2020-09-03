@@ -20,3 +20,8 @@ func (m *MySQL) PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymede
 
 	return nil
 }
+
+// GetAvailableCorePair retrieve not pinned CorePairs.
+func (m *MySQL) GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error) {
+	panic("implement me")
+}
