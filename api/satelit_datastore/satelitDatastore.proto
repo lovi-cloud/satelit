@@ -86,6 +86,7 @@ message NumaNode {
 message RegisterTeleskopAgentRequest {
   string            hostname = 1;
   string            endpoint = 2;
+  string            iqn      = 4;
   repeated NumaNode nodes    = 3;
 }
 
