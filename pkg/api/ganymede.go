@@ -298,19 +298,78 @@ func (s *SatelitServer) AddCPUPinningGroup(ctx context.Context, req *pb.AddCPUPi
 	if div != 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "count_of_core must be a multiple of two")
 	}
+	hv, err := s.Datastore.GetHypervisorByHostname(ctx, req.HypervisorName)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve hypervisor: %+v", err)
+	}
 
 	u := uuid.NewV4()
-	if err := s.Datastore.PutCPUPinningGroup(ctx, ganymede.CPUPinningGroup{
+	cpg := ganymede.CPUPinningGroup{
 		UUID:      u,
 		Name:      req.Name,
 		CountCore: int(req.CountOfCore),
-	}); err != nil {
+	}
+	if err := s.Datastore.PutCPUPinningGroup(ctx, cpg); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to put CPU Pinning Group: %+v", err)
 	}
+
+	numRequestCorePair := req.CountOfCore / 2
+	_, err = s.Scheduler.PopCorePair(ctx, hv.Hostname, int(numRequestCorePair), cpg.UUID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to allocate pinning cpu pair: %+v", err)
+	}
+	defer func() {
+		if err != nil {
+			if err := s.Scheduler.PushCorePair(ctx, cpg.UUID); err != nil {
+				logger.Logger.Warn(fmt.Sprintf("failed to push core pair: %+v", err))
+			}
+		}
+	}()
 
 	return &pb.AddCPUPinningGroupResponse{CpuPinningGroup: &pb.CPUPinningGroup{
 		Uuid:        u.String(),
 		Name:        req.Name,
 		CountOfCore: req.CountOfCore,
 	}}, nil
+}
+
+// ShowCPUPinningGroup retrieve cpu pinning group
+func (s *SatelitServer) ShowCPUPinningGroup(ctx context.Context, req *pb.ShowCPUPinningGroupRequest) (*pb.ShowCPUPinningGroupResponse, error) {
+	cpuPinningGroupID, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req cpu pinning group id (need uuid): %+v", err)
+	}
+
+	cpg, err := s.Datastore.GetCPUPinningGroup(ctx, cpuPinningGroupID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get cpu pinning group: %+v", err)
+	}
+
+	return &pb.ShowCPUPinningGroupResponse{
+		CpuPinningGroup: cpg.ToPb(),
+	}, nil
+}
+
+// DeleteCPUPinningGroup delete cpu pinning group
+func (s *SatelitServer) DeleteCPUPinningGroup(ctx context.Context, req *pb.DeleteCPUPinningGroupRequest) (*pb.DeleteCPUPinningGroupResponse, error) {
+	cpuPinningGroupID, err := s.parseRequestUUID(req.Uuid)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req cpu pinning group id (need uuid): %+v", err)
+	}
+
+	// TODO: check related pinned cpu from hypervisor (return InvalidArgument if exist)
+	cpg, err := s.Datastore.GetCPUPinningGroup(ctx, cpuPinningGroupID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get cpu pinning group: %+v", err)
+	}
+
+	if err := s.Scheduler.PushCorePair(ctx, cpg.UUID); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to free cpu core pair: %+v", err)
+	}
+
+	if err := s.Datastore.DeleteCPUPinningGroup(ctx, cpuPinningGroupID); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete cpu pinning group: %+v", err)
+	}
+
+	return &pb.DeleteCPUPinningGroupResponse{}, nil
 }

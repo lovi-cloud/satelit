@@ -26,6 +26,7 @@ type Datastore interface {
 	DeleteVolume(volumeID string) error
 
 	// ganymede
+	GetHypervisor(ctx context.Context, hvID int) (*ganymede.HyperVisor, error)
 	GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error)
 	PutHypervisor(ctx context.Context, iqn, hostname string) (int, error)
 	PutHypervisorNUMANode(ctx context.Context, nodes []ganymede.NUMANode, hypervisorID int) error
@@ -36,7 +37,14 @@ type Datastore interface {
 	GetHostnameByAddress(address types.IP) (string, error)
 
 	PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymede.CPUPinningGroup) error
+	GetCPUPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) (*ganymede.CPUPinningGroup, error)
+	GetCPUPinningGroupByName(ctx context.Context, name string) (*ganymede.CPUPinningGroup, error)
+	DeleteCPUPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) error
 	GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error)
+	GetCPUCorePair(ctx context.Context, corePairID uuid.UUID) (*ganymede.CorePair, error)
+	GetPinnedCoreByPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) ([]ganymede.CPUCorePinned, error)
+	PutPinnedCore(ctx context.Context, pinned ganymede.CPUCorePinned) error
+	DeletePinnedCore(ctx context.Context, pinnedID uuid.UUID) error
 
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)

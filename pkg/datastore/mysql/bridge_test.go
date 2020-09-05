@@ -196,7 +196,7 @@ func TestMySQL_DeleteBridge(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }

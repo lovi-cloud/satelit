@@ -8,7 +8,23 @@ import (
 	"github.com/whywaita/satelit/pkg/ganymede"
 )
 
-// GetHypervisorByHostname retrieve hypervisor
+// GetHypervisor retrieve hypervisor
+func (m *MySQL) GetHypervisor(ctx context.Context, hypervisorID int) (*ganymede.HyperVisor, error) {
+	var hypervisor ganymede.HyperVisor
+
+	query := `SELECT id, iqn, hostname, created_at, updated_at FROM hypervisor WHERE id = ?`
+	stmt, err := m.Conn.Preparex(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	if err := stmt.Get(&hypervisor, hypervisorID); err != nil {
+		return nil, fmt.Errorf("failed to execute get query: %w", err)
+	}
+
+	return &hypervisor, nil
+}
+
+// GetHypervisorByHostname retrieve hypervisor by hostname
 func (m *MySQL) GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error) {
 	var hypervisor ganymede.HyperVisor
 

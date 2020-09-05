@@ -14,8 +14,8 @@ service SatelitDatastore {
   rpc ListBridge(ListBridgeRequest) returns (ListBridgeResponse) {}
   rpc RegisterTeleskopAgent(RegisterTeleskopAgentRequest)
       returns (RegisterTeleskopAgentResponse) {}
-  //  rpc GetCPUCoreByPinningGroup(GetCPUCoreByPinningGroupRequest)
-  //      returns (GetCPUCoreByPinningGroupResponse) {}
+  rpc GetCPUCoreByPinningGroup(GetCPUCoreByPinningGroupRequest)
+      returns (GetCPUCoreByPinningGroupResponse) {}
 }
 
 message DHCPLease {
@@ -92,11 +92,11 @@ message RegisterTeleskopAgentRequest {
 
 message RegisterTeleskopAgentResponse {}
 
-// message GetCPUCoreByPinningGroupRequest {
-//  string hostname           = 1;
-//  string pinning_group_name = 2;
-//}
-//
-// message GetCPUCoreByPinningGroupResponse {
-//  repeated CorePair pairs = 1;
-//}
+message GetCPUCoreByPinningGroupRequest {
+  string hostname           = 1;
+  string pinning_group_name = 2;
+}
+
+message GetCPUCoreByPinningGroupResponse {
+  repeated CorePair pairs = 1;
+}
