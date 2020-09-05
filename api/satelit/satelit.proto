@@ -52,6 +52,10 @@ service Satelit {
 
   rpc AddCPUPinningGroup(AddCPUPinningGroupRequest)
       returns (AddCPUPinningGroupResponse) {}
+  rpc ShowCPUPinningGroup(ShowCPUPinningGroupRequest)
+      returns (ShowCPUPinningGroupResponse) {}
+  rpc DeleteCPUPinningGroup(DeleteCPUPinningGroupRequest)
+      returns (DeleteCPUPinningGroupResponse) {}
 }
 
 // type
@@ -419,10 +423,25 @@ message ListAttachmentResponse {
 }
 
 message AddCPUPinningGroupRequest {
-  string name          = 1;
-  uint32 count_of_core = 2;
+  string name            = 1;
+  uint32 count_of_core   = 2;
+  string hypervisor_name = 3;
 }
 
 message AddCPUPinningGroupResponse {
   CPUPinningGroup cpu_pinning_group = 1;
 }
+
+message ShowCPUPinningGroupRequest {
+  string uuid = 1;
+}
+
+message ShowCPUPinningGroupResponse {
+  CPUPinningGroup cpu_pinning_group = 1;
+}
+
+message DeleteCPUPinningGroupRequest {
+  string uuid = 1;
+}
+
+message DeleteCPUPinningGroupResponse {}

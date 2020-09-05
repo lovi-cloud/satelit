@@ -9,8 +9,6 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
-
 	"github.com/whywaita/satelit/internal/client/teleskop"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -25,6 +23,7 @@ import (
 	"github.com/whywaita/satelit/internal/logger"
 	"github.com/whywaita/satelit/internal/mysql/types"
 	"github.com/whywaita/satelit/pkg/datastore"
+	"github.com/whywaita/satelit/pkg/ganymede"
 )
 
 // A SatelitDatastore is definition of Satelit Datastore API Server
@@ -200,4 +199,30 @@ func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.Re
 	}
 
 	return &pb.RegisterTeleskopAgentResponse{}, nil
+}
+
+// GetCPUCoreByPinningGroup retrieve pinned cpu pair.
+func (s *SatelitDatastore) GetCPUCoreByPinningGroup(ctx context.Context, req *pb.GetCPUCoreByPinningGroupRequest) (*pb.GetCPUCoreByPinningGroupResponse, error) {
+	cpg, err := s.Datastore.GetCPUPinningGroupByName(ctx, req.PinningGroupName)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get cpu pinning group: %+v", err)
+	}
+
+	pinneds, err := s.Datastore.GetPinnedCoreByPinningGroup(ctx, cpg.UUID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get cpu pinned: %+v", err)
+	}
+
+	var pairs []*pb.CorePair
+	for _, pinned := range pinneds {
+		pair, err := s.Datastore.GetCPUCorePair(ctx, pinned.CorePairID)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get pinned cpu corepairs: %+v", err)
+		}
+		pairs = append(pairs, pair.ToPb())
+	}
+
+	return &pb.GetCPUCoreByPinningGroupResponse{
+		Pairs: pairs,
+	}, nil
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	pb "github.com/whywaita/satelit/api/satelit"
+	dspb "github.com/whywaita/satelit/api/satelit_datastore"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -125,27 +126,62 @@ type HyperVisor struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-// NUMANode is CPU cores
+// NUMANode is Non-uniform memory access in hypervisor
 type NUMANode struct {
 	UUID            uuid.UUID `db:"uuid"`
 	CorePairs       []CorePair
-	PhysicalCoreMin uint32
-	PhysicalCoreMax uint32
-	LogicalCoreMin  uint32
-	LogicalCoreMax  uint32
+	PhysicalCoreMin uint32    `db:"physical_core_min"`
+	PhysicalCoreMax uint32    `db:"physical_core_max"`
+	LogicalCoreMin  uint32    `db:"logical_core_min"`
+	LogicalCoreMax  uint32    `db:"logical_core_max"`
+	HypervisorID    int       `db:"hypervisor_id"`
+	CreatedAt       time.Time `db:"created_at"`
+	UpdatedAt       time.Time `db:"updated_at"`
 }
 
 // CorePair is pair of cpu core
 type CorePair struct {
 	UUID         uuid.UUID `db:"uuid"`
-	PhysicalCore uint32
-	LogicalCore  uint32
+	PhysicalCore uint32    `db:"physical_core_number"`
+	LogicalCore  uint32    `db:"logical_core_number"`
+	NUMANodeID   uuid.UUID `db:"numa_node_id"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
+}
+
+// ToPb convert to type for proto
+func (cp *CorePair) ToPb() *dspb.CorePair {
+	return &dspb.CorePair{
+		PhysicalCore: cp.PhysicalCore,
+		LogicalCore:  cp.LogicalCore,
+	}
 }
 
 // CPUPinningGroup is group of cpu cores.
 // use a same group's cpu core if joined a same group.
 type CPUPinningGroup struct {
-	UUID      uuid.UUID `db:"uuid"`
-	Name      string    `db:"name"`
-	CountCore int       `db:"count_of_core"`
+	UUID         uuid.UUID `db:"uuid"`
+	Name         string    `db:"name"`
+	HypervisorID int       `db:"hypervisor_id"`
+	CountCore    int       `db:"count_of_core"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
+}
+
+// ToPb convert to type for proto
+func (cpg *CPUPinningGroup) ToPb() *pb.CPUPinningGroup {
+	return &pb.CPUPinningGroup{
+		Uuid:        cpg.UUID.String(),
+		Name:        cpg.Name,
+		CountOfCore: uint32(cpg.CountCore),
+	}
+}
+
+// CPUCorePinned is pinned cpu
+type CPUCorePinned struct {
+	UUID              uuid.UUID `db:"uuid"`
+	CPUPinningGroupID uuid.UUID `db:"pinning_group_id"`
+	CorePairID        uuid.UUID `db:"hypervisor_cpu_pair_id"`
+	CreatedAt         time.Time `db:"created_at"`
+	UpdatedAt         time.Time `db:"updated_at"`
 }

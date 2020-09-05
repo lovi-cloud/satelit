@@ -106,11 +106,11 @@ func setupTeleskop() (hypervisorName string, teardown func(), err error) {
 	var ep string
 	ep, teardown, err = testutils.NewDummyTeleskop()
 	if err != nil {
-		return
+		return "", nil, fmt.Errorf("failed to create dummy teleskop: %w", err)
 	}
 	err = teleskop.New(map[string]string{hypervisorName: ep})
 	if err != nil {
-		return
+		return "", nil, fmt.Errorf("failed to teleskop.New: %w", err)
 	}
 	return hypervisorName, teardown, nil
 }

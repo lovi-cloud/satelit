@@ -31,6 +31,7 @@ type Memory struct {
 	hypervisorNumaNode  map[uuid.UUID]ganymede.NUMANode
 	hypervisorCorePair  map[uuid.UUID]ganymede.CorePair
 	cpuPinningGroup     map[uuid.UUID]ganymede.CPUPinningGroup
+	cpuCorePinned       map[uuid.UUID]ganymede.CPUCorePinned
 }
 
 // New create Memory
@@ -49,6 +50,7 @@ func New() *Memory {
 		hypervisorNumaNode:  map[uuid.UUID]ganymede.NUMANode{},
 		hypervisorCorePair:  map[uuid.UUID]ganymede.CorePair{},
 		cpuPinningGroup:     map[uuid.UUID]ganymede.CPUPinningGroup{},
+		cpuCorePinned:       map[uuid.UUID]ganymede.CPUCorePinned{},
 	}
 }
 
@@ -145,6 +147,19 @@ func (m *Memory) DeleteVolume(volumeID string) error {
 	m.mutex.Unlock()
 
 	return nil
+}
+
+// GetHypervisor retrieve hypervisor
+func (m *Memory) GetHypervisor(ctx context.Context, hvID int) (*ganymede.HyperVisor, error) {
+	m.mutex.Lock()
+	hv, ok := m.hypervisors[hvID]
+	m.mutex.Unlock()
+
+	if !ok {
+		return nil, errors.New("not found")
+	}
+
+	return &hv, nil
 }
 
 // GetHypervisorByHostname retrieve hypervisor by hostname
@@ -297,9 +312,101 @@ func (m *Memory) PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymed
 	return nil
 }
 
+// GetCPUPinningGroup retrieves cpu pinning group
+func (m *Memory) GetCPUPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) (*ganymede.CPUPinningGroup, error) {
+	m.mutex.Lock()
+	cpg, ok := m.cpuPinningGroup[cpuPinningGroupID]
+	m.mutex.Unlock()
+
+	if !ok {
+		return nil, errors.New("not found")
+	}
+
+	return &cpg, nil
+}
+
+// GetCPUPinningGroupByName retrieves cpu pinning group by name
+func (m *Memory) GetCPUPinningGroupByName(ctx context.Context, name string) (*ganymede.CPUPinningGroup, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	for _, cpg := range m.cpuPinningGroup {
+		if cpg.Name == name {
+			return &cpg, nil
+		}
+	}
+
+	return nil, errors.New("not found")
+}
+
+// DeleteCPUPinningGroup delete cpu pinning group
+func (m *Memory) DeleteCPUPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.cpuPinningGroup[cpuPinningGroupID]
+	if !ok {
+		return errors.New("not found")
+	}
+
+	delete(m.cpuPinningGroup, cpuPinningGroupID)
+
+	return nil
+}
+
 // GetAvailableCorePair retrieves cpu pairs
 func (m *Memory) GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error) {
 	panic("implement me")
+}
+
+// GetCPUCorePair retrieve cpu core pair
+func (m *Memory) GetCPUCorePair(ctx context.Context, corePairID uuid.UUID) (*ganymede.CorePair, error) {
+	m.mutex.Lock()
+	cp, ok := m.hypervisorCorePair[corePairID]
+	m.mutex.Unlock()
+
+	if !ok {
+		return nil, errors.New("not found")
+	}
+
+	return &cp, nil
+}
+
+// GetPinnedCoreByPinningGroup retrieve pinned cpu cores
+func (m *Memory) GetPinnedCoreByPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) ([]ganymede.CPUCorePinned, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	pinned, ok := m.cpuCorePinned[cpuPinningGroupID]
+	if !ok {
+		return nil, errors.New("not found")
+	}
+
+	return []ganymede.CPUCorePinned{pinned}, nil
+}
+
+// PutPinnedCore put pinned cpu cores
+func (m *Memory) PutPinnedCore(ctx context.Context, pinned ganymede.CPUCorePinned) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.cpuCorePinned[pinned.UUID] = pinned
+
+	return nil
+}
+
+// DeletePinnedCore delete pinned cpu cores
+func (m *Memory) DeletePinnedCore(ctx context.Context, pinnedID uuid.UUID) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, ok := m.cpuCorePinned[pinnedID]
+	if !ok {
+		return errors.New("not found")
+	}
+	delete(m.cpuCorePinned, pinnedID)
+
+	return nil
 }
 
 // CreateSubnet create a subnet

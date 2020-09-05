@@ -90,7 +90,7 @@ func TestMySQL_GetVirtualMachine(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -236,7 +236,7 @@ func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -332,7 +332,7 @@ func TestMySQL_GetHostnameByAddress(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
