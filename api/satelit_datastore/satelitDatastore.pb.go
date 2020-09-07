@@ -1098,7 +1098,7 @@ var file_satelitDatastore_proto_rawDesc = []byte{
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x05, 0x70, 0x61, 0x69, 0x72, 0x73, 0x18,
 	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f,
 	0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x43, 0x6f, 0x72, 0x65, 0x50, 0x61,
-	0x69, 0x72, 0x52, 0x05, 0x70, 0x61, 0x69, 0x72, 0x73, 0x32, 0xb2, 0x05, 0x0a, 0x10, 0x53, 0x61,
+	0x69, 0x72, 0x52, 0x05, 0x70, 0x61, 0x69, 0x72, 0x73, 0x32, 0xba, 0x06, 0x0a, 0x10, 0x53, 0x61,
 	0x74, 0x65, 0x6c, 0x69, 0x74, 0x44, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x12, 0x61,
 	0x0a, 0x0c, 0x47, 0x65, 0x74, 0x44, 0x48, 0x43, 0x50, 0x4c, 0x65, 0x61, 0x73, 0x65, 0x12, 0x26,
 	0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f,
@@ -1141,9 +1141,18 @@ var file_satelitDatastore_proto_rawDesc = []byte{
 	0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x73, 0x61, 0x74,
 	0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x52,
 	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x54, 0x65, 0x6c, 0x65, 0x73, 0x6b, 0x6f, 0x70, 0x41,
-	0x67, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15,
-	0x5a, 0x13, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61,
-	0x73, 0x74, 0x6f, 0x72, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x67, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x85,
+	0x01, 0x0a, 0x18, 0x47, 0x65, 0x74, 0x43, 0x50, 0x55, 0x43, 0x6f, 0x72, 0x65, 0x42, 0x79, 0x50,
+	0x69, 0x6e, 0x6e, 0x69, 0x6e, 0x67, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x12, 0x32, 0x2e, 0x73, 0x61,
+	0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e,
+	0x47, 0x65, 0x74, 0x43, 0x50, 0x55, 0x43, 0x6f, 0x72, 0x65, 0x42, 0x79, 0x50, 0x69, 0x6e, 0x6e,
+	0x69, 0x6e, 0x67, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x33, 0x2e, 0x73, 0x61, 0x74, 0x65, 0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74,
+	0x6f, 0x72, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x50, 0x55, 0x43, 0x6f, 0x72, 0x65, 0x42, 0x79,
+	0x50, 0x69, 0x6e, 0x6e, 0x69, 0x6e, 0x67, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x2e, 0x3b, 0x73, 0x61, 0x74, 0x65,
+	0x6c, 0x69, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1191,14 +1200,16 @@ var file_satelitDatastore_proto_depIdxs = []int32{
 	7,  // 8: satelit_datastore.SatelitDatastore.GetISUCONAdminKeys:input_type -> satelit_datastore.GetISUCONAdminKeysRequest
 	9,  // 9: satelit_datastore.SatelitDatastore.ListBridge:input_type -> satelit_datastore.ListBridgeRequest
 	13, // 10: satelit_datastore.SatelitDatastore.RegisterTeleskopAgent:input_type -> satelit_datastore.RegisterTeleskopAgentRequest
-	2,  // 11: satelit_datastore.SatelitDatastore.GetDHCPLease:output_type -> satelit_datastore.GetDHCPLeaseResponse
-	4,  // 12: satelit_datastore.SatelitDatastore.GetHostnameByAddress:output_type -> satelit_datastore.GetHostnameByAddressResponse
-	6,  // 13: satelit_datastore.SatelitDatastore.GetISUCONUserKeys:output_type -> satelit_datastore.GetISUCONUserKeysResponse
-	8,  // 14: satelit_datastore.SatelitDatastore.GetISUCONAdminKeys:output_type -> satelit_datastore.GetISUCONAdminKeysResponse
-	10, // 15: satelit_datastore.SatelitDatastore.ListBridge:output_type -> satelit_datastore.ListBridgeResponse
-	14, // 16: satelit_datastore.SatelitDatastore.RegisterTeleskopAgent:output_type -> satelit_datastore.RegisterTeleskopAgentResponse
-	11, // [11:17] is the sub-list for method output_type
-	5,  // [5:11] is the sub-list for method input_type
+	15, // 11: satelit_datastore.SatelitDatastore.GetCPUCoreByPinningGroup:input_type -> satelit_datastore.GetCPUCoreByPinningGroupRequest
+	2,  // 12: satelit_datastore.SatelitDatastore.GetDHCPLease:output_type -> satelit_datastore.GetDHCPLeaseResponse
+	4,  // 13: satelit_datastore.SatelitDatastore.GetHostnameByAddress:output_type -> satelit_datastore.GetHostnameByAddressResponse
+	6,  // 14: satelit_datastore.SatelitDatastore.GetISUCONUserKeys:output_type -> satelit_datastore.GetISUCONUserKeysResponse
+	8,  // 15: satelit_datastore.SatelitDatastore.GetISUCONAdminKeys:output_type -> satelit_datastore.GetISUCONAdminKeysResponse
+	10, // 16: satelit_datastore.SatelitDatastore.ListBridge:output_type -> satelit_datastore.ListBridgeResponse
+	14, // 17: satelit_datastore.SatelitDatastore.RegisterTeleskopAgent:output_type -> satelit_datastore.RegisterTeleskopAgentResponse
+	16, // 18: satelit_datastore.SatelitDatastore.GetCPUCoreByPinningGroup:output_type -> satelit_datastore.GetCPUCoreByPinningGroupResponse
+	12, // [12:19] is the sub-list for method output_type
+	5,  // [5:12] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -1465,6 +1476,7 @@ type SatelitDatastoreClient interface {
 	GetISUCONAdminKeys(ctx context.Context, in *GetISUCONAdminKeysRequest, opts ...grpc.CallOption) (*GetISUCONAdminKeysResponse, error)
 	ListBridge(ctx context.Context, in *ListBridgeRequest, opts ...grpc.CallOption) (*ListBridgeResponse, error)
 	RegisterTeleskopAgent(ctx context.Context, in *RegisterTeleskopAgentRequest, opts ...grpc.CallOption) (*RegisterTeleskopAgentResponse, error)
+	GetCPUCoreByPinningGroup(ctx context.Context, in *GetCPUCoreByPinningGroupRequest, opts ...grpc.CallOption) (*GetCPUCoreByPinningGroupResponse, error)
 }
 
 type satelitDatastoreClient struct {
@@ -1529,6 +1541,15 @@ func (c *satelitDatastoreClient) RegisterTeleskopAgent(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *satelitDatastoreClient) GetCPUCoreByPinningGroup(ctx context.Context, in *GetCPUCoreByPinningGroupRequest, opts ...grpc.CallOption) (*GetCPUCoreByPinningGroupResponse, error) {
+	out := new(GetCPUCoreByPinningGroupResponse)
+	err := c.cc.Invoke(ctx, "/satelit_datastore.SatelitDatastore/GetCPUCoreByPinningGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SatelitDatastoreServer is the server API for SatelitDatastore service.
 type SatelitDatastoreServer interface {
 	GetDHCPLease(context.Context, *GetDHCPLeaseRequest) (*GetDHCPLeaseResponse, error)
@@ -1537,6 +1558,7 @@ type SatelitDatastoreServer interface {
 	GetISUCONAdminKeys(context.Context, *GetISUCONAdminKeysRequest) (*GetISUCONAdminKeysResponse, error)
 	ListBridge(context.Context, *ListBridgeRequest) (*ListBridgeResponse, error)
 	RegisterTeleskopAgent(context.Context, *RegisterTeleskopAgentRequest) (*RegisterTeleskopAgentResponse, error)
+	GetCPUCoreByPinningGroup(context.Context, *GetCPUCoreByPinningGroupRequest) (*GetCPUCoreByPinningGroupResponse, error)
 }
 
 // UnimplementedSatelitDatastoreServer can be embedded to have forward compatible implementations.
@@ -1560,6 +1582,9 @@ func (*UnimplementedSatelitDatastoreServer) ListBridge(context.Context, *ListBri
 }
 func (*UnimplementedSatelitDatastoreServer) RegisterTeleskopAgent(context.Context, *RegisterTeleskopAgentRequest) (*RegisterTeleskopAgentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterTeleskopAgent not implemented")
+}
+func (*UnimplementedSatelitDatastoreServer) GetCPUCoreByPinningGroup(context.Context, *GetCPUCoreByPinningGroupRequest) (*GetCPUCoreByPinningGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCPUCoreByPinningGroup not implemented")
 }
 
 func RegisterSatelitDatastoreServer(s *grpc.Server, srv SatelitDatastoreServer) {
@@ -1674,6 +1699,24 @@ func _SatelitDatastore_RegisterTeleskopAgent_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SatelitDatastore_GetCPUCoreByPinningGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCPUCoreByPinningGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SatelitDatastoreServer).GetCPUCoreByPinningGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/satelit_datastore.SatelitDatastore/GetCPUCoreByPinningGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SatelitDatastoreServer).GetCPUCoreByPinningGroup(ctx, req.(*GetCPUCoreByPinningGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SatelitDatastore_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "satelit_datastore.SatelitDatastore",
 	HandlerType: (*SatelitDatastoreServer)(nil),
@@ -1701,6 +1744,10 @@ var _SatelitDatastore_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterTeleskopAgent",
 			Handler:    _SatelitDatastore_RegisterTeleskopAgent_Handler,
+		},
+		{
+			MethodName: "GetCPUCoreByPinningGroup",
+			Handler:    _SatelitDatastore_GetCPUCoreByPinningGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

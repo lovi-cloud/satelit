@@ -305,9 +305,10 @@ func (s *SatelitServer) AddCPUPinningGroup(ctx context.Context, req *pb.AddCPUPi
 
 	u := uuid.NewV4()
 	cpg := ganymede.CPUPinningGroup{
-		UUID:      u,
-		Name:      req.Name,
-		CountCore: int(req.CountOfCore),
+		UUID:         u,
+		Name:         req.Name,
+		CountCore:    int(req.CountOfCore),
+		HypervisorID: hv.ID,
 	}
 	if err := s.Datastore.PutCPUPinningGroup(ctx, cpg); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to put CPU Pinning Group: %+v", err)
