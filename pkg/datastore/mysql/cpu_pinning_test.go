@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/whywaita/satelit/pkg/datastore"
+
 	"github.com/go-test/deep"
 
 	"github.com/jmoiron/sqlx"
@@ -244,56 +246,9 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 		uuid.FromStringOrNil("e77523a3-fef0-4864-b24f-4f9579a65eed"),
 	}
 
-	hypervisorID, err := testDatastore.PutHypervisor(context.Background(), testIQN, testHostname)
+	hypervisorID, err := setFakePinnedCore(testDatastore, testCorePairUUIDs)
 	if err != nil {
-		t.Fatalf("failed to put hypervisor: %+v", err)
-	}
-	if err := testDatastore.PutCPUPinningGroup(context.Background(), ganymede.CPUPinningGroup{
-		UUID:         uuid.FromStringOrNil(testCPUPinningGroupUUID),
-		Name:         testCPUPinningGroupName,
-		HypervisorID: hypervisorID,
-		CountCore:    2,
-	}); err != nil {
-		t.Fatalf("failed to put cpu pinning group: %+v", err)
-	}
-	nodes := []ganymede.NUMANode{
-		ganymede.NUMANode{
-			UUID: uuid.FromStringOrNil(testNUMANodeUUID),
-			CorePairs: []ganymede.CorePair{
-				ganymede.CorePair{
-					UUID:         testCorePairUUIDs[0],
-					PhysicalCore: 0,
-					LogicalCore:  5,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
-				},
-				ganymede.CorePair{
-					UUID:         testCorePairUUIDs[1],
-					PhysicalCore: 1,
-					LogicalCore:  6,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
-				},
-				ganymede.CorePair{
-					UUID:         testCorePairUUIDs[2],
-					PhysicalCore: 2,
-					LogicalCore:  7,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
-				},
-				ganymede.CorePair{
-					UUID:         testCorePairUUIDs[3],
-					PhysicalCore: 3,
-					LogicalCore:  8,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
-				},
-			},
-			PhysicalCoreMin: 0,
-			PhysicalCoreMax: 3,
-			LogicalCoreMin:  5,
-			LogicalCoreMax:  8,
-			HypervisorID:    hypervisorID,
-		},
-	}
-	if err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID); err != nil {
-		t.Fatalf("failed to put hypervisor numa node: %+v", err)
+		t.Fatalf("failed to set cpu pinned core: %+v", err)
 	}
 
 	tests := []struct {
@@ -304,28 +259,28 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 		{
 			input: nil,
 			want: []ganymede.NUMANode{
-				ganymede.NUMANode{
+				{
 					UUID: uuid.FromStringOrNil(testNUMANodeUUID),
 					CorePairs: []ganymede.CorePair{
-						ganymede.CorePair{
+						{
 							UUID:         testCorePairUUIDs[0],
 							PhysicalCore: 0,
 							LogicalCore:  5,
 							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
 						},
-						ganymede.CorePair{
+						{
 							UUID:         testCorePairUUIDs[1],
 							PhysicalCore: 1,
 							LogicalCore:  6,
 							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
 						},
-						ganymede.CorePair{
+						{
 							UUID:         testCorePairUUIDs[2],
 							PhysicalCore: 2,
 							LogicalCore:  7,
 							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
 						},
-						ganymede.CorePair{
+						{
 							UUID:         testCorePairUUIDs[3],
 							PhysicalCore: 3,
 							LogicalCore:  8,
@@ -342,16 +297,16 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 				testCorePairUUIDs[1],
 			},
 			want: []ganymede.NUMANode{
-				ganymede.NUMANode{
+				{
 					UUID: uuid.FromStringOrNil(testNUMANodeUUID),
 					CorePairs: []ganymede.CorePair{
-						ganymede.CorePair{
+						{
 							UUID:         testCorePairUUIDs[2],
 							PhysicalCore: 2,
 							LogicalCore:  7,
 							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
 						},
-						ganymede.CorePair{
+						{
 							UUID:         testCorePairUUIDs[3],
 							PhysicalCore: 3,
 							LogicalCore:  8,
@@ -368,7 +323,7 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 				testCorePairUUIDs[3],
 			},
 			want: []ganymede.NUMANode{
-				ganymede.NUMANode{
+				{
 					UUID:      uuid.FromStringOrNil(testNUMANodeUUID),
 					CorePairs: nil,
 				},
@@ -416,10 +371,10 @@ func TestMySQL_GetCPUCorePair(t *testing.T) {
 		t.Fatalf("failed to put hypervisor: %+v", err)
 	}
 	nodes := []ganymede.NUMANode{
-		ganymede.NUMANode{
+		{
 			UUID: uuid.FromStringOrNil(testNUMANodeUUID),
 			CorePairs: []ganymede.CorePair{
-				ganymede.CorePair{
+				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
 					LogicalCore:  41,
@@ -490,10 +445,10 @@ func TestMySQL_GetPinnedCoreByPinningGroup(t *testing.T) {
 		t.Fatalf("failed to put cpu pinning group: %+v", err)
 	}
 	nodes := []ganymede.NUMANode{
-		ganymede.NUMANode{
+		{
 			UUID: uuid.FromStringOrNil(testNUMANodeUUID),
 			CorePairs: []ganymede.CorePair{
-				ganymede.CorePair{
+				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
 					LogicalCore:  41,
@@ -528,7 +483,7 @@ func TestMySQL_GetPinnedCoreByPinningGroup(t *testing.T) {
 		{
 			input: uuid.FromStringOrNil(testCPUPinningGroupUUID),
 			want: []ganymede.CPUCorePinned{
-				ganymede.CPUCorePinned{
+				{
 					UUID:              uuid.FromStringOrNil(testCPUPinnedCoreUUID),
 					CPUPinningGroupID: uuid.FromStringOrNil(testCPUPinningGroupUUID),
 					CorePairID:        uuid.FromStringOrNil(testCorePairUUID),
@@ -574,10 +529,10 @@ func TestMySQL_PutPinnedCore(t *testing.T) {
 		t.Fatalf("failed to put cpu pinning group: %+v", err)
 	}
 	nodes := []ganymede.NUMANode{
-		ganymede.NUMANode{
+		{
 			UUID: uuid.FromStringOrNil(testNUMANodeUUID),
 			CorePairs: []ganymede.CorePair{
-				ganymede.CorePair{
+				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
 					LogicalCore:  41,
@@ -655,10 +610,10 @@ func TestMySQL_DeletePinnedCore(t *testing.T) {
 		t.Fatalf("failed to put cpu pinning group: %+v", err)
 	}
 	nodes := []ganymede.NUMANode{
-		ganymede.NUMANode{
+		{
 			UUID: uuid.FromStringOrNil(testNUMANodeUUID),
 			CorePairs: []ganymede.CorePair{
-				ganymede.CorePair{
+				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
 					LogicalCore:  41,
@@ -760,4 +715,47 @@ func setFakeTimeNUMANodes(nodes []ganymede.NUMANode) []ganymede.NUMANode {
 	}
 
 	return result
+}
+
+func setFakePinnedCore(testDatastore datastore.Datastore, corePairUUIDs []uuid.UUID) (int, error) {
+	var pairs []ganymede.CorePair
+	logicalOffset := len(corePairUUIDs) + 1
+	for i, cpUUID := range corePairUUIDs {
+		cp := ganymede.CorePair{
+			UUID:         cpUUID,
+			PhysicalCore: uint32(i),
+			LogicalCore:  uint32(i + logicalOffset),
+			NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+		}
+		pairs = append(pairs, cp)
+	}
+
+	hypervisorID, err := testDatastore.PutHypervisor(context.Background(), testIQN, testHostname)
+	if err != nil {
+		return -1, fmt.Errorf("failed to put hypervisor: %w", err)
+	}
+	if err := testDatastore.PutCPUPinningGroup(context.Background(), ganymede.CPUPinningGroup{
+		UUID:         uuid.FromStringOrNil(testCPUPinningGroupUUID),
+		Name:         testCPUPinningGroupName,
+		HypervisorID: hypervisorID,
+		CountCore:    2,
+	}); err != nil {
+		return -1, fmt.Errorf("failed to put cpu pinning group: %w", err)
+	}
+	nodes := []ganymede.NUMANode{
+		{
+			UUID:            uuid.FromStringOrNil(testNUMANodeUUID),
+			CorePairs:       pairs,
+			PhysicalCoreMin: 0,
+			PhysicalCoreMax: uint32(len(corePairUUIDs) - 1),
+			LogicalCoreMin:  uint32(logicalOffset),
+			LogicalCoreMax:  uint32(len(corePairUUIDs) * 2),
+			HypervisorID:    hypervisorID,
+		},
+	}
+	if err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID); err != nil {
+		return -1, fmt.Errorf("failed to put hypervisor numa node: %w", err)
+	}
+
+	return hypervisorID, nil
 }

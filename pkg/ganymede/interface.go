@@ -139,6 +139,22 @@ type NUMANode struct {
 	UpdatedAt       time.Time `db:"updated_at"`
 }
 
+// ToPb convert to type for proto
+func (node *NUMANode) ToPb() *dspb.NumaNode {
+	var pairs []*dspb.CorePair
+	for _, p := range node.CorePairs {
+		pairs = append(pairs, p.ToPb())
+	}
+
+	return &dspb.NumaNode{
+		Pairs:           pairs,
+		PhysicalCoreMin: node.PhysicalCoreMin,
+		PhysicalCoreMax: node.PhysicalCoreMax,
+		LogicalCoreMin:  node.LogicalCoreMin,
+		LogicalCoreMax:  node.LogicalCoreMax,
+	}
+}
+
 // CorePair is pair of cpu core
 type CorePair struct {
 	UUID         uuid.UUID `db:"uuid"`

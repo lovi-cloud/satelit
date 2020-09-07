@@ -9,7 +9,7 @@ import (
 )
 
 func TestSatelitServer_CreateSubnet(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -68,7 +68,7 @@ func TestSatelitServer_CreateSubnet(t *testing.T) {
 }
 
 func TestSatelitServer_GetSubnet(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -124,7 +124,7 @@ func TestSatelitServer_GetSubnet(t *testing.T) {
 }
 
 func TestSatelitServer_ListSubnet(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -177,7 +177,7 @@ func TestSatelitServer_ListSubnet(t *testing.T) {
 }
 
 func TestSatelitServer_DeleteSubnet(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -228,7 +228,7 @@ func TestSatelitServer_DeleteSubnet(t *testing.T) {
 }
 
 func TestSatelitServer_CreateAddress(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -329,7 +329,7 @@ func TestSatelitServer_CreateAddress(t *testing.T) {
 }
 
 func TestSatelitServer_GetAddress(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -391,7 +391,7 @@ func TestSatelitServer_GetAddress(t *testing.T) {
 }
 
 func TestSatelitServer_ListAddress(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -452,7 +452,7 @@ func TestSatelitServer_ListAddress(t *testing.T) {
 }
 
 func TestSatelitServer_DeleteAddress(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -509,7 +509,7 @@ func TestSatelitServer_DeleteAddress(t *testing.T) {
 }
 
 func TestSatelitServer_CreateLease(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -576,7 +576,7 @@ func TestSatelitServer_CreateLease(t *testing.T) {
 }
 
 func TestSatelitServer_GetLease(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -645,7 +645,7 @@ func TestSatelitServer_GetLease(t *testing.T) {
 }
 
 func TestSatelitServer_ListLease(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -710,7 +710,7 @@ func TestSatelitServer_ListLease(t *testing.T) {
 }
 
 func TestSatelitServer_DeleteLease(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}

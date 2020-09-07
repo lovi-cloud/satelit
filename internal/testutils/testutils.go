@@ -12,6 +12,10 @@ import (
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
 )
 
+const (
+	mysqlRootPassword = "secret"
+)
+
 var (
 	testDB        *sqlx.DB
 	testDatastore datastore.Datastore
@@ -26,7 +30,7 @@ func IntegrationTestRunner(m *testing.M) int {
 	}
 
 	// pulls an image, creates a container based on it and runs it
-	resource, err := pool.Run("mysql", "8.0", []string{"MYSQL_ROOT_PASSWORD=secret"})
+	resource, err := pool.Run("mysql", "8.0", []string{"MYSQL_ROOT_PASSWORD=" + mysqlRootPassword})
 	if err != nil {
 		log.Fatalf("Could not start resource: %s", err)
 	}
@@ -34,7 +38,7 @@ func IntegrationTestRunner(m *testing.M) int {
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := pool.Retry(func() error {
 		var err error
-		dsn := fmt.Sprintf("root:secret@(localhost:%s)/mysql", resource.GetPort("3306/tcp"))
+		dsn := fmt.Sprintf("root:%s@(localhost:%s)/mysql", mysqlRootPassword, resource.GetPort("3306/tcp"))
 		datastoreConfig := config.MySQLConfig{
 			DSN:                   dsn,
 			MaxIdleConn:           60,
@@ -46,7 +50,7 @@ func IntegrationTestRunner(m *testing.M) int {
 			log.Fatalf("failed to create datastore instance: %s", err)
 		}
 
-		testDB, err = sqlx.Open("mysql", fmt.Sprintf("root:secret@(localhost:%s)/mysql?parseTime=true", resource.GetPort("3306/tcp")))
+		testDB, err = sqlx.Open("mysql", fmt.Sprintf("root:%s@(localhost:%s)/mysql?parseTime=true", mysqlRootPassword, resource.GetPort("3306/tcp")))
 		if err != nil {
 			return err
 		}

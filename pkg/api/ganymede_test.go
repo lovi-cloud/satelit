@@ -3,12 +3,18 @@ package api
 import (
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
+	"github.com/whywaita/satelit/pkg/ganymede"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/go-test/deep"
 	pb "github.com/whywaita/satelit/api/satelit"
 )
 
 func TestSatelitServer_AddVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -61,7 +67,7 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 }
 
 func TestSatelitServer_StartVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -121,7 +127,7 @@ func TestSatelitServer_StartVirtualMachine(t *testing.T) {
 }
 
 func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -186,7 +192,7 @@ func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
 }
 
 func TestSatelitServer_DeleteVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -240,7 +246,7 @@ func TestSatelitServer_DeleteVirtualMachine(t *testing.T) {
 }
 
 func TestSatelitServer_CreateBridge(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -285,7 +291,7 @@ func TestSatelitServer_CreateBridge(t *testing.T) {
 }
 
 func TestSatelitServer_CreateInternalBridge(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -329,7 +335,7 @@ func TestSatelitServer_CreateInternalBridge(t *testing.T) {
 }
 
 func TestSatelitServer_GetBridge(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -379,7 +385,7 @@ func TestSatelitServer_GetBridge(t *testing.T) {
 }
 
 func TestSatelitServer_ListBridge(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -426,7 +432,7 @@ func TestSatelitServer_ListBridge(t *testing.T) {
 }
 
 func TestSatelitServer_DeleteBridge(t *testing.T) {
-	_, teardownTeleskop, err := setupTeleskop()
+	_, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -471,7 +477,7 @@ func TestSatelitServer_DeleteBridge(t *testing.T) {
 }
 
 func TestSatelitServer_AttachInterface(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -572,7 +578,7 @@ func TestSatelitServer_AttachInterface(t *testing.T) {
 }
 
 func TestSatelitServer_DetachInterface(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -667,7 +673,7 @@ func TestSatelitServer_DetachInterface(t *testing.T) {
 }
 
 func TestSatelitServer_GetAttachment(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -764,7 +770,7 @@ func TestSatelitServer_GetAttachment(t *testing.T) {
 }
 
 func TestSatelitServer_ListAttachment(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -860,115 +866,206 @@ func TestSatelitServer_ListAttachment(t *testing.T) {
 	}
 }
 
-// TODO: need to implement dummyTeleskopCLient calling RegisterClient
-//func TestSatelitServer_AddCPUPinningGroup(t *testing.T) {
-//	ctx, client, teardown := getSatelitClient()
-//	defer teardown()
-//
-//	hypervisorName, teardownTeleskop, err := setupTeleskop()
-//	if err != nil {
-//		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
-//	}
-//	defer teardownTeleskop()
-//
-//	tests := []struct {
-//		input   *pb.AddCPUPinningGroupRequest
-//		want    *pb.AddCPUPinningGroupResponse
-//		errCode codes.Code
-//	}{
-//		{
-//			input: &pb.AddCPUPinningGroupRequest{
-//				Name:           "testgroup",
-//				CountOfCore:    4,
-//				HypervisorName: hypervisorName,
-//			},
-//			want: &pb.AddCPUPinningGroupResponse{CpuPinningGroup: &pb.CPUPinningGroup{
-//				Uuid:        "",
-//				Name:        "testgroup",
-//				CountOfCore: 4,
-//			}},
-//			errCode: 0,
-//		},
-//		{
-//			input: &pb.AddCPUPinningGroupRequest{
-//				Name:           "not_multiple_of_two_group",
-//				CountOfCore:    3,
-//				HypervisorName: hypervisorName,
-//			},
-//			want:    nil,
-//			errCode: codes.InvalidArgument,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		got, err := client.AddCPUPinningGroup(ctx, test.input)
-//		if got != nil {
-//			test.want.CpuPinningGroup.Uuid = got.CpuPinningGroup.Uuid
-//		}
-//		if test.errCode == 0 && err != nil {
-//			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
-//		}
-//
-//		s, ok := status.FromError(err)
-//		if test.errCode != 0 && ok && s.Code() != test.errCode {
-//			t.Fatalf("should be error for %+v but not:", test.input)
-//		}
-//		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-//			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
-//		}
-//	}
-//}
-//
-//func TestSatelitServer_ShowCPUPinningGroup(t *testing.T) {
-//	ctx, client, teardown := getSatelitClient()
-//	defer teardown()
-//
-//	hypervisorName, teardownTeleskop, err := setupTeleskop()
-//	if err != nil {
-//		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
-//	}
-//	defer teardownTeleskop()
-//
-//	resp, err := client.AddCPUPinningGroup(ctx, &pb.AddCPUPinningGroupRequest{
-//		Name:           "testgroup",
-//		CountOfCore:    4,
-//		HypervisorName: hypervisorName,
-//	})
-//	if err != nil {
-//		t.Fatalf("failed to addCPUPinningGroup: %+v", err)
-//	}
-//
-//	tests := []struct {
-//		input   *pb.ShowCPUPinningGroupRequest
-//		want    *pb.ShowCPUPinningGroupResponse
-//		errCode codes.Code
-//	}{
-//		{
-//			input: &pb.ShowCPUPinningGroupRequest{
-//				Uuid: resp.CpuPinningGroup.Uuid,
-//			},
-//			want: &pb.ShowCPUPinningGroupResponse{
-//				CpuPinningGroup: &pb.CPUPinningGroup{
-//					Uuid:        resp.CpuPinningGroup.Uuid,
-//					Name:        "testgroup",
-//					CountOfCore: 4,
-//				},
-//			},
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		got, err := client.ShowCPUPinningGroup(ctx, test.input)
-//		if test.errCode == 0 && err != nil {
-//			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
-//		}
-//
-//		s, ok := status.FromError(err)
-//		if test.errCode != 0 && ok && s.Code() != test.errCode {
-//			t.Fatalf("should be error for %+v but not:", test.input)
-//		}
-//		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-//			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
-//		}
-//	}
-//}
+func TestSatelitServer_AddCPUPinningGroup(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	nodes := getDummyNodes()
+
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nodes)
+	if err != nil {
+		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
+	}
+	defer teardownTeleskop()
+
+	tests := []struct {
+		input   *pb.AddCPUPinningGroupRequest
+		want    *pb.AddCPUPinningGroupResponse
+		errCode codes.Code
+	}{
+		{
+			input: &pb.AddCPUPinningGroupRequest{
+				Name:           "testgroup",
+				CountOfCore:    2,
+				HypervisorName: hypervisorName,
+			},
+			want: &pb.AddCPUPinningGroupResponse{CpuPinningGroup: &pb.CPUPinningGroup{
+				Uuid:        "",
+				Name:        "testgroup",
+				CountOfCore: 2,
+			}},
+			errCode: codes.OK,
+		},
+		{
+			input: &pb.AddCPUPinningGroupRequest{
+				Name:           "not_multiple_of_two_group",
+				CountOfCore:    3,
+				HypervisorName: hypervisorName,
+			},
+			want:    nil,
+			errCode: codes.InvalidArgument,
+		},
+	}
+
+	for _, test := range tests {
+		got, err := client.AddCPUPinningGroup(ctx, test.input)
+		if got != nil {
+			test.want.CpuPinningGroup.Uuid = got.CpuPinningGroup.Uuid
+		}
+		if test.errCode == 0 && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+
+		s, ok := status.FromError(err)
+		if test.errCode != 0 && ok && s.Code() != test.errCode {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
+func TestSatelitServer_ShowCPUPinningGroup(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	nodes := getDummyNodes()
+
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nodes)
+	if err != nil {
+		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
+	}
+	defer teardownTeleskop()
+
+	resp, err := client.AddCPUPinningGroup(ctx, &pb.AddCPUPinningGroupRequest{
+		Name:           "testgroup",
+		CountOfCore:    4,
+		HypervisorName: hypervisorName,
+	})
+	if err != nil {
+		t.Fatalf("failed to addCPUPinningGroup: %+v", err)
+	}
+
+	tests := []struct {
+		input   *pb.ShowCPUPinningGroupRequest
+		want    *pb.ShowCPUPinningGroupResponse
+		errCode codes.Code
+	}{
+		{
+			input: &pb.ShowCPUPinningGroupRequest{
+				Uuid: resp.CpuPinningGroup.Uuid,
+			},
+			want: &pb.ShowCPUPinningGroupResponse{
+				CpuPinningGroup: &pb.CPUPinningGroup{
+					Uuid:        resp.CpuPinningGroup.Uuid,
+					Name:        "testgroup",
+					CountOfCore: 4,
+				},
+			},
+			errCode: codes.OK,
+		},
+	}
+
+	for _, test := range tests {
+		got, err := client.ShowCPUPinningGroup(ctx, test.input)
+		if test.errCode == 0 && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+
+		s, ok := status.FromError(err)
+		if test.errCode != 0 && ok && s.Code() != test.errCode {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
+func TestSatelitServer_DeleteCPUPinningGroup(t *testing.T) {
+	ctx, client, teardown := getSatelitClient()
+	defer teardown()
+
+	nodes := getDummyNodes()
+
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nodes)
+	if err != nil {
+		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
+	}
+	defer teardownTeleskop()
+
+	resp, err := client.AddCPUPinningGroup(ctx, &pb.AddCPUPinningGroupRequest{
+		Name:           "testgroup",
+		CountOfCore:    4,
+		HypervisorName: hypervisorName,
+	})
+	if err != nil {
+		t.Fatalf("failed to addCPUPinningGroup: %+v", err)
+	}
+
+	tests := []struct {
+		input   *pb.DeleteCPUPinningGroupRequest
+		want    *pb.DeleteCPUPinningGroupResponse
+		errCode codes.Code
+	}{
+		{
+			input: &pb.DeleteCPUPinningGroupRequest{
+				Uuid: resp.CpuPinningGroup.Uuid,
+			},
+			want:    &pb.DeleteCPUPinningGroupResponse{},
+			errCode: codes.OK,
+		},
+	}
+
+	for _, test := range tests {
+		got, err := client.DeleteCPUPinningGroup(ctx, test.input)
+		if test.errCode == 0 && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+
+		s, ok := status.FromError(err)
+		if test.errCode != 0 && ok && s.Code() != test.errCode {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
+func getDummyNodes() []ganymede.NUMANode {
+	var (
+		testNUMANodeUUID  = "162b42f5-2eea-4fd1-b57b-c598db69fb4a"
+		testCorePairUUIDs = []uuid.UUID{
+			uuid.FromStringOrNil("9cf11645-ec85-4607-b638-cd592819bbae"),
+			uuid.FromStringOrNil("25b403a9-cdd7-4176-8d44-c922220bdcb8"),
+			uuid.FromStringOrNil("2cc61359-8912-4187-aadc-8692574b1b52"),
+			uuid.FromStringOrNil("e77523a3-fef0-4864-b24f-4f9579a65eed"),
+		}
+	)
+
+	var cps []ganymede.CorePair
+	for i, u := range testCorePairUUIDs {
+		cp := ganymede.CorePair{
+			UUID:         u,
+			PhysicalCore: uint32(i),
+			LogicalCore:  uint32(len(testCorePairUUIDs) + i),
+			NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+		}
+		cps = append(cps, cp)
+	}
+
+	nodes := []ganymede.NUMANode{
+		{
+			UUID:            uuid.FromStringOrNil(testNUMANodeUUID),
+			CorePairs:       cps,
+			PhysicalCoreMin: 0,
+			PhysicalCoreMax: 3,
+			LogicalCoreMin:  4,
+			LogicalCoreMax:  8,
+		},
+	}
+
+	return nodes
+}
