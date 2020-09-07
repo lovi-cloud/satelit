@@ -181,7 +181,7 @@ func (m *Memory) PutHypervisor(ctx context.Context, iqn, hostname string) (int, 
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	id := len(m.hypervisors) + 1 // AUTO INCREMENT
+	id := len(m.hypervisors) // AUTO INCREMENT
 
 	hv := ganymede.HyperVisor{
 		ID:       id,
@@ -356,7 +356,47 @@ func (m *Memory) DeleteCPUPinningGroup(ctx context.Context, cpuPinningGroupID uu
 
 // GetAvailableCorePair retrieves cpu pairs
 func (m *Memory) GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error) {
-	panic("implement me")
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	hv, ok := m.hypervisors[hypervisorID]
+	if !ok {
+		return nil, errors.New("hv is not found")
+	}
+
+	var pinneds []ganymede.CPUCorePinned
+	for _, p := range m.cpuCorePinned {
+		pinneds = append(pinneds, p)
+	}
+
+	var nodes []ganymede.NUMANode
+	for _, n := range m.hypervisorNumaNode {
+		if n.HypervisorID == hv.ID {
+			var cps []ganymede.CorePair
+			for _, cp := range n.CorePairs {
+				if !isPinned(pinneds, cp) {
+					// not pinned
+					cps = append(cps, cp)
+				}
+			}
+
+			nn := n
+			nn.CorePairs = cps
+			nodes = append(nodes, nn)
+		}
+	}
+
+	return nodes, nil
+}
+
+func isPinned(pinneds []ganymede.CPUCorePinned, corepair ganymede.CorePair) bool {
+	for _, pinned := range pinneds {
+		if pinned.CorePairID == corepair.UUID {
+			return true
+		}
+	}
+
+	return false
 }
 
 // GetCPUCorePair retrieve cpu core pair
@@ -377,12 +417,18 @@ func (m *Memory) GetPinnedCoreByPinningGroup(ctx context.Context, cpuPinningGrou
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	pinned, ok := m.cpuCorePinned[cpuPinningGroupID]
-	if !ok {
+	var pinneds []ganymede.CPUCorePinned
+	for _, pinned := range m.cpuCorePinned {
+		if pinned.CPUPinningGroupID == cpuPinningGroupID {
+			pinneds = append(pinneds, pinned)
+		}
+	}
+
+	if len(pinneds) == 0 {
 		return nil, errors.New("not found")
 	}
 
-	return []ganymede.CPUCorePinned{pinned}, nil
+	return pinneds, nil
 }
 
 // PutPinnedCore put pinned cpu cores

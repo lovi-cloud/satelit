@@ -296,7 +296,7 @@ func (s *SatelitServer) ListAttachment(ctx context.Context, req *pb.ListAttachme
 func (s *SatelitServer) AddCPUPinningGroup(ctx context.Context, req *pb.AddCPUPinningGroupRequest) (*pb.AddCPUPinningGroupResponse, error) {
 	div := req.CountOfCore % 2
 	if div != 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "count_of_core must be a multiple of two")
+		return nil, status.Errorf(codes.InvalidArgument, "count_of_core must be a multiple of two (physical and logical core)")
 	}
 	hv, err := s.Datastore.GetHypervisorByHostname(ctx, req.HypervisorName)
 	if err != nil {

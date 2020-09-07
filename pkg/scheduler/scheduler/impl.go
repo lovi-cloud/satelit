@@ -13,13 +13,13 @@ import (
 
 // Scheduler is implementation used datastore.
 type Scheduler struct {
-	ds datastore.Datastore
+	Datastore datastore.Datastore
 }
 
 // New create a new scheduler
-func New(ds *datastore.Datastore) *Scheduler {
+func New(ds datastore.Datastore) *Scheduler {
 	return &Scheduler{
-		ds: *ds,
+		Datastore: ds,
 	}
 }
 
@@ -28,11 +28,11 @@ func New(ds *datastore.Datastore) *Scheduler {
 // you can use 2 x numRequestCorePair of cpu cores.
 // two is physical core and logical core.
 func (s *Scheduler) PopCorePair(ctx context.Context, hostname string, numRequestCorePair int, pinningGroupID uuid.UUID) ([]ganymede.CorePair, error) {
-	hv, err := s.ds.GetHypervisorByHostname(ctx, hostname)
+	hv, err := s.Datastore.GetHypervisorByHostname(ctx, hostname)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get hypervisor: %w", err)
 	}
-	nodes, err := s.ds.GetAvailableCorePair(ctx, hv.ID)
+	nodes, err := s.Datastore.GetAvailableCorePair(ctx, hv.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get available core from datastore: %w", err)
 	}
@@ -52,7 +52,7 @@ func (s *Scheduler) PopCorePair(ctx context.Context, hostname string, numRequest
 			}
 
 			// TODO: bulk insert
-			if err := s.ds.PutPinnedCore(ctx, pinned); err != nil {
+			if err := s.Datastore.PutPinnedCore(ctx, pinned); err != nil {
 				return nil, fmt.Errorf("failed to pin CPU CorePair: %w", err)
 			}
 		}
@@ -65,16 +65,16 @@ func (s *Scheduler) PopCorePair(ctx context.Context, hostname string, numRequest
 
 // PushCorePair free pinned cpu core
 func (s *Scheduler) PushCorePair(ctx context.Context, pinningGroupID uuid.UUID) error {
-	pinneds, err := s.ds.GetPinnedCoreByPinningGroup(ctx, pinningGroupID)
+	pinneds, err := s.Datastore.GetPinnedCoreByPinningGroup(ctx, pinningGroupID)
 	if err != nil {
 		// TODO: check not found
-		return fmt.Errorf("failed to get pinned CPU: %w", err)
+		return fmt.Errorf("failed to get pinned core: %w", err)
 	}
 
 	for _, pinned := range pinneds {
 		// TODO: bulk insert
-		if err := s.ds.DeletePinnedCore(ctx, pinned.UUID); err != nil {
-			return fmt.Errorf("failed to delete pinned CPU CorePairs from datastore: %w", err)
+		if err := s.Datastore.DeletePinnedCore(ctx, pinned.UUID); err != nil {
+			return fmt.Errorf("failed to delete pinned core from datastore: %w", err)
 		}
 	}
 
