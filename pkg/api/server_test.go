@@ -76,9 +76,8 @@ func NewMemorySatelitDatastore(ds datastore.Datastore) *SatelitDatastore {
 const bufSize = 1024 * 1024
 
 var lisSatelit *bufconn.Listener
-var resetSatelit func()
+var resetAll func()
 var lisDatastore *bufconn.Listener
-var resetDatastore func()
 
 func init() {
 	logger.New("debug")
@@ -86,13 +85,6 @@ func init() {
 	ds := datastoreMemory.New()
 
 	server := NewMemorySatelit(ds)
-	resetSatelit = func() {
-		server.Datastore = datastoreMemory.New()
-		server.IPAM = ipam.New(server.Datastore)
-		server.Europa = europaMemory.New(server.Datastore)
-		server.Ganymede = ganymedeMemory.New(server.Datastore)
-		server.Scheduler = scheduler.New(server.Datastore)
-	}
 
 	lisSatelit = bufconn.Listen(bufSize)
 	s := grpc.NewServer()
@@ -104,9 +96,6 @@ func init() {
 	}()
 
 	dsServer := NewMemorySatelitDatastore(ds)
-	resetDatastore = func() {
-		dsServer.Datastore = datastoreMemory.New()
-	}
 	lisDatastore = bufconn.Listen(bufSize)
 	sDs := grpc.NewServer()
 	dspb.RegisterSatelitDatastoreServer(sDs, dsServer)
@@ -115,6 +104,18 @@ func init() {
 			log.Fatal(err)
 		}
 	}()
+
+	resetAll = func() {
+		ds := datastoreMemory.New()
+
+		server.Datastore = ds
+		server.IPAM = ipam.New(ds)
+		server.Europa = europaMemory.New(ds)
+		server.Ganymede = ganymedeMemory.New(ds)
+		server.Scheduler = scheduler.New(ds)
+
+		dsServer.Datastore = ds
+	}
 }
 func bufDialerSatelit(ctx context.Context, address string) (net.Conn, error) {
 	return lisSatelit.Dial()
@@ -134,7 +135,7 @@ func getSatelitClient() (context.Context, pb.SatelitClient, func() error) {
 	client := pb.NewSatelitClient(conn)
 
 	return ctx, client, func() error {
-		resetSatelit()
+		resetAll()
 		return conn.Close()
 	}
 }
@@ -149,7 +150,7 @@ func getDatastoreClient() (context.Context, dspb.SatelitDatastoreClient, func() 
 	client := dspb.NewSatelitDatastoreClient(conn)
 
 	return ctx, client, func() error {
-		resetDatastore()
+		resetAll()
 		return conn.Close()
 	}
 }
