@@ -117,6 +117,25 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to put volume: %+v\n", err)
 	}
 
+	testCorePairUUIDs := []uuid.UUID{
+		uuid.FromStringOrNil("9cf11645-ec85-4607-b638-cd592819bbae"),
+		uuid.FromStringOrNil("25b403a9-cdd7-4176-8d44-c922220bdcb8"),
+		uuid.FromStringOrNil("2cc61359-8912-4187-aadc-8692574b1b52"),
+		uuid.FromStringOrNil("e77523a3-fef0-4864-b24f-4f9579a65eed"),
+	}
+
+	testVirtualMachineID2 := "575abf68-c10e-4801-84df-8bc1bed82ff2"
+
+	_, err = setFakePinnedCore(testDatastore, testCorePairUUIDs)
+	if err != nil {
+		t.Fatalf("failed to set cpu pinned core: %+v", err)
+	}
+
+	cpg, err := testDatastore.GetCPUPinningGroup(context.Background(), uuid.FromStringOrNil(testCPUPinningGroupUUID))
+	if err != nil {
+		t.Fatalf("failed to retrieve cpu pinning group: %+v", err)
+	}
+
 	tests := []struct {
 		input ganymede.VirtualMachine
 		want  *ganymede.VirtualMachine
@@ -124,8 +143,40 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 	}{
 		{
 			input: ganymede.VirtualMachine{
-				UUID:           uuid.FromStringOrNil(testVirtualMachineID),
-				Name:           "test000",
+				UUID:              uuid.FromStringOrNil(testVirtualMachineID),
+				Name:              "test000",
+				Vcpus:             1,
+				MemoryKiB:         2 * 1024 * 1024,
+				HypervisorName:    "hv000",
+				RootVolumeID:      testRootVolumeID,
+				RootVolumeGB:      20,
+				ReadBytesSec:      100 * 1000 * 1000,
+				WriteBytesSec:     200 * 1000 * 1000,
+				ReadIOPSSec:       10000,
+				WriteIOPSSec:      5000,
+				SourceImageID:     testImage.UUID,
+				CPUPinningGroupID: cpg.UUID,
+			},
+			want: &ganymede.VirtualMachine{
+				UUID:              uuid.FromStringOrNil(testVirtualMachineID),
+				Name:              "test000",
+				Vcpus:             1,
+				MemoryKiB:         2 * 1024 * 1024,
+				HypervisorName:    "hv000",
+				RootVolumeID:      testRootVolumeID,
+				RootVolumeGB:      20,
+				ReadBytesSec:      100 * 1000 * 1000,
+				WriteBytesSec:     200 * 1000 * 1000,
+				ReadIOPSSec:       10000,
+				WriteIOPSSec:      5000,
+				SourceImageID:     testImage.UUID,
+				CPUPinningGroupID: cpg.UUID,
+			},
+			err: false,
+		}, {
+			input: ganymede.VirtualMachine{
+				UUID:           uuid.FromStringOrNil(testVirtualMachineID2),
+				Name:           "test000-no-cpu-pinning-group",
 				Vcpus:          1,
 				MemoryKiB:      2 * 1024 * 1024,
 				HypervisorName: "hv000",
@@ -138,8 +189,8 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 				SourceImageID:  testImage.UUID,
 			},
 			want: &ganymede.VirtualMachine{
-				UUID:           uuid.FromStringOrNil(testVirtualMachineID),
-				Name:           "test000",
+				UUID:           uuid.FromStringOrNil(testVirtualMachineID2),
+				Name:           "test000-no-cpu-pinning-group",
 				Vcpus:          1,
 				MemoryKiB:      2 * 1024 * 1024,
 				HypervisorName: "hv000",
@@ -338,7 +389,7 @@ func TestMySQL_GetHostnameByAddress(t *testing.T) {
 }
 
 func getVirtualMachineFromSQL(testDB *sqlx.DB, vmID uuid.UUID) (*ganymede.VirtualMachine, error) {
-	query := `SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, volume.capacity_gb, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec, volume.base_image_id FROM virtual_machine JOIN volume ON virtual_machine.root_volume_id = volume.id WHERE uuid = ?`
+	query := `SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, volume.capacity_gb, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec, volume.base_image_id, cpu_pinning_group_id FROM virtual_machine JOIN volume ON virtual_machine.root_volume_id = volume.id WHERE uuid = ?`
 	stmt, err := testDB.Preparex(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare statement: %w", err)

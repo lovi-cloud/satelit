@@ -121,6 +121,7 @@ CREATE TABLE IF NOT EXISTS virtual_machine (
     write_bytes_sec INT UNSIGNED NOT NULL,
     read_iops_sec INT UNSIGNED NOT NULL,
     write_iops_sec INT UNSIGNED NOT NULL,
+    cpu_pinning_group_id VARCHAR(36),
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
     FOREIGN KEY fk_root_volume_id(root_volume_id) REFERENCES volume(id) ON DELETE RESTRICT ON UPDATE RESTRICT

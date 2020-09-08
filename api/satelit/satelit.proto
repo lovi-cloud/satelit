@@ -313,16 +313,17 @@ message DeleteLeaseRequest {
 message DeleteLeaseResponse {}
 
 message AddVirtualMachineRequest {
-  string name            = 1;
-  uint32 vcpus           = 2;
-  uint64 memory_kib      = 3;
-  uint32 root_volume_gb  = 4;
-  string source_image_id = 5;
-  string hypervisor_name = 6;
-  uint32 read_bytes_sec  = 7;
-  uint32 write_bytes_sec = 8;
-  uint32 read_iops_sec   = 9;
-  uint32 write_iops_sec  = 10;
+  string name               = 1;
+  uint32 vcpus              = 2;
+  uint64 memory_kib         = 3;
+  uint32 root_volume_gb     = 4;
+  string source_image_id    = 5;
+  string hypervisor_name    = 6;
+  uint32 read_bytes_sec     = 7;
+  uint32 write_bytes_sec    = 8;
+  uint32 read_iops_sec      = 9;
+  uint32 write_iops_sec     = 10;
+  string pinning_group_name = 11;
 }
 
 message AddVirtualMachineResponse {
