@@ -27,7 +27,7 @@ func New(ds datastore.Datastore) *Libvirt {
 }
 
 // CreateVirtualMachine send create operation to teleskop
-func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string, readBytesSec, writeBytesSec, readIOPSSec, writeIOPSSec uint32) (*ganymede.VirtualMachine, error) {
+func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string, readBytesSec, writeBytesSec, readIOPSSec, writeIOPSSec uint32, cpuPinningGroupName string) (*ganymede.VirtualMachine, error) {
 	agentReq := &agentpb.AddVirtualMachineRequest{
 		Name:          name,
 		Vcpus:         vcpus,
@@ -37,6 +37,17 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 		WriteBytesSec: writeBytesSec,
 		ReadIopsSec:   readIOPSSec,
 		WriteIopsSec:  writeIOPSSec,
+	}
+
+	var cpg *ganymede.CPUPinningGroup
+	var err error
+	if cpuPinningGroupName != "" {
+		cpg, err = l.ds.GetCPUPinningGroupByName(ctx, cpuPinningGroupName)
+		if err != nil {
+			return nil, fmt.Errorf("failed to retrieve cpu pinning group: %w", err)
+		}
+
+		agentReq.PinningGroupName = cpg.Name
 	}
 
 	teleskopClient, err := teleskop.GetClient(hypervisorName)
@@ -64,6 +75,10 @@ func (l *Libvirt) CreateVirtualMachine(ctx context.Context, name string, vcpus u
 		WriteBytesSec:  writeBytesSec,
 		ReadIOPSSec:    readIOPSSec,
 		WriteIOPSSec:   writeIOPSSec,
+	}
+
+	if cpg != nil {
+		vm.CPUPinningGroupID = cpg.UUID
 	}
 
 	err = l.ds.PutVirtualMachine(*vm)

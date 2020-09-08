@@ -22,8 +22,17 @@ func New(ds datastore.Datastore) *Memory {
 }
 
 // CreateVirtualMachine add virtual machine
-func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string, readBytesSec, writeBytesSec, readIOPSSec, writeIOPSSec uint32) (*ganymede.VirtualMachine, error) {
+func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus uint32, memoryKiB uint64, bootDeviceName, hypervisorName, rootVolumeID string, readBytesSec, writeBytesSec, readIOPSSec, writeIOPSSec uint32, cpuPinningGroupName string) (*ganymede.VirtualMachine, error) {
 	u := uuid.NewV4()
+
+	var cpg *ganymede.CPUPinningGroup
+	var err error
+	if cpuPinningGroupName != "" {
+		cpg, err = m.ds.GetCPUPinningGroupByName(ctx, cpuPinningGroupName)
+		if err != nil {
+			return nil, fmt.Errorf("failed to retrieve cpu pinning group: %w", err)
+		}
+	}
 
 	vm := &ganymede.VirtualMachine{
 		UUID:           u,
@@ -38,7 +47,11 @@ func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus ui
 		WriteIOPSSec:   writeIOPSSec,
 	}
 
-	err := m.ds.PutVirtualMachine(*vm)
+	if cpg != nil {
+		vm.CPUPinningGroupID = cpg.UUID
+	}
+
+	err = m.ds.PutVirtualMachine(*vm)
 	if err != nil {
 		return nil, fmt.Errorf("failed to write virtual machine: %w", err)
 	}
