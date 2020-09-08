@@ -27,12 +27,8 @@ func New(ds datastore.Datastore) *Scheduler {
 // numRequestCorePair is number of requested CorePair.
 // you can use 2 x numRequestCorePair of cpu cores.
 // two is physical core and logical core.
-func (s *Scheduler) PopCorePair(ctx context.Context, hostname string, numRequestCorePair int, pinningGroupID uuid.UUID) ([]ganymede.CorePair, error) {
-	hv, err := s.Datastore.GetHypervisorByHostname(ctx, hostname)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get hypervisor: %w", err)
-	}
-	nodes, err := s.Datastore.GetAvailableCorePair(ctx, hv.ID)
+func (s *Scheduler) PopCorePair(ctx context.Context, hypervisorID int, numRequestCorePair int, pinningGroupID uuid.UUID) ([]ganymede.CorePair, error) {
+	nodes, err := s.Datastore.GetAvailableCorePair(ctx, hypervisorID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get available core from datastore: %w", err)
 	}

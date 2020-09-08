@@ -315,7 +315,7 @@ func (s *SatelitServer) AddCPUPinningGroup(ctx context.Context, req *pb.AddCPUPi
 	}
 
 	numRequestCorePair := req.CountOfCore / 2
-	_, err = s.Scheduler.PopCorePair(ctx, hv.Hostname, int(numRequestCorePair), cpg.UUID)
+	_, err = s.Scheduler.PopCorePair(ctx, hv.ID, int(numRequestCorePair), cpg.UUID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to allocate pinning cpu pair: %+v", err)
 	}
