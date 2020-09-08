@@ -22,6 +22,7 @@ import (
 	"github.com/whywaita/satelit/pkg/europa"
 	"github.com/whywaita/satelit/pkg/ganymede"
 	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/whywaita/satelit/pkg/scheduler"
 )
 
 // A SatelitServer is definition of Satlite API Server
@@ -31,6 +32,8 @@ type SatelitServer struct {
 	Europa   europa.Europa
 	IPAM     ipam.IPAM
 	Ganymede ganymede.Ganymede
+
+	Scheduler scheduler.Scheduler
 }
 
 // Run start gRPC Server

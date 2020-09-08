@@ -177,7 +177,7 @@ func TestSatelitServer_AddVolumeImage(t *testing.T) {
 }
 
 func TestSatelitServer_AttachVolume(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -223,7 +223,7 @@ func TestSatelitServer_AttachVolume(t *testing.T) {
 }
 
 func TestSatelitServer_DetachVolume(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}

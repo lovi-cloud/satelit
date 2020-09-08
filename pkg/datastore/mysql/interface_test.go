@@ -112,7 +112,7 @@ func TestMySQL_AttachInterface(t *testing.T) {
 			got.UpdatedAt = time.Time{}
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -209,7 +209,7 @@ func TestMySQL_DetachInterface(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -312,7 +312,7 @@ func TestMySQL_GetAttachment(t *testing.T) {
 			got.UpdatedAt = time.Time{}
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -417,7 +417,7 @@ func TestMySQL_ListAttachment(t *testing.T) {
 			}
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, dirr %q:", test.want, got, diff)
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
