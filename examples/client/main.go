@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 
 	"google.golang.org/grpc"
 
@@ -72,11 +75,23 @@ func SampleUploadImage(ctx context.Context, client pb.SatelitClient) error {
 	args := os.Args
 	fmt.Printf("args: %s\n", args)
 	imageFile := args[1]
+	name := filepath.Base(imageFile[:len(imageFile)-len(filepath.Ext(imageFile))])
 	f, err := os.Open(imageFile)
 	if err != nil {
 		return err
 	}
-	image, err := UploadImage(ctx, client, f, "test-cirros", "cirros")
+
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return err
+	}
+	hb := h.Sum(nil)[:16]
+
+	if _, err := f.Seek(0, 0); err != nil {
+		return err
+	}
+
+	image, err := UploadImage(ctx, client, f, name, "md5:"+hex.EncodeToString(hb))
 	if err != nil {
 		return err
 	}
@@ -91,12 +106,12 @@ func SampleUploadImage(ctx context.Context, client pb.SatelitClient) error {
 		fmt.Printf("%+v\n", i)
 	}
 
-	fmt.Println("DeleteImage")
-	deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
-	if err != nil {
-		return err
-	}
-	fmt.Println(deleteResp)
+	//fmt.Println("DeleteImage")
+	//deleteResp, err := client.DeleteImage(ctx, &pb.DeleteImageRequest{Id: image.Id})
+	//if err != nil {
+	//	return err
+	//}
+	//fmt.Println(deleteResp)
 
 	return nil
 }

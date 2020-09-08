@@ -13,6 +13,7 @@ import (
 
 // A Datastore is type definition of data store.
 type Datastore interface {
+	// europa
 	GetIQN(ctx context.Context, hostname string) (string, error)
 	GetImage(imageID uuid.UUID) (*europa.BaseImage, error)
 	ListImage() ([]europa.BaseImage, error)
@@ -23,6 +24,27 @@ type Datastore interface {
 	GetVolume(volumeID string) (*europa.Volume, error)
 	PutVolume(volume europa.Volume) error
 	DeleteVolume(volumeID string) error
+
+	// ganymede
+	GetHypervisor(ctx context.Context, hvID int) (*ganymede.HyperVisor, error)
+	GetHypervisorByHostname(ctx context.Context, hostname string) (*ganymede.HyperVisor, error)
+	PutHypervisor(ctx context.Context, iqn, hostname string) (int, error)
+	PutHypervisorNUMANode(ctx context.Context, nodes []ganymede.NUMANode, hypervisorID int) error
+
+	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
+	PutVirtualMachine(vm ganymede.VirtualMachine) error
+	DeleteVirtualMachine(vmID uuid.UUID) error
+	GetHostnameByAddress(address types.IP) (string, error)
+
+	PutCPUPinningGroup(ctx context.Context, cpuPinningGroup ganymede.CPUPinningGroup) error
+	GetCPUPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) (*ganymede.CPUPinningGroup, error)
+	GetCPUPinningGroupByName(ctx context.Context, name string) (*ganymede.CPUPinningGroup, error)
+	DeleteCPUPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) error
+	GetAvailableCorePair(ctx context.Context, hypervisorID int) ([]ganymede.NUMANode, error)
+	GetCPUCorePair(ctx context.Context, corePairID uuid.UUID) (*ganymede.CorePair, error)
+	GetPinnedCoreByPinningGroup(ctx context.Context, cpuPinningGroupID uuid.UUID) ([]ganymede.CPUCorePinned, error)
+	PutPinnedCore(ctx context.Context, pinned ganymede.CPUCorePinned) error
+	DeletePinnedCore(ctx context.Context, pinnedID uuid.UUID) error
 
 	// IPAM
 	CreateSubnet(ctx context.Context, subnet ipam.Subnet) (*ipam.Subnet, error)
@@ -41,11 +63,6 @@ type Datastore interface {
 	GetDHCPLeaseByMACAddress(ctx context.Context, mac types.HardwareAddr) (*ipam.DHCPLease, error)
 	ListLease(ctx context.Context) ([]ipam.Lease, error)
 	DeleteLease(ctx context.Context, leaseID uuid.UUID) error
-
-	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
-	PutVirtualMachine(vm ganymede.VirtualMachine) error
-	DeleteVirtualMachine(vmID uuid.UUID) error
-	GetHostnameByAddress(address types.IP) (string, error)
 
 	CreateBridge(ctx context.Context, bridge ganymede.Bridge) (*ganymede.Bridge, error)
 	GetBridge(ctx context.Context, bridgeID uuid.UUID) (*ganymede.Bridge, error)

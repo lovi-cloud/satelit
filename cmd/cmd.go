@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
+
 	"go.uber.org/zap"
 
 	"github.com/whywaita/go-os-brick/osbrick"
@@ -55,11 +57,14 @@ func NewSatelit() (*api.SatelitServer, error) {
 
 	libvirtBackend := libvirt.New(ds)
 
+	schedulerBackend := scheduler.New(ds)
+
 	return &api.SatelitServer{
 		Europa:    doradoBackend,
 		IPAM:      ipamBackend,
 		Datastore: ds,
 		Ganymede:  libvirtBackend,
+		Scheduler: schedulerBackend,
 	}, nil
 }
 

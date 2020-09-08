@@ -159,7 +159,7 @@ func TestMySQL_DeleteSubnet(t *testing.T) {
 	for _, test := range tests {
 		err := testDatastore.DeleteSubnet(context.Background(), test.input)
 		if err != nil {
-			t.Fatalf("failed to create subnet: %+v", err)
+			t.Fatalf("failed to delete subnet: %+v", err)
 		}
 		got, err := getSubnetFromSQL(testDB, test.input)
 		if !test.err && err != nil {
