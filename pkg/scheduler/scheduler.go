@@ -17,6 +17,6 @@ var (
 
 // Scheduler is manager of cpu cores.
 type Scheduler interface {
-	PopCorePair(ctx context.Context, hostname string, numRequestCorePair int, pinningGroupID uuid.UUID) ([]ganymede.CorePair, error)
+	PopCorePair(ctx context.Context, hypervisorID int, numRequestCorePair int, pinningGroupID uuid.UUID) ([]ganymede.CorePair, error)
 	PushCorePair(ctx context.Context, pinningGroupID uuid.UUID) error
 }
