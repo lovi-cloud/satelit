@@ -90,7 +90,7 @@ func TestMySQL_GetVirtualMachine(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -136,6 +136,11 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to retrieve cpu pinning group: %+v", err)
 	}
 
+	cpgID := uuid.NullUUID{
+		UUID:  cpg.UUID,
+		Valid: true,
+	}
+
 	tests := []struct {
 		input ganymede.VirtualMachine
 		want  *ganymede.VirtualMachine
@@ -155,7 +160,7 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 				ReadIOPSSec:       10000,
 				WriteIOPSSec:      5000,
 				SourceImageID:     testImage.UUID,
-				CPUPinningGroupID: cpg.UUID,
+				CPUPinningGroupID: cpgID,
 			},
 			want: &ganymede.VirtualMachine{
 				UUID:              uuid.FromStringOrNil(testVirtualMachineID),
@@ -170,7 +175,7 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 				ReadIOPSSec:       10000,
 				WriteIOPSSec:      5000,
 				SourceImageID:     testImage.UUID,
-				CPUPinningGroupID: cpg.UUID,
+				CPUPinningGroupID: cpgID,
 			},
 			err: false,
 		}, {
@@ -218,7 +223,7 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -298,7 +303,7 @@ func TestMySQL_ListVirtualMachine(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -367,7 +372,7 @@ func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 			t.Fatalf("should be error for %+v but not:", test.input)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }
