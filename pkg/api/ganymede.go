@@ -120,6 +120,32 @@ func (s *SatelitServer) ShowVirtualMachine(ctx context.Context, req *pb.ShowVirt
 	}, nil
 }
 
+// ListVirtualMachine retrieve all virtual machine
+func (s *SatelitServer) ListVirtualMachine(ctx context.Context, req *pb.ListVirtualMachineRequest) (*pb.ListVirtualMachineResponse, error) {
+	vms, err := s.Datastore.ListVirtualMachine()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve all virtual machine from datastore: %+v", err)
+	}
+
+	var pbvms []*pb.VirtualMachine
+	for _, vm := range vms {
+		cpgName := ""
+		if vm.CPUPinningGroupID != uuid.Nil {
+			cpg, err := s.Datastore.GetCPUPinningGroup(ctx, vm.CPUPinningGroupID)
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "failed to retrieve cpu pinning group from datastore: %+v", err)
+			}
+
+			cpgName = cpg.Name
+		}
+		pbvms = append(pbvms, vm.ToPb(cpgName))
+	}
+
+	return &pb.ListVirtualMachineResponse{
+		VirtualMachines: pbvms,
+	}, nil
+}
+
 // DeleteVirtualMachine delete virtual machine
 func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.DeleteVirtualMachineRequest) (*pb.DeleteVirtualMachineResponse, error) {
 	vmID, err := s.parseRequestUUID(req.Uuid)

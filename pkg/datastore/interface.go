@@ -33,6 +33,7 @@ type Datastore interface {
 
 	GetVirtualMachine(vmID uuid.UUID) (*ganymede.VirtualMachine, error)
 	PutVirtualMachine(vm ganymede.VirtualMachine) error
+	ListVirtualMachine() ([]ganymede.VirtualMachine, error)
 	DeleteVirtualMachine(vmID uuid.UUID) error
 	GetHostnameByAddress(address types.IP) (string, error)
 

@@ -34,6 +34,8 @@ service Satelit {
       returns (StartVirtualMachineResponse) {}
   rpc ShowVirtualMachine(ShowVirtualMachineRequest)
       returns (ShowVirtualMachineResponse) {}
+  rpc ListVirtualMachine(ListVirtualMachineRequest)
+      returns (ListVirtualMachineResponse) {}
   rpc DeleteVirtualMachine(DeleteVirtualMachineRequest)
       returns (DeleteVirtualMachineResponse) {}
 
@@ -347,6 +349,12 @@ message ShowVirtualMachineRequest {
 
 message ShowVirtualMachineResponse {
   VirtualMachine virtual_machine = 1;
+}
+
+message ListVirtualMachineRequest {}
+
+message ListVirtualMachineResponse {
+  repeated VirtualMachine virtual_machines = 1;
 }
 
 message DeleteVirtualMachineRequest {

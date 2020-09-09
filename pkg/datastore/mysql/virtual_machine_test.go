@@ -223,6 +223,86 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 	}
 }
 
+func TestMySQL_ListVirtualMachine(t *testing.T) {
+	testDatastore, teardown := testutils.GetTestDatastore()
+	defer teardown()
+	//testDB, _ := testutils.GetTestDB()
+
+	err := testDatastore.PutImage(testImage)
+	if err != nil {
+		t.Fatalf("failed to put image: %+v\n", err)
+	}
+
+	err = testDatastore.PutVolume(europa.Volume{
+		ID:          testRootVolumeID,
+		Attached:    false,
+		HostName:    "hv000",
+		CapacityGB:  20,
+		BaseImageID: testImage.UUID,
+		HostLUNID:   0,
+	})
+	if err != nil {
+		t.Fatalf("failed to put volume: %+v\n", err)
+	}
+
+	err = testDatastore.PutVirtualMachine(ganymede.VirtualMachine{
+		UUID:           uuid.FromStringOrNil(testVirtualMachineID),
+		Name:           "test000",
+		Vcpus:          1,
+		MemoryKiB:      2 * 1024 * 1024,
+		HypervisorName: "hv000",
+		RootVolumeID:   testRootVolumeID,
+		RootVolumeGB:   20,
+		ReadBytesSec:   100 * 1000 * 1000,
+		WriteBytesSec:  200 * 1000 * 1000,
+		ReadIOPSSec:    10000,
+		WriteIOPSSec:   5000,
+		SourceImageID:  testImage.UUID,
+	})
+	if err != nil {
+		t.Fatalf("failed to put virtual machine: %+v\n", err)
+	}
+
+	tests := []struct {
+		input interface{}
+		want  []ganymede.VirtualMachine
+		err   bool
+	}{
+		{
+			input: nil,
+			want: []ganymede.VirtualMachine{
+				{
+					UUID:           uuid.FromStringOrNil(testVirtualMachineID),
+					Name:           "test000",
+					Vcpus:          1,
+					MemoryKiB:      2 * 1024 * 1024,
+					HypervisorName: "hv000",
+					RootVolumeID:   testRootVolumeID,
+					RootVolumeGB:   20,
+					ReadBytesSec:   100 * 1000 * 1000,
+					WriteBytesSec:  200 * 1000 * 1000,
+					ReadIOPSSec:    10000,
+					WriteIOPSSec:   5000,
+					SourceImageID:  testImage.UUID,
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		got, err := testDatastore.ListVirtualMachine()
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %+v but: %+v", test.input, err)
+		}
+		if test.err && err == nil {
+			t.Fatalf("should be error for %+v but not:", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+		}
+	}
+}
+
 func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 	testDatastore, teardown := testutils.GetTestDatastore()
 	defer teardown()
