@@ -32,6 +32,17 @@ func (m *MySQL) PutVirtualMachine(vm ganymede.VirtualMachine) error {
 	return nil
 }
 
+// ListVirtualMachine retrieve all virtual machine record
+func (m *MySQL) ListVirtualMachine() ([]ganymede.VirtualMachine, error) {
+	var vms []ganymede.VirtualMachine
+	query := fmt.Sprintf(`SELECT uuid, name, vcpus, memory_kib, hypervisor_name, root_volume_id, volume.capacity_gb, read_bytes_sec, write_bytes_sec, read_iops_sec, write_iops_sec, volume.base_image_id, cpu_pinning_group_id FROM virtual_machine JOIN volume ON virtual_machine.root_volume_id = volume.id`)
+	if err := m.Conn.Select(&vms, query); err != nil {
+		return nil, fmt.Errorf("failed to execute select query: %w", err)
+	}
+
+	return vms, nil
+}
+
 // DeleteVirtualMachine delete virtual machine record
 func (m *MySQL) DeleteVirtualMachine(vmID uuid.UUID) error {
 	query := fmt.Sprintf(`DELETE FROM virtual_machine WHERE uuid = "%s"`, vmID.String())
