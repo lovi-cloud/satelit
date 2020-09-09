@@ -14,7 +14,8 @@ import (
 )
 
 func TestSatelitServer_AddVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
+	nodes := getDummyNodes()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nodes)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -26,6 +27,15 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 	imageResp, err := uploadDummyImage(ctx, client)
 	if err != nil {
 		t.Fatalf("failed to upload dummy image: %+v\n", err)
+	}
+
+	cpgResp, err := client.AddCPUPinningGroup(ctx, &pb.AddCPUPinningGroupRequest{
+		Name:           "testgroup",
+		CountOfCore:    2,
+		HypervisorName: hypervisorName,
+	})
+	if err != nil {
+		t.Fatalf("failed to add cpu pinning group: %+v", err)
 	}
 
 	tests := []struct {
@@ -45,6 +55,22 @@ func TestSatelitServer_AddVirtualMachine(t *testing.T) {
 			want: &pb.AddVirtualMachineResponse{
 				Uuid: "",
 				Name: "test001",
+			},
+			err: false,
+		},
+		{
+			input: &pb.AddVirtualMachineRequest{
+				Name:             "test-with-cpu-pinning-group",
+				Vcpus:            1,
+				MemoryKib:        1 * 1024 * 1024,
+				RootVolumeGb:     10,
+				SourceImageId:    imageResp.Image.Id,
+				HypervisorName:   hypervisorName,
+				PinningGroupName: cpgResp.CpuPinningGroup.Name,
+			},
+			want: &pb.AddVirtualMachineResponse{
+				Uuid: "",
+				Name: "test-with-cpu-pinning-group",
 			},
 			err: false,
 		},
@@ -127,7 +153,8 @@ func TestSatelitServer_StartVirtualMachine(t *testing.T) {
 }
 
 func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
-	hypervisorName, teardownTeleskop, err := setupTeleskop(nil)
+	nodes := getDummyNodes()
+	hypervisorName, teardownTeleskop, err := setupTeleskop(nodes)
 	if err != nil {
 		t.Fatalf("failed to get teleskop endpoint %+v\n", err)
 	}
@@ -141,6 +168,15 @@ func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to upload dummy image: %+v\n", err)
 	}
 
+	cpgResp, err := client.AddCPUPinningGroup(ctx, &pb.AddCPUPinningGroupRequest{
+		Name:           "testgroup",
+		CountOfCore:    2,
+		HypervisorName: hypervisorName,
+	})
+	if err != nil {
+		t.Fatalf("failed to add cpu pinning group: %+v", err)
+	}
+
 	vmResp, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
 		Name:           "test001",
 		Vcpus:          1,
@@ -151,6 +187,19 @@ func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatalf("failed to add test virtual machine: %+v\n", err)
+	}
+
+	vmCpgResp, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
+		Name:             "test-with-cpu-pinning-group",
+		Vcpus:            1,
+		MemoryKib:        1 * 1024 * 1024,
+		RootVolumeGb:     10,
+		SourceImageId:    imageResp.Image.Id,
+		HypervisorName:   hypervisorName,
+		PinningGroupName: cpgResp.CpuPinningGroup.Name,
+	})
+	if err != nil {
+		t.Fatalf("failed to add test virtual machine with cpu pinning group: %+v", err)
 	}
 
 	tests := []struct {
@@ -169,6 +218,22 @@ func TestSatelitServer_ShowVirtualMachine(t *testing.T) {
 					HypervisorName: hypervisorName,
 					SourceImageId:  imageResp.Image.Id,
 					RootVolumeGb:   10,
+				},
+			},
+			err: false,
+		},
+		{
+			input: &pb.ShowVirtualMachineRequest{Uuid: vmCpgResp.Uuid},
+			want: &pb.ShowVirtualMachineResponse{
+				VirtualMachine: &pb.VirtualMachine{
+					Uuid:             vmCpgResp.Uuid,
+					Name:             "test-with-cpu-pinning-group",
+					Vcpus:            1,
+					MemoryKib:        1 * 1024 * 1024,
+					RootVolumeGb:     10,
+					SourceImageId:    imageResp.Image.Id,
+					HypervisorName:   hypervisorName,
+					PinningGroupName: cpgResp.CpuPinningGroup.Name,
 				},
 			},
 			err: false,

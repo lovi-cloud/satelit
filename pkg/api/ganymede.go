@@ -105,8 +105,18 @@ func (s *SatelitServer) ShowVirtualMachine(ctx context.Context, req *pb.ShowVirt
 		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
 	}
 
+	cpgName := ""
+	if vm.CPUPinningGroupID != uuid.Nil {
+		cpg, err := s.Datastore.GetCPUPinningGroup(ctx, vm.CPUPinningGroupID)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to retrieve cpu pinning group: %+v", err)
+		}
+
+		cpgName = cpg.Name
+	}
+
 	return &pb.ShowVirtualMachineResponse{
-		VirtualMachine: vm.ToPb(),
+		VirtualMachine: vm.ToPb(cpgName),
 	}, nil
 }
 
