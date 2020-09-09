@@ -240,6 +240,27 @@ func (m *Memory) PutVirtualMachine(vm ganymede.VirtualMachine) error {
 	return nil
 }
 
+// ListVirtualMachine retrieve all virtual machine record
+func (m *Memory) ListVirtualMachine() ([]ganymede.VirtualMachine, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var vms []ganymede.VirtualMachine
+	for _, vm := range m.virtualMachines {
+		volume, ok := m.volumes[vm.RootVolumeID]
+		if !ok {
+			return nil, fmt.Errorf("failed to find volume for virtual machine root uuid=%s", vm.RootVolumeID)
+		}
+
+		vm.SourceImageID = volume.BaseImageID
+		vm.RootVolumeGB = volume.CapacityGB
+
+		vms = append(vms, vm)
+	}
+
+	return vms, nil
+}
+
 // DeleteVirtualMachine delete virtual machine record
 func (m *Memory) DeleteVirtualMachine(vmID uuid.UUID) error {
 	m.mutex.Lock()

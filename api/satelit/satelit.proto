@@ -34,6 +34,8 @@ service Satelit {
       returns (StartVirtualMachineResponse) {}
   rpc ShowVirtualMachine(ShowVirtualMachineRequest)
       returns (ShowVirtualMachineResponse) {}
+  rpc ListVirtualMachine(ListVirtualMachineRequest)
+      returns (ListVirtualMachineResponse) {}
   rpc DeleteVirtualMachine(DeleteVirtualMachineRequest)
       returns (DeleteVirtualMachineResponse) {}
 
@@ -98,17 +100,18 @@ message Lease {
 }
 
 message VirtualMachine {
-  string uuid            = 1;
-  string name            = 2;
-  uint32 vcpus           = 3;
-  uint64 memory_kib      = 4;
-  string hypervisor_name = 5;
-  uint32 root_volume_gb  = 6;
-  uint32 read_bytes_sec  = 7;
-  uint32 write_bytes_sec = 8;
-  uint32 read_iops_sec   = 9;
-  uint32 write_iops_sec  = 10;
-  string source_image_id = 11;
+  string uuid               = 1;
+  string name               = 2;
+  uint32 vcpus              = 3;
+  uint64 memory_kib         = 4;
+  string hypervisor_name    = 5;
+  uint32 root_volume_gb     = 6;
+  uint32 read_bytes_sec     = 7;
+  uint32 write_bytes_sec    = 8;
+  uint32 read_iops_sec      = 9;
+  uint32 write_iops_sec     = 10;
+  string source_image_id    = 11;
+  string pinning_group_name = 12;
 }
 
 message Bridge {
@@ -346,6 +349,12 @@ message ShowVirtualMachineRequest {
 
 message ShowVirtualMachineResponse {
   VirtualMachine virtual_machine = 1;
+}
+
+message ListVirtualMachineRequest {}
+
+message ListVirtualMachineResponse {
+  repeated VirtualMachine virtual_machines = 1;
 }
 
 message DeleteVirtualMachineRequest {
