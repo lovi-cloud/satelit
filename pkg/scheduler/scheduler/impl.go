@@ -3,6 +3,7 @@ package scheduler
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	uuid "github.com/satori/go.uuid"
 
@@ -14,6 +15,7 @@ import (
 // Scheduler is implementation used datastore.
 type Scheduler struct {
 	Datastore datastore.Datastore
+	mu        sync.RWMutex
 }
 
 // New create a new scheduler
@@ -28,6 +30,9 @@ func New(ds datastore.Datastore) *Scheduler {
 // you can use 2 x numRequestCorePair of cpu cores.
 // two is physical core and logical core.
 func (s *Scheduler) PopCorePair(ctx context.Context, hypervisorID int, numRequestCorePair int, pinningGroupID uuid.UUID) ([]ganymede.CorePair, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	nodes, err := s.Datastore.GetAvailableCorePair(ctx, hypervisorID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get available core from datastore: %w", err)
@@ -63,7 +68,7 @@ func (s *Scheduler) PopCorePair(ctx context.Context, hypervisorID int, numReques
 func (s *Scheduler) PushCorePair(ctx context.Context, pinningGroupID uuid.UUID) error {
 	pinneds, err := s.Datastore.GetPinnedCoreByPinningGroup(ctx, pinningGroupID)
 	if err != nil {
-		// TODO: check not found
+		// TODO: check not found, to be skip
 		return fmt.Errorf("failed to get pinned core: %w", err)
 	}
 
