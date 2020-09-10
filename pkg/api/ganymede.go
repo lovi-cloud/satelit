@@ -119,8 +119,13 @@ func (s *SatelitServer) ShowVirtualMachine(ctx context.Context, req *pb.ShowVirt
 		cpgName = cpg.Name
 	}
 
+	volume, err := s.Datastore.GetVolume(ctx, vm.RootVolumeID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volume from datastore: %+v", err)
+	}
+
 	return &pb.ShowVirtualMachineResponse{
-		VirtualMachine: vm.ToPb(cpgName),
+		VirtualMachine: vm.ToPb(cpgName, volume.BackendName),
 	}, nil
 }
 
@@ -142,7 +147,13 @@ func (s *SatelitServer) ListVirtualMachine(ctx context.Context, req *pb.ListVirt
 
 			cpgName = cpg.Name
 		}
-		pbvms = append(pbvms, vm.ToPb(cpgName))
+
+		volume, err := s.Datastore.GetVolume(ctx, vm.RootVolumeID)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to retrieve volume from datastore: %+v", err)
+		}
+
+		pbvms = append(pbvms, vm.ToPb(cpgName, volume.BackendName))
 	}
 
 	return &pb.ListVirtualMachineResponse{
