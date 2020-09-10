@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 
+	isucon_sshkey "github.com/whywaita/isucon-sshkey"
 	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
 
 	"go.uber.org/zap"
@@ -76,7 +77,14 @@ func NewSatelitDatastore() (*api.SatelitDatastore, error) {
 		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
+	p := config.GetValue().Portal
+	client, err := isucon_sshkey.NewClient(p.Endpoint, p.HMACSecretKey, logger.Logger)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create ISUCON portal client: %w", err)
+	}
+
 	return &api.SatelitDatastore{
 		Datastore: ds,
+		Client:    client,
 	}, nil
 }
