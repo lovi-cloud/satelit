@@ -130,6 +130,7 @@ func TestSatelitServer_AddVolume(t *testing.T) {
 	want := pb.Volume{
 		Id:               testUUID,
 		CapacityGigabyte: testCapacityGigabyte,
+		BackendName:      testEuropaBackendName,
 	}
 
 	if diff := deep.Equal(resp.Volume, &want); diff != nil {

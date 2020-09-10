@@ -325,6 +325,16 @@ func TestSatelitServer_ListVirtualMachine(t *testing.T) {
 			want: &pb.ListVirtualMachineResponse{
 				VirtualMachines: []*pb.VirtualMachine{
 					{
+						Uuid:              vmResp.Uuid,
+						Name:              "test001",
+						Vcpus:             1,
+						MemoryKib:         1 * 1024 * 1024,
+						RootVolumeGb:      10,
+						SourceImageId:     imageResp.Image.Id,
+						HypervisorName:    hypervisorName,
+						EuropaBackendName: testEuropaBackendName,
+					},
+					{
 						Uuid:              vmCpgResp.Uuid,
 						Name:              "test-with-cpu-pinning-group",
 						Vcpus:             1,
@@ -333,16 +343,6 @@ func TestSatelitServer_ListVirtualMachine(t *testing.T) {
 						SourceImageId:     imageResp.Image.Id,
 						HypervisorName:    hypervisorName,
 						PinningGroupName:  cpgResp.CpuPinningGroup.Name,
-						EuropaBackendName: testEuropaBackendName,
-					},
-					{
-						Uuid:              vmResp.Uuid,
-						Name:              "test001",
-						Vcpus:             1,
-						MemoryKib:         1 * 1024 * 1024,
-						RootVolumeGb:      10,
-						SourceImageId:     imageResp.Image.Id,
-						HypervisorName:    hypervisorName,
 						EuropaBackendName: testEuropaBackendName,
 					},
 				},
