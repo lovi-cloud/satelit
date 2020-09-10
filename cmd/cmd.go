@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	isucon_sshkey "github.com/whywaita/isucon-sshkey"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
 
 	"go.uber.org/zap"
@@ -83,7 +80,7 @@ func NewSatelitDatastore() (*api.SatelitDatastore, error) {
 	p := config.GetValue().Portal
 	client, err := isucon_sshkey.NewClient(p.Endpoint, p.HMACSecretKey, logger.Logger)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to create ISUCON portal client: %+v", err)
+		return nil, fmt.Errorf("failed to create ISUCON portal client: %w", err)
 	}
 
 	return &api.SatelitDatastore{
