@@ -30,21 +30,21 @@ type Ganymede interface {
 
 // VirtualMachine is virtual machine.
 type VirtualMachine struct {
-	UUID              uuid.UUID `db:"uuid"`
-	Name              string    `db:"name"`
-	Vcpus             uint32    `db:"vcpus"`
-	MemoryKiB         uint64    `db:"memory_kib"`
-	HypervisorName    string    `db:"hypervisor_name"`
-	RootVolumeID      string    `db:"root_volume_id"`
-	RootVolumeGB      uint32    `db:"capacity_gb"`
-	ReadBytesSec      uint32    `db:"read_bytes_sec"`
-	WriteBytesSec     uint32    `db:"write_bytes_sec"`
-	ReadIOPSSec       uint32    `db:"read_iops_sec"`
-	WriteIOPSSec      uint32    `db:"write_iops_sec"`
-	SourceImageID     uuid.UUID `db:"base_image_id"`
-	CPUPinningGroupID uuid.UUID `db:"cpu_pinning_group_id"`
-	CreatedAt         time.Time `db:"created_at"`
-	UpdatedAt         time.Time `db:"updated_at"`
+	UUID              uuid.UUID     `db:"uuid"`
+	Name              string        `db:"name"`
+	Vcpus             uint32        `db:"vcpus"`
+	MemoryKiB         uint64        `db:"memory_kib"`
+	HypervisorName    string        `db:"hypervisor_name"`
+	RootVolumeID      string        `db:"root_volume_id"`
+	RootVolumeGB      uint32        `db:"capacity_gb"`
+	ReadBytesSec      uint32        `db:"read_bytes_sec"`
+	WriteBytesSec     uint32        `db:"write_bytes_sec"`
+	ReadIOPSSec       uint32        `db:"read_iops_sec"`
+	WriteIOPSSec      uint32        `db:"write_iops_sec"`
+	SourceImageID     uuid.UUID     `db:"base_image_id"`
+	CPUPinningGroupID uuid.NullUUID `db:"cpu_pinning_group_id"`
+	CreatedAt         time.Time     `db:"created_at"`
+	UpdatedAt         time.Time     `db:"updated_at"`
 }
 
 // ToPb convert to type for proto
