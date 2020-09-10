@@ -29,7 +29,7 @@ import (
 type SatelitServer struct {
 	Datastore datastore.Datastore
 
-	Europa   europa.Europa
+	Europa   map[string]europa.Europa // backend_name: europa.Europa
 	IPAM     ipam.IPAM
 	Ganymede ganymede.Ganymede
 
@@ -85,8 +85,9 @@ var pool = sync.Pool{
 }
 
 type meta struct {
-	name        string
-	description string
+	name              string
+	description       string
+	europaBackendName string
 }
 
 // header.Size is byte
@@ -125,6 +126,7 @@ func (s *SatelitServer) receiveImage(stream pb.Satelit_UploadImageServer, w io.W
 		if mt := resp.GetMeta(); mt != nil {
 			m.name = mt.Name
 			m.description = mt.Description
+			m.europaBackendName = mt.EuropaBackendName
 		}
 		if chunk := resp.GetChunk(); chunk != nil {
 			_, err := w.Write(chunk.Data)

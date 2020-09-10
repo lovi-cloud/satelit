@@ -39,6 +39,7 @@ type Dorado struct {
 	PortGroupName        string   `yaml:"portgroup_name"`
 	StoragePoolName      string   `yaml:"storagepool_name"`
 	HyperMetroDomainName string   `yaml:"hypermetrodomain_name"`
+	BackendName          string   `yaml:"backend_name"`
 }
 
 // A YAML is top element of config.yaml
@@ -47,7 +48,7 @@ type YAML struct {
 	Datastore   Datastore   `yaml:"datastore"`
 	MySQLConfig MySQLConfig `yaml:"mysql"`
 	Teleskop    Teleskop    `yaml:"teleskop"`
-	Dorado      Dorado      `yaml:"dorado"`
+	Dorado      []Dorado    `yaml:"dorado"`
 	LogLevel    string      `yaml:"log_level"`
 }
 

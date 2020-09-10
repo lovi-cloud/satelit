@@ -37,13 +37,14 @@ func TestMySQL_AttachInterface(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -136,13 +137,14 @@ func TestMySQL_DetachInterface(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -232,13 +234,14 @@ func TestMySQL_GetAttachment(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -335,13 +338,14 @@ func TestMySQL_ListAttachment(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "dorad000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)

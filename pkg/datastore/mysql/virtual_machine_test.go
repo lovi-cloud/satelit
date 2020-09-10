@@ -29,13 +29,14 @@ func TestMySQL_GetVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "hv000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -105,13 +106,14 @@ func TestMySQL_PutVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "hv000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -233,13 +235,14 @@ func TestMySQL_ListVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "hv000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -313,13 +316,14 @@ func TestMySQL_DeleteVirtualMachine(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "hv000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)
@@ -390,13 +394,14 @@ func TestMySQL_GetHostnameByAddress(t *testing.T) {
 		t.Fatalf("failed to put image: %+v\n", err)
 	}
 
-	err = testDatastore.PutVolume(europa.Volume{
+	err = testDatastore.PutVolume(context.Background(), europa.Volume{
 		ID:          testRootVolumeID,
 		Attached:    false,
-		HostName:    "hv000",
+		HostName:    "",
 		CapacityGB:  20,
 		BaseImageID: testImage.UUID,
 		HostLUNID:   0,
+		BackendName: testVolume.BackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to put volume: %+v\n", err)

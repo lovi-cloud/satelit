@@ -20,10 +20,10 @@ type Datastore interface {
 	PutImage(image europa.BaseImage) error
 	DeleteImage(imageID uuid.UUID) error
 
-	ListVolume(volumeIDs []string) ([]europa.Volume, error)
-	GetVolume(volumeID string) (*europa.Volume, error)
-	PutVolume(volume europa.Volume) error
-	DeleteVolume(volumeID string) error
+	ListVolume(ctx context.Context, volumeIDs []string) ([]europa.Volume, error)
+	GetVolume(ctx context.Context, volumeID string) (*europa.Volume, error)
+	PutVolume(ctx context.Context, volume europa.Volume) error
+	DeleteVolume(ctx context.Context, volumeID string) error
 
 	// ganymede
 	GetHypervisor(ctx context.Context, hvID int) (*ganymede.HyperVisor, error)

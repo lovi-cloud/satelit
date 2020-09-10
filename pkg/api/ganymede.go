@@ -24,29 +24,33 @@ func (s *SatelitServer) AddVirtualMachine(ctx context.Context, req *pb.AddVirtua
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse req source image id (need uuid): %+v", err)
 	}
+	e, ok := s.Europa[req.EuropaBackendName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid backend name (name: %s)", req.EuropaBackendName)
+	}
 
 	u := uuid.NewV4()
-	volume, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), sourceImageID)
+	volume, err := e.CreateVolumeFromImage(ctx, u, int(req.RootVolumeGb), sourceImageID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create volume from image: %+v", err)
 	}
 	defer func() {
 		volumeID := volume.ID
 		if err != nil {
-			if err := s.Europa.DeleteVolume(ctx, volumeID); err != nil {
+			if err := e.DeleteVolume(ctx, volumeID); err != nil {
 				logger.Logger.Warn(fmt.Sprintf("failed to DeleteVolume: %v", err))
 			}
 		}
 	}()
 
-	_, deviceName, err := s.Europa.AttachVolumeTeleskop(ctx, volume.ID, req.HypervisorName)
+	_, deviceName, err := e.AttachVolumeTeleskop(ctx, volume.ID, req.HypervisorName)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to attach volume: %+v", err)
 	}
 	defer func() {
 		volumeID := volume.ID
 		if err != nil {
-			if err := s.Europa.DetachVolume(ctx, volumeID); err != nil {
+			if err := e.DetachVolume(ctx, volumeID); err != nil {
 				logger.Logger.Warn(fmt.Sprintf("failed to DetachVolume: %v", err))
 			}
 		}
@@ -157,6 +161,14 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine: %+v", err)
 	}
+	volume, err := s.Datastore.GetVolume(ctx, vm.RootVolumeID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve root volume disk: %+v", err)
+	}
+	e, ok := s.Europa[volume.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid backend name (name: %s)", volume.BackendName)
+	}
 
 	client, err := teleskop.GetClient(vm.HypervisorName)
 	if err != nil {
@@ -174,10 +186,10 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 		return nil, status.Errorf(codes.Internal, "failed to delete virtual machine: %+v", err)
 	}
 
-	if err := s.Europa.DetachVolume(ctx, vm.RootVolumeID); err != nil {
+	if err := e.DetachVolume(ctx, vm.RootVolumeID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to detach root volume: %+v", err)
 	}
-	if err := s.Europa.DeleteVolume(ctx, vm.RootVolumeID); err != nil {
+	if err := e.DeleteVolume(ctx, vm.RootVolumeID); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete root volume: %+v", err)
 	}
 
