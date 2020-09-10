@@ -103,7 +103,7 @@ func (m *Memory) DeleteImage(imageID uuid.UUID) error {
 }
 
 // ListVolume rerieves volumes
-func (m *Memory) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
+func (m *Memory) ListVolume(ctx context.Context, volumeIDs []string) ([]europa.Volume, error) {
 	var vs []europa.Volume
 
 	m.mutex.Lock()
@@ -119,7 +119,7 @@ func (m *Memory) ListVolume(volumeIDs []string) ([]europa.Volume, error) {
 }
 
 // GetVolume return volume
-func (m *Memory) GetVolume(volumeID string) (*europa.Volume, error) {
+func (m *Memory) GetVolume(ctx context.Context, volumeID string) (*europa.Volume, error) {
 	m.mutex.Lock()
 	v, ok := m.volumes[volumeID]
 	m.mutex.Unlock()
@@ -132,7 +132,7 @@ func (m *Memory) GetVolume(volumeID string) (*europa.Volume, error) {
 }
 
 // PutVolume write volume
-func (m *Memory) PutVolume(volume europa.Volume) error {
+func (m *Memory) PutVolume(ctx context.Context, volume europa.Volume) error {
 	m.mutex.Lock()
 	m.volumes[volume.ID] = volume
 	m.mutex.Unlock()
@@ -141,7 +141,7 @@ func (m *Memory) PutVolume(volume europa.Volume) error {
 }
 
 // DeleteVolume delete volume
-func (m *Memory) DeleteVolume(volumeID string) error {
+func (m *Memory) DeleteVolume(ctx context.Context, volumeID string) error {
 	m.mutex.Lock()
 	delete(m.volumes, volumeID)
 	m.mutex.Unlock()

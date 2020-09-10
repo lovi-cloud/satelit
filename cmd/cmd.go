@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/whywaita/satelit/pkg/europa"
+
 	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
 
 	"go.uber.org/zap"
@@ -43,9 +45,14 @@ func NewSatelit() (*api.SatelitServer, error) {
 		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
-	doradoBackend, err := dorado.New(config.GetValue().Dorado, ds)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
+	dorados := map[string]europa.Europa{}
+	for _, c := range config.GetValue().Dorado {
+		doradoBackend, err := dorado.New(c, ds)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
+		}
+
+		dorados[c.BackendName] = doradoBackend
 	}
 
 	ipamBackend := ipam.New(ds)
@@ -60,7 +67,7 @@ func NewSatelit() (*api.SatelitServer, error) {
 	schedulerBackend := scheduler.New(ds)
 
 	return &api.SatelitServer{
-		Europa:    doradoBackend,
+		Europa:    dorados,
 		IPAM:      ipamBackend,
 		Datastore: ds,
 		Ganymede:  libvirtBackend,

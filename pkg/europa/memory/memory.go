@@ -17,8 +17,9 @@ import (
 // A Memory is backend of europa by in-memory for testing.
 type Memory struct {
 	// im-memory storage engine (ex: Dorado)
-	Volumes map[string]europa.Volume // ID: Volume
-	Mu      sync.RWMutex
+	Volumes        map[string]europa.Volume // ID: Volume
+	Mu             sync.RWMutex
+	BackendendName string
 
 	ds datastore.Datastore
 }
@@ -28,23 +29,25 @@ func New(ds datastore.Datastore) *Memory {
 	vs := map[string]europa.Volume{}
 
 	return &Memory{
-		Volumes: vs,
-		ds:      ds,
+		Volumes:        vs,
+		ds:             ds,
+		BackendendName: "memory",
 	}
 }
 
 // CreateVolume write volume information to in-memory
 func (m *Memory) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB int) (*europa.Volume, error) {
 	v := europa.Volume{
-		ID:         name.String(),
-		CapacityGB: uint32(capacityGB),
+		ID:          name.String(),
+		CapacityGB:  uint32(capacityGB),
+		BackendName: m.BackendendName,
 	}
 
 	m.Mu.Lock()
 	m.Volumes[v.ID] = v
 	m.Mu.Unlock()
 
-	if err := m.ds.PutVolume(v); err != nil {
+	if err := m.ds.PutVolume(ctx, v); err != nil {
 		return nil, err
 	}
 
@@ -57,13 +60,14 @@ func (m *Memory) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capa
 		ID:          name.String(),
 		CapacityGB:  uint32(capacityGB),
 		BaseImageID: imageID,
+		BackendName: m.BackendendName,
 	}
 
 	m.Mu.Lock()
 	m.Volumes[v.ID] = v
 	m.Mu.Unlock()
 
-	if err := m.ds.PutVolume(v); err != nil {
+	if err := m.ds.PutVolume(ctx, v); err != nil {
 		return nil, err
 	}
 
@@ -76,7 +80,7 @@ func (m *Memory) DeleteVolume(ctx context.Context, id string) error {
 	delete(m.Volumes, id)
 	m.Mu.Unlock()
 
-	if err := m.ds.DeleteVolume(id); err != nil {
+	if err := m.ds.DeleteVolume(ctx, id); err != nil {
 		return err
 	}
 
@@ -93,7 +97,7 @@ func (m *Memory) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 	}
 	m.Mu.RUnlock()
 
-	volumes, err := m.ds.ListVolume(ids)
+	volumes, err := m.ds.ListVolume(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +107,7 @@ func (m *Memory) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 
 // GetVolume get volume in-memory
 func (m *Memory) GetVolume(ctx context.Context, id string) (*europa.Volume, error) {
-	return m.ds.GetVolume(id)
+	return m.ds.GetVolume(ctx, id)
 }
 
 // AttachVolumeTeleskop write attach information in-memory
@@ -134,7 +138,7 @@ func (m *Memory) AttachVolume(ctx context.Context, id string, hostname string) (
 	m.Volumes[id] = *newV
 	m.Mu.Unlock()
 
-	if err := m.ds.PutVolume(*newV); err != nil {
+	if err := m.ds.PutVolume(ctx, *newV); err != nil {
 		return 0, "", err
 	}
 
@@ -156,7 +160,7 @@ func (m *Memory) DetachVolume(ctx context.Context, id string) error {
 	m.Volumes[id] = *newV
 	m.Mu.Unlock()
 
-	if err := m.ds.PutVolume(*newV); err != nil {
+	if err := m.ds.PutVolume(ctx, *newV); err != nil {
 		return err
 	}
 

@@ -1,6 +1,7 @@
 package mysql_test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"testing"
@@ -18,6 +19,7 @@ var testVolume = europa.Volume{
 	ID:          "TEST_VOLUME_ID_IS_NOT_UUID",
 	CapacityGB:  8,
 	BaseImageID: uuid.FromStringOrNil(testUUID),
+	BackendName: "test-europa-backend",
 }
 
 func TestMySQL_PutVolume(t *testing.T) {
@@ -26,7 +28,7 @@ func TestMySQL_PutVolume(t *testing.T) {
 	testDB, _ := testutils.GetTestDB()
 
 	// first write, use INSERT
-	if err := testDatastore.PutVolume(testVolume); err != nil {
+	if err := testDatastore.PutVolume(context.Background(), testVolume); err != nil {
 		t.Fatalf("failed to put volume (INSERT): %s", err)
 	}
 
@@ -44,7 +46,7 @@ func TestMySQL_PutVolume(t *testing.T) {
 	testVolume.HostName = "testHost"
 	testVolume.HostLUNID = 1
 	// second write, use UPDATE
-	if err = testDatastore.PutVolume(testVolume); err != nil {
+	if err = testDatastore.PutVolume(context.Background(), testVolume); err != nil {
 		t.Fatalf("failed to put volume (UPDATE):%s", err)
 	}
 
@@ -60,6 +62,7 @@ func TestMySQL_PutVolume(t *testing.T) {
 		CapacityGB:  8,
 		BaseImageID: uuid.FromStringOrNil(testUUID),
 		HostLUNID:   1,
+		BackendName: testVolume.BackendName,
 	}
 	ok, values = testutils.CompareStruct(want, v2)
 	if !ok {
@@ -71,11 +74,11 @@ func TestMySQL_GetVolume(t *testing.T) {
 	testDatastore, teardown := testutils.GetTestDatastore()
 	defer teardown()
 
-	if err := testDatastore.PutVolume(testVolume); err != nil {
+	if err := testDatastore.PutVolume(context.Background(), testVolume); err != nil {
 		t.Fatalf("failed to put volume (INSERT): %s", err)
 	}
 
-	volume, err := testDatastore.GetVolume(testVolume.ID)
+	volume, err := testDatastore.GetVolume(context.Background(), testVolume.ID)
 	if err != nil {
 		t.Fatalf("failed to get volume: %s", err)
 	}
@@ -92,10 +95,10 @@ func TestMySQL_DeleteVolume(t *testing.T) {
 	defer teardown()
 	testDB, _ := testutils.GetTestDB()
 
-	if err := testDatastore.PutVolume(testVolume); err != nil {
+	if err := testDatastore.PutVolume(context.Background(), testVolume); err != nil {
 		t.Fatalf("failed to put volume (INSERT): %s", err)
 	}
-	if err := testDatastore.DeleteVolume(testVolume.ID); err != nil {
+	if err := testDatastore.DeleteVolume(context.Background(), testVolume.ID); err != nil {
 		t.Fatalf("failed to delete volume: %s", err)
 	}
 
@@ -109,7 +112,7 @@ func TestMySQL_DeleteVolume(t *testing.T) {
 }
 
 func getVolumeFromSQL(testDB *sqlx.DB, volumeID string) (*europa.Volume, error) {
-	query := fmt.Sprintf(`SELECT id, attached, hostname, capacity_gb, base_image_id, host_lun_id FROM volume WHERE id = "%s"`, volumeID)
+	query := fmt.Sprintf(`SELECT id, attached, hostname, capacity_gb, base_image_id, host_lun_id, backend_name FROM volume WHERE id = "%s"`, volumeID)
 	var i europa.Volume
 	err := testDB.Get(&i, query)
 	if err != nil {

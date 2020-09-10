@@ -26,6 +26,8 @@ type Dorado struct {
 	client    *dorado.Client
 	datastore datastore.Datastore
 
+	backendName string
+
 	hyperMetroDomainID string
 	storagePoolName    string
 	portGroupName      string
@@ -109,6 +111,8 @@ func New(doradoConfig config.Dorado, datastore datastore.Datastore) (*Dorado, er
 		datastore:          datastore,
 		hyperMetroDomainID: hmds[0].ID,
 
+		backendName: doradoConfig.BackendName,
+
 		local:  l,
 		remote: r,
 	}, nil
@@ -126,7 +130,7 @@ func (d *Dorado) ListVolume(ctx context.Context) ([]europa.Volume, error) {
 		ids = append(ids, hmp.ID)
 	}
 
-	vs, err := d.datastore.ListVolume(ids)
+	vs, err := d.datastore.ListVolume(ctx, ids)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volume list from datastore: %w", err)
 	}
@@ -141,7 +145,7 @@ func (d *Dorado) GetVolume(ctx context.Context, id string) (*europa.Volume, erro
 	}
 	logger.Logger.Debug(fmt.Sprintf("successfully retrieves HyperMetroPair: %+v", hmp))
 
-	vd, err := d.datastore.GetVolume(id)
+	vd, err := d.datastore.GetVolume(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
 	}
@@ -163,7 +167,7 @@ func (d *Dorado) DeleteVolume(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to delete volume (ID: %s): %w", id, err)
 	}
 
-	err = d.datastore.DeleteVolume(id)
+	err = d.datastore.DeleteVolume(ctx, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete volume from datastore (ID: %s): %w", id, err)
 	}
@@ -214,14 +218,14 @@ func (d *Dorado) AttachVolumeTeleskop(ctx context.Context, id string, hostname s
 		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
 	}
 
-	volume, err := d.datastore.GetVolume(id)
+	volume, err := d.datastore.GetVolume(ctx, id)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get volume (ID: %s): %w", id, err)
 	}
 	volume.Attached = true
 	volume.HostName = hostname
 	volume.HostLUNID = hostLUNID
-	err = d.datastore.PutVolume(*volume)
+	err = d.datastore.PutVolume(ctx, *volume)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", id, err)
 	}
@@ -249,14 +253,14 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 		return 0, "", fmt.Errorf("failed to attach volume to localhost (ID: %s): %w", hyperMetroPairID, err)
 	}
 
-	volume, err := d.datastore.GetVolume(hyperMetroPairID)
+	volume, err := d.datastore.GetVolume(ctx, hyperMetroPairID)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
 	}
 	volume.Attached = true
 	volume.HostName = hostname
 	volume.HostLUNID = hostLUNID
-	err = d.datastore.PutVolume(*volume)
+	err = d.datastore.PutVolume(ctx, *volume)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
 	}
@@ -266,7 +270,7 @@ func (d *Dorado) AttachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 
 // DetachVolume detach volume by Dorado
 func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) error {
-	volume, err := d.datastore.GetVolume(hyperMetroPairID)
+	volume, err := d.datastore.GetVolume(ctx, hyperMetroPairID)
 	if err != nil {
 		return fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
 	}
@@ -299,7 +303,7 @@ func (d *Dorado) DetachVolume(ctx context.Context, hyperMetroPairID string) erro
 	volume.HostName = ""
 	volume.HostLUNID = 0
 
-	err = d.datastore.PutVolume(*volume)
+	err = d.datastore.PutVolume(ctx, *volume)
 	if err != nil {
 		return fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
 	}
@@ -323,7 +327,7 @@ func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 		return fmt.Errorf("failed to delete dorado attach mapping (ID: %s): %w", hyperMetroPairID, err)
 	}
 
-	volume, err := d.datastore.GetVolume(hyperMetroPairID)
+	volume, err := d.datastore.GetVolume(ctx, hyperMetroPairID)
 	if err != nil {
 		return fmt.Errorf("failed to get volume (ID: %s): %w", hyperMetroPairID, err)
 	}
@@ -332,7 +336,7 @@ func (d *Dorado) DetachVolumeSatelit(ctx context.Context, hyperMetroPairID strin
 	volume.HostName = ""
 	volume.HostLUNID = 0
 
-	err = d.datastore.PutVolume(*volume)
+	err = d.datastore.PutVolume(ctx, *volume)
 	if err != nil {
 		return fmt.Errorf("failed to update volume record (ID: %s): %w", hyperMetroPairID, err)
 	}
@@ -455,6 +459,9 @@ func (d *Dorado) toVolume(hmp *dorado.HyperMetroPair, isAttached bool, hostname 
 	v.HostName = hostname
 
 	v.CapacityGB = uint32(c / dorado.CapacityUnit)
+
+	v.BackendName = d.backendName
+
 	return v, nil
 }
 
