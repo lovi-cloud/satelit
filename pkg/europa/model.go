@@ -27,6 +27,7 @@ func (v *Volume) ToPb() *pb.Volume {
 		Attached:         v.Attached,
 		Hostname:         v.HostName,
 		CapacityGigabyte: v.CapacityGB,
+		BackendName:      v.BackendName,
 	}
 	return pv
 }
