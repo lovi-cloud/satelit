@@ -4,11 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/whywaita/satelit/pkg/europa"
-
-	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
-
-	"go.uber.org/zap"
+	isucon_sshkey "github.com/whywaita/isucon-sshkey"
 
 	"github.com/whywaita/go-os-brick/osbrick"
 	"github.com/whywaita/satelit/internal/client/teleskop"
@@ -16,9 +12,12 @@ import (
 	"github.com/whywaita/satelit/internal/logger"
 	"github.com/whywaita/satelit/pkg/api"
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
+	"github.com/whywaita/satelit/pkg/europa"
 	"github.com/whywaita/satelit/pkg/europa/dorado"
 	"github.com/whywaita/satelit/pkg/ganymede/libvirt"
 	"github.com/whywaita/satelit/pkg/ipam/ipam"
+	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
+	"go.uber.org/zap"
 )
 
 var conf = flag.String("conf", "./configs/satelit.yaml", "set satelit config")
@@ -83,7 +82,14 @@ func NewSatelitDatastore() (*api.SatelitDatastore, error) {
 		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
+	p := config.GetValue().Portal
+	client, err := isucon_sshkey.NewClient(p.Endpoint, p.HMACSecretKey, logger.Logger)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create ISUCON portal client: %w", err)
+	}
+
 	return &api.SatelitDatastore{
 		Datastore: ds,
+		Client:    client,
 	}, nil
 }

@@ -42,6 +42,12 @@ type Dorado struct {
 	BackendName          string   `yaml:"backend_name"`
 }
 
+// A Portal is config for ISUCON Portal
+type Portal struct {
+	Endpoint      string `yaml:"endpoint"`
+	HMACSecretKey string `yaml:"hmac_secret_key"`
+}
+
 // A YAML is top element of config.yaml
 type YAML struct {
 	API         API         `yaml:"api"`
@@ -49,6 +55,7 @@ type YAML struct {
 	MySQLConfig MySQLConfig `yaml:"mysql"`
 	Teleskop    Teleskop    `yaml:"teleskop"`
 	Dorado      []Dorado    `yaml:"dorado"`
+	Portal      Portal      `yaml:"portal"`
 	LogLevel    string      `yaml:"log_level"`
 }
 
