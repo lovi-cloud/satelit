@@ -66,6 +66,7 @@ message Volume {
   bool   attached          = 2;
   string hostname          = 3;
   uint32 capacity_gigabyte = 4;
+  string backend_name      = 5;
 }
 
 message Image {
