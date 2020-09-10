@@ -163,6 +163,7 @@ func TestSatelitServer_AddVolumeImage(t *testing.T) {
 				Volume: &pb.Volume{
 					Id:               testUUID,
 					CapacityGigabyte: 10,
+					BackendName:      testEuropaBackendName,
 				},
 			},
 			err: false,
