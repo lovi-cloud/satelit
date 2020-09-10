@@ -48,7 +48,10 @@ func (m *Memory) CreateVirtualMachine(ctx context.Context, name string, vcpus ui
 	}
 
 	if cpg != nil {
-		vm.CPUPinningGroupID = cpg.UUID
+		vm.CPUPinningGroupID = uuid.NullUUID{
+			UUID:  cpg.UUID,
+			Valid: true,
+		}
 	}
 
 	err = m.ds.PutVirtualMachine(*vm)
