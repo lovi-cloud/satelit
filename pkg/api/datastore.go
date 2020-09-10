@@ -7,6 +7,9 @@ import (
 	"net"
 	"strings"
 
+	isucon_sshkey "github.com/whywaita/isucon-sshkey"
+	"github.com/whywaita/satelit/pkg/api/team"
+
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/whywaita/satelit/internal/client/teleskop"
@@ -29,6 +32,7 @@ import (
 // A SatelitDatastore is definition of Satelit Datastore API Server
 type SatelitDatastore struct {
 	Datastore datastore.Datastore
+	Client    *isucon_sshkey.Client
 }
 
 // Run start gRPC Server
@@ -108,13 +112,23 @@ func (s *SatelitDatastore) GetHostnameByAddress(ctx context.Context, req *pb.Get
 
 // GetISUCONUserKeys is
 func (s *SatelitDatastore) GetISUCONUserKeys(ctx context.Context, req *pb.GetISUCONUserKeysRequest) (*pb.GetISUCONUserKeysResponse, error) {
-	address := net.ParseIP(req.Address)
-	if address == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request address")
+	teamID, err := team.GetTeamID(req.Address)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%+v", err)
+	}
+
+	keys, err := s.Client.GetPublicKeysByTeamID(ctx, teamID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get public keys from ISUCON portal: %+v", err)
+	}
+
+	publicKeys := make([]string, len(keys))
+	for i := 0; i < len(keys); i++ {
+		publicKeys[i] = string(keys[i])
 	}
 
 	return &pb.GetISUCONUserKeysResponse{
-		Keys: strings.Split(strings.TrimSpace(adminKeys), "\n"),
+		Keys: publicKeys,
 	}, nil
 }
 
