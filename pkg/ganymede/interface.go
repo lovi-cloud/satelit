@@ -48,24 +48,25 @@ type VirtualMachine struct {
 }
 
 // ToPb convert to type for proto
-func (vm *VirtualMachine) ToPb(cpuPinningGroupName string) *pb.VirtualMachine {
+func (vm *VirtualMachine) ToPb(cpuPinningGroupName, europaBackendName string) *pb.VirtualMachine {
 	if vm == nil {
 		return &pb.VirtualMachine{}
 	}
 
 	return &pb.VirtualMachine{
-		Uuid:             vm.UUID.String(),
-		Name:             vm.Name,
-		Vcpus:            vm.Vcpus,
-		MemoryKib:        vm.MemoryKiB,
-		HypervisorName:   vm.HypervisorName,
-		RootVolumeGb:     vm.RootVolumeGB,
-		ReadBytesSec:     vm.ReadBytesSec,
-		WriteBytesSec:    vm.WriteBytesSec,
-		ReadIopsSec:      vm.ReadIOPSSec,
-		WriteIopsSec:     vm.WriteIOPSSec,
-		SourceImageId:    vm.SourceImageID.String(),
-		PinningGroupName: cpuPinningGroupName,
+		Uuid:              vm.UUID.String(),
+		Name:              vm.Name,
+		Vcpus:             vm.Vcpus,
+		MemoryKib:         vm.MemoryKiB,
+		HypervisorName:    vm.HypervisorName,
+		RootVolumeGb:      vm.RootVolumeGB,
+		ReadBytesSec:      vm.ReadBytesSec,
+		WriteBytesSec:     vm.WriteBytesSec,
+		ReadIopsSec:       vm.ReadIOPSSec,
+		WriteIopsSec:      vm.WriteIOPSSec,
+		SourceImageId:     vm.SourceImageID.String(),
+		PinningGroupName:  cpuPinningGroupName,
+		EuropaBackendName: europaBackendName,
 	}
 }
 

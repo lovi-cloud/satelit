@@ -15,6 +15,7 @@ type Volume struct {
 	CapacityGB  uint32    `db:"capacity_gb"`
 	BaseImageID uuid.UUID `db:"base_image_id"`
 	HostLUNID   int       `db:"host_lun_id"` // set when attached
+	BackendName string    `db:"backend_name"`
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`
 }
@@ -26,6 +27,7 @@ func (v *Volume) ToPb() *pb.Volume {
 		Attached:         v.Attached,
 		Hostname:         v.HostName,
 		CapacityGigabyte: v.CapacityGB,
+		BackendName:      v.BackendName,
 	}
 	return pv
 }
