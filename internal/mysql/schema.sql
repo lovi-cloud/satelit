@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS volume (
     capacity_gb INT NOT NULL,
     base_image_id VARCHAR(36) NOT NULL,
     host_lun_id INT,
+    backend_name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp
 );

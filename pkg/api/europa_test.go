@@ -22,9 +22,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgMETEqcE5ggAAwA=
 `
 
 const (
-	testVolumeName       = "TEST_VOLUME"
-	testCapacityGigabyte = 8
-	testUUID             = "90dd6cd4-b3e4-47f3-9af5-47f78efc8fc7"
+	testVolumeName        = "TEST_VOLUME"
+	testCapacityGigabyte  = 8
+	testUUID              = "90dd6cd4-b3e4-47f3-9af5-47f78efc8fc7"
+	testEuropaBackendName = "memory"
 )
 
 func TestSatelitServer_ShowVolume(t *testing.T) {
@@ -34,6 +35,7 @@ func TestSatelitServer_ShowVolume(t *testing.T) {
 	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
 		Name:             testUUID,
 		CapacityGigabyte: 1,
+		BackendName:      testEuropaBackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to create test volume: %+v\n", err)
@@ -75,6 +77,7 @@ func TestSatelitServer_ListVolume(t *testing.T) {
 	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
 		Name:             testUUID,
 		CapacityGigabyte: 1,
+		BackendName:      testEuropaBackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to create test volume: %+v\n", err)
@@ -116,6 +119,7 @@ func TestSatelitServer_AddVolume(t *testing.T) {
 	req := &pb.AddVolumeRequest{
 		Name:             testUUID,
 		CapacityGigabyte: testCapacityGigabyte,
+		BackendName:      testEuropaBackendName,
 	}
 
 	resp, err := client.AddVolume(ctx, req)
@@ -126,6 +130,7 @@ func TestSatelitServer_AddVolume(t *testing.T) {
 	want := pb.Volume{
 		Id:               testUUID,
 		CapacityGigabyte: testCapacityGigabyte,
+		BackendName:      testEuropaBackendName,
 	}
 
 	if diff := deep.Equal(resp.Volume, &want); diff != nil {
@@ -152,11 +157,13 @@ func TestSatelitServer_AddVolumeImage(t *testing.T) {
 				Name:             testUUID,
 				CapacityGigabyte: 10,
 				SourceImageId:    imageResp.Image.Id,
+				BackendName:      testEuropaBackendName,
 			},
 			want: &pb.AddVolumeImageResponse{
 				Volume: &pb.Volume{
 					Id:               testUUID,
 					CapacityGigabyte: 10,
+					BackendName:      testEuropaBackendName,
 				},
 			},
 			err: false,
@@ -189,6 +196,7 @@ func TestSatelitServer_AttachVolume(t *testing.T) {
 	resp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
 		Name:             testUUID,
 		CapacityGigabyte: 10,
+		BackendName:      testEuropaBackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to add test volume: %+v", err)
@@ -235,6 +243,7 @@ func TestSatelitServer_DetachVolume(t *testing.T) {
 	volume, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
 		Name:             testUUID,
 		CapacityGigabyte: 10,
+		BackendName:      testEuropaBackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to add test volume: %+v\n", err)
@@ -282,6 +291,7 @@ func TestSatelitServer_DeleteVolume(t *testing.T) {
 	volume, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
 		Name:             testUUID,
 		CapacityGigabyte: 10,
+		BackendName:      testEuropaBackendName,
 	})
 	if err != nil {
 		t.Fatalf("failed to add test volume: %+v\n", err)

@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/whywaita/satelit/pkg/europa"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -15,7 +17,16 @@ import (
 
 // ShowVolume call GetVolume to Europa Backend
 func (s *SatelitServer) ShowVolume(ctx context.Context, req *pb.ShowVolumeRequest) (*pb.ShowVolumeResponse, error) {
-	volume, err := s.Europa.GetVolume(ctx, req.Id)
+	v, err := s.Datastore.GetVolume(ctx, req.Id)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volume from datastore: %+v", err)
+	}
+	e, ok := s.Europa[v.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid backend name (name: %s)", v.BackendName)
+	}
+
+	volume, err := e.GetVolume(ctx, req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to retrieve volume: %+v", err)
 	}
@@ -27,9 +38,14 @@ func (s *SatelitServer) ShowVolume(ctx context.Context, req *pb.ShowVolumeReques
 
 // ListVolume call ListVolume to Europa Backend
 func (s *SatelitServer) ListVolume(ctx context.Context, req *pb.ListVolumeRequest) (*pb.ListVolumeResponse, error) {
-	volumes, err := s.Europa.ListVolume(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to retrieve volumes: %+v", err)
+	var volumes []europa.Volume
+	for _, e := range s.Europa {
+		vs, err := e.ListVolume(ctx)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to retrieve volumes: %+v", err)
+		}
+
+		volumes = append(volumes, vs...)
 	}
 
 	var pvs []*pb.Volume
@@ -48,8 +64,12 @@ func (s *SatelitServer) AddVolume(ctx context.Context, req *pb.AddVolumeRequest)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request name (need uuid): %+v", err)
 	}
+	e, ok := s.Europa[req.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid backend name (name: %s)", req.BackendName)
+	}
 
-	volume, err := s.Europa.CreateVolume(ctx, u, int(req.CapacityGigabyte))
+	volume, err := e.CreateVolume(ctx, u, int(req.CapacityGigabyte))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create volume: %+v", err)
 	}
@@ -65,13 +85,17 @@ func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeIma
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request name (need uuid): %+v", err)
 	}
+	e, ok := s.Europa[req.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid backend name (name: %s)", req.BackendName)
+	}
 
 	sourceImageID, err := s.parseRequestUUID(req.SourceImageId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request source image id (need uuid): %+v", err)
 	}
 
-	v, err := s.Europa.CreateVolumeFromImage(ctx, u, int(req.CapacityGigabyte), sourceImageID)
+	v, err := e.CreateVolumeFromImage(ctx, u, int(req.CapacityGigabyte), sourceImageID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create volume from image: %+v", err)
 	}
@@ -83,8 +107,16 @@ func (s *SatelitServer) AddVolumeImage(ctx context.Context, req *pb.AddVolumeIma
 
 // AttachVolume call AttachVolume to Europa backend
 func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRequest) (*pb.AttachVolumeResponse, error) {
-	_, _, err := s.Europa.AttachVolumeTeleskop(ctx, req.Id, req.Hostname)
+	v, err := s.Datastore.GetVolume(ctx, req.Id)
 	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volume from datastore: %+v", err)
+	}
+	e, ok := s.Europa[v.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid backend name (name: %s)", v.BackendName)
+	}
+
+	if _, _, err := e.AttachVolumeTeleskop(ctx, req.Id, req.Hostname); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to attach volume: %+v", err)
 	}
 
@@ -93,8 +125,16 @@ func (s *SatelitServer) AttachVolume(ctx context.Context, req *pb.AttachVolumeRe
 
 // DetachVolume call DetachVolume to Europa backend
 func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRequest) (*pb.DetachVolumeResponse, error) {
-	err := s.Europa.DetachVolume(ctx, req.Id)
+	v, err := s.Datastore.GetVolume(ctx, req.Id)
 	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volume from datastore: %+v", err)
+	}
+	e, ok := s.Europa[v.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid backend name (name: %s)", v.BackendName)
+	}
+
+	if err := e.DetachVolume(ctx, req.Id); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to detach volume: %+v", err)
 	}
 
@@ -103,8 +143,16 @@ func (s *SatelitServer) DetachVolume(ctx context.Context, req *pb.DetachVolumeRe
 
 // DeleteVolume call DeleteVolume to Europa backend
 func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRequest) (*pb.DeleteVolumeResponse, error) {
-	err := s.Europa.DeleteVolume(ctx, req.Id)
+	v, err := s.Datastore.GetVolume(ctx, req.Id)
 	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve volume from datastore: %+v", err)
+	}
+	e, ok := s.Europa[v.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid backend name (name: %s)", v.BackendName)
+	}
+
+	if err := e.DeleteVolume(ctx, req.Id); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete volume: %+v", err)
 	}
 
@@ -113,9 +161,15 @@ func (s *SatelitServer) DeleteVolume(ctx context.Context, req *pb.DeleteVolumeRe
 
 // ListImage retrieves all images
 func (s *SatelitServer) ListImage(ctx context.Context, req *pb.ListImageRequest) (*pb.ListImageResponse, error) {
-	images, err := s.Europa.ListImage()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to retrieves images: %+v", err)
+	var images []europa.BaseImage
+
+	for _, e := range s.Europa {
+		is, err := e.ListImage()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to retrieves images: %+v", err)
+		}
+
+		images = append(images, is...)
 	}
 
 	var pbImages []*pb.Image
@@ -145,6 +199,11 @@ func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 	}
 	logger.Logger.Debug(fmt.Sprintf("received image (name: %s)", m.name))
 
+	e, ok := s.Europa[m.europaBackendName]
+	if !ok {
+		return status.Errorf(codes.InvalidArgument, "invalid backend name (name: %s)", m.europaBackendName)
+	}
+
 	// validate qcow2 image
 	b := buf.Bytes()
 	reader := bytes.NewReader(b)
@@ -154,7 +213,7 @@ func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 	}
 
 	// send to europa
-	image, err := s.Europa.UploadImage(ctx, b, m.name, m.description, sanitizeImageSize(header.Size))
+	image, err := e.UploadImage(ctx, b, m.name, m.description, sanitizeImageSize(header.Size))
 	if err != nil {
 		return status.Errorf(codes.Internal, "failed to upload image to europa: %+v", err)
 	}
@@ -162,7 +221,7 @@ func (s *SatelitServer) UploadImage(stream pb.Satelit_UploadImageServer) error {
 	defer func() {
 		uuid := image.UUID
 		if err != nil {
-			if err := s.Europa.DeleteImage(ctx, uuid); err != nil {
+			if err := e.DeleteImage(ctx, uuid); err != nil {
 				logger.Logger.Warn(fmt.Sprint("failed to delete image: %w", err))
 			}
 		}
@@ -191,8 +250,20 @@ func (s *SatelitServer) DeleteImage(ctx context.Context, req *pb.DeleteImageRequ
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to parse request image id (need uuid): %+v", err)
 	}
+	image, err := s.Datastore.GetImage(imageID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve image from datastore: %+v", err)
+	}
+	v, err := s.Datastore.GetVolume(ctx, image.CacheVolumeID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve cache volume from datastore: %+v", err)
+	}
+	e, ok := s.Europa[v.BackendName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "invalid backend name (name: %s)", v.BackendName)
+	}
 
-	err = s.Europa.DeleteImage(ctx, imageID)
+	err = e.DeleteImage(ctx, imageID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete image from europa: %+v", err)
 	}

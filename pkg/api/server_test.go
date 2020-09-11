@@ -8,6 +8,8 @@ import (
 	"net"
 	"testing"
 
+	"github.com/whywaita/satelit/pkg/europa"
+
 	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
 
 	"github.com/whywaita/satelit/pkg/datastore"
@@ -52,12 +54,14 @@ func TestSanitizeImageSize(t *testing.T) {
 // for testing Satelit API
 func NewMemorySatelit(ds datastore.Datastore) *SatelitServer {
 	ipamBackend := ipam.New(ds)
-	europa := europaMemory.New(ds)
+	e := europaMemory.New(ds)
 	ganymede := ganymedeMemory.New(ds)
 	sche := scheduler.New(ds)
 
 	return &SatelitServer{
-		Europa:    europa,
+		Europa: map[string]europa.Europa{
+			"memory": e,
+		},
 		IPAM:      ipamBackend,
 		Datastore: ds,
 		Ganymede:  ganymede,
@@ -110,7 +114,9 @@ func init() {
 
 		server.Datastore = ds
 		server.IPAM = ipam.New(ds)
-		server.Europa = europaMemory.New(ds)
+		server.Europa = map[string]europa.Europa{
+			"memory": europaMemory.New(ds),
+		}
 		server.Ganymede = ganymedeMemory.New(ds)
 		server.Scheduler = scheduler.New(ds)
 
@@ -203,8 +209,9 @@ func uploadImage(ctx context.Context, client pb.SatelitClient, image io.Reader) 
 	err = stream.Send(&pb.UploadImageRequest{
 		Value: &pb.UploadImageRequest_Meta{
 			Meta: &pb.UploadImageRequestMeta{
-				Name:        "image001",
-				Description: "desc",
+				Name:              "image001",
+				Description:       "desc",
+				EuropaBackendName: "memory",
 			},
 		},
 	})

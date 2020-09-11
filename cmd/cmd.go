@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	isucon_sshkey "github.com/whywaita/isucon-sshkey"
-	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
-
-	"go.uber.org/zap"
 
 	"github.com/whywaita/go-os-brick/osbrick"
 	"github.com/whywaita/satelit/internal/client/teleskop"
@@ -15,9 +12,12 @@ import (
 	"github.com/whywaita/satelit/internal/logger"
 	"github.com/whywaita/satelit/pkg/api"
 	"github.com/whywaita/satelit/pkg/datastore/mysql"
+	"github.com/whywaita/satelit/pkg/europa"
 	"github.com/whywaita/satelit/pkg/europa/dorado"
 	"github.com/whywaita/satelit/pkg/ganymede/libvirt"
 	"github.com/whywaita/satelit/pkg/ipam/ipam"
+	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
+	"go.uber.org/zap"
 )
 
 var conf = flag.String("conf", "./configs/satelit.yaml", "set satelit config")
@@ -44,9 +44,14 @@ func NewSatelit() (*api.SatelitServer, error) {
 		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
-	doradoBackend, err := dorado.New(config.GetValue().Dorado, ds)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
+	dorados := map[string]europa.Europa{}
+	for _, c := range config.GetValue().Dorado {
+		doradoBackend, err := dorado.New(c, ds)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
+		}
+
+		dorados[c.BackendName] = doradoBackend
 	}
 
 	ipamBackend := ipam.New(ds)
@@ -61,7 +66,7 @@ func NewSatelit() (*api.SatelitServer, error) {
 	schedulerBackend := scheduler.New(ds)
 
 	return &api.SatelitServer{
-		Europa:    doradoBackend,
+		Europa:    dorados,
 		IPAM:      ipamBackend,
 		Datastore: ds,
 		Ganymede:  libvirtBackend,

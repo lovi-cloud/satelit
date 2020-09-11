@@ -66,6 +66,7 @@ message Volume {
   bool   attached          = 2;
   string hostname          = 3;
   uint32 capacity_gigabyte = 4;
+  string backend_name      = 5;
 }
 
 message Image {
@@ -100,18 +101,19 @@ message Lease {
 }
 
 message VirtualMachine {
-  string uuid               = 1;
-  string name               = 2;
-  uint32 vcpus              = 3;
-  uint64 memory_kib         = 4;
-  string hypervisor_name    = 5;
-  uint32 root_volume_gb     = 6;
-  uint32 read_bytes_sec     = 7;
-  uint32 write_bytes_sec    = 8;
-  uint32 read_iops_sec      = 9;
-  uint32 write_iops_sec     = 10;
-  string source_image_id    = 11;
-  string pinning_group_name = 12;
+  string uuid                = 1;
+  string name                = 2;
+  uint32 vcpus               = 3;
+  uint64 memory_kib          = 4;
+  string hypervisor_name     = 5;
+  uint32 root_volume_gb      = 6;
+  uint32 read_bytes_sec      = 7;
+  uint32 write_bytes_sec     = 8;
+  uint32 read_iops_sec       = 9;
+  uint32 write_iops_sec      = 10;
+  string source_image_id     = 11;
+  string pinning_group_name  = 12;
+  string europa_backend_name = 13;
 }
 
 message Bridge {
@@ -153,6 +155,7 @@ message ListVolumeResponse {
 message AddVolumeRequest {
   string name              = 1;
   uint32 capacity_gigabyte = 2;
+  string backend_name      = 3;
 }
 
 message AddVolumeResponse {
@@ -163,6 +166,7 @@ message AddVolumeImageRequest {
   string name              = 1;
   uint32 capacity_gigabyte = 2;
   string source_image_id   = 3;
+  string backend_name      = 4;
 }
 
 message AddVolumeImageResponse {
@@ -202,8 +206,9 @@ message UploadImageRequest {
 }
 
 message UploadImageRequestMeta {
-  string name        = 1;
-  string description = 2;
+  string name                = 1;
+  string description         = 2;
+  string europa_backend_name = 3;
 }
 
 message UploadImageRequestChunk {
@@ -316,17 +321,18 @@ message DeleteLeaseRequest {
 message DeleteLeaseResponse {}
 
 message AddVirtualMachineRequest {
-  string name               = 1;
-  uint32 vcpus              = 2;
-  uint64 memory_kib         = 3;
-  uint32 root_volume_gb     = 4;
-  string source_image_id    = 5;
-  string hypervisor_name    = 6;
-  uint32 read_bytes_sec     = 7;
-  uint32 write_bytes_sec    = 8;
-  uint32 read_iops_sec      = 9;
-  uint32 write_iops_sec     = 10;
-  string pinning_group_name = 11;
+  string name                = 1;
+  uint32 vcpus               = 2;
+  uint64 memory_kib          = 3;
+  uint32 root_volume_gb      = 4;
+  string source_image_id     = 5;
+  string hypervisor_name     = 6;
+  uint32 read_bytes_sec      = 7;
+  uint32 write_bytes_sec     = 8;
+  uint32 read_iops_sec       = 9;
+  uint32 write_iops_sec      = 10;
+  string pinning_group_name  = 11;
+  string europa_backend_name = 12;
 }
 
 message AddVirtualMachineResponse {
