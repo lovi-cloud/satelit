@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -176,7 +175,7 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 // RegisterTeleskopAgent register new teleskop agent
 func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.RegisterTeleskopAgentRequest) (*pb.RegisterTeleskopAgentResponse, error) {
 	err := teleskop.AddClient(req.Hostname, req.Endpoint)
-	if err != nil && !errors.Is(err, teleskop.ErrTeleskopAgentAlreadyExist) {
+	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agent: %+v", err)
 	}
 

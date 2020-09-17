@@ -71,14 +71,10 @@ func ListClient() ([]agentpb.AgentClient, error) {
 	return cs, nil
 }
 
-// AddClient add new teleskop Client
+// AddClient add new teleskop Client and reconnect if registered
 func AddClient(hostname, endpoint string) error {
 	mu.Lock()
 	defer mu.Unlock()
-	_, ok := client[hostname]
-	if ok {
-		return ErrTeleskopAgentAlreadyExist
-	}
 
 	conn, err := grpc.Dial(endpoint, grpc.WithInsecure())
 	if err != nil {
