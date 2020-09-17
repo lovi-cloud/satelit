@@ -134,7 +134,7 @@ func (d dummyTeleskop) GetVirtualMachineState(ctx context.Context, req *agent.Ge
 		State: &agent.VirtualMachineState{
 			Uuid:  req.Uuid,
 			Name:  req.Uuid,
-			State: agent.VirtualMachineState_RUNNING,
+			State: agent.VirtualMachineState_SHUTOFF,
 		},
 	}, nil
 }
