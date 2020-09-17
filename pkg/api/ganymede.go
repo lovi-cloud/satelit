@@ -189,7 +189,7 @@ func (s *SatelitServer) DeleteVirtualMachine(ctx context.Context, req *pb.Delete
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to retrieve virtual machine state: %+v", err)
 	}
-	if resp.State.State.Type() != agentpb.VirtualMachineState_SHUTOFF.Type() {
+	if resp.State.State.Number() != agentpb.VirtualMachineState_SHUTOFF.Number() {
 		return nil, status.Errorf(codes.InvalidArgument, "%s is not shutdown. please `virsh destroy` before delete", vmID.String())
 	}
 
