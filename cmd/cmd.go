@@ -4,9 +4,8 @@ import (
 	"flag"
 	"fmt"
 
-	isucon_sshkey "github.com/whywaita/isucon-sshkey"
-
 	"github.com/whywaita/go-os-brick/osbrick"
+	"github.com/whywaita/satelit/internal/client/sshkey"
 	"github.com/whywaita/satelit/internal/client/teleskop"
 	"github.com/whywaita/satelit/internal/config"
 	"github.com/whywaita/satelit/internal/logger"
@@ -83,7 +82,7 @@ func NewSatelitDatastore() (*api.SatelitDatastore, error) {
 	}
 
 	p := config.GetValue().Portal
-	client, err := isucon_sshkey.NewClient(p.Endpoint, p.HMACSecretKey, logger.Logger)
+	client, err := sshkey.NewClient(p.Endpoint, p.HMACSecretKey, logger.Logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ISUCON portal client: %w", err)
 	}
