@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -257,6 +258,12 @@ func (m *Memory) ListVirtualMachine() ([]ganymede.VirtualMachine, error) {
 
 		vms = append(vms, vm)
 	}
+
+	// map is unstable order, so vms is not sorted.
+	// test becomes stable affected by this sort function.
+	sort.Slice(vms, func(i, j int) bool {
+		return vms[i].Vcpus < vms[j].Vcpus
+	})
 
 	return vms, nil
 }

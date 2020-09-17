@@ -303,7 +303,7 @@ func TestSatelitServer_ListVirtualMachine(t *testing.T) {
 
 	vmCpgResp, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
 		Name:              "test-with-cpu-pinning-group",
-		Vcpus:             1,
+		Vcpus:             2, // sort key for test
 		MemoryKib:         1 * 1024 * 1024,
 		RootVolumeGb:      10,
 		SourceImageId:     imageResp.Image.Id,
@@ -337,7 +337,7 @@ func TestSatelitServer_ListVirtualMachine(t *testing.T) {
 					{
 						Uuid:              vmCpgResp.Uuid,
 						Name:              "test-with-cpu-pinning-group",
-						Vcpus:             1,
+						Vcpus:             2,
 						MemoryKib:         1 * 1024 * 1024,
 						RootVolumeGb:      10,
 						SourceImageId:     imageResp.Image.Id,
