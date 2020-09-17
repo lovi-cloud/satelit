@@ -30,14 +30,18 @@ func run() error {
 	}
 	client := pb.NewSatelitClient(conn)
 
-	fmt.Println("GetImages")
-	resp, err := client.ListImage(ctx, &pb.ListImageRequest{})
-	if err != nil {
+	if err := SampleUploadImage(ctx, client); err != nil {
 		return err
 	}
-	for _, i := range resp.Images {
-		fmt.Printf("%+v\n", i)
-	}
+
+	//fmt.Println("GetImages")
+	//resp, err := client.ListImage(ctx, &pb.ListImageRequest{})
+	//if err != nil {
+	//	return err
+	//}
+	//for _, i := range resp.Images {
+	//	fmt.Printf("%+v\n", i)
+	//}
 
 	return nil
 }
@@ -91,7 +95,7 @@ func SampleUploadImage(ctx context.Context, client pb.SatelitClient) error {
 		return err
 	}
 
-	image, err := UploadImage(ctx, client, f, name, "md5:"+hex.EncodeToString(hb))
+	image, err := UploadImage(ctx, client, f, name, "md5:"+hex.EncodeToString(hb), args[2])
 	if err != nil {
 		return err
 	}
@@ -117,21 +121,22 @@ func SampleUploadImage(ctx context.Context, client pb.SatelitClient) error {
 }
 
 // UploadImage upload image
-func UploadImage(ctx context.Context, client pb.SatelitClient, src io.Reader, name, description string) (*pb.Image, error) {
+func UploadImage(ctx context.Context, client pb.SatelitClient, src io.Reader, name, description, europaBackend string) (*pb.Image, error) {
 	stream, err := client.UploadImage(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return uploadImage(stream, src, name, description)
+	return uploadImage(stream, src, name, description, europaBackend)
 }
 
-func uploadImage(stream pb.Satelit_UploadImageClient, src io.Reader, name, description string) (*pb.Image, error) {
+func uploadImage(stream pb.Satelit_UploadImageClient, src io.Reader, name, description, europaBackend string) (*pb.Image, error) {
 	meta := &pb.UploadImageRequest{
 		Value: &pb.UploadImageRequest_Meta{
 			Meta: &pb.UploadImageRequestMeta{
-				Name:        name,
-				Description: description,
+				Name:              name,
+				Description:       description,
+				EuropaBackendName: europaBackend,
 			}}}
 	err := stream.Send(meta)
 	if err != nil {
