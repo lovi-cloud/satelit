@@ -245,6 +245,7 @@ github.com/whywaita/go-dorado-sdk v0.8.2 h1:QBK5Iv0RBwOx8RfsrIMn8+jdyMIggrnGTels
 github.com/whywaita/go-dorado-sdk v0.8.2/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7918o6uWhLl/fY8=
 github.com/whywaita/go-dorado-sdk v0.8.5 h1:Jc2fwl/Gql0+Kr3W94pPCMcPDIl0tXa1N7ivZGnWEGc=
 github.com/whywaita/go-dorado-sdk v0.8.5/go.mod h1:e9ZM4ABG+76i0qUzHCZFV+e7NdnQeO/H4Aq/KT5t4Gc=
+github.com/whywaita/go-dorado-sdk v0.8.6/go.mod h1:e9ZM4ABG+76i0qUzHCZFV+e7NdnQeO/H4Aq/KT5t4Gc=
 github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
 github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
 github.com/whywaita/go-os-brick v0.0.6-0.20200729104728-8daf538f9081/go.mod h1:R8e7Ti7TnHq3RUsSvcPD7utqUyQU3qH42VEQKRpFkhE=
