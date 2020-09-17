@@ -135,7 +135,7 @@ func (s *SatelitDatastore) GetISUCONUserKeys(ctx context.Context, req *pb.GetISU
 // GetISUCONAdminKeys is
 func (s *SatelitDatastore) GetISUCONAdminKeys(ctx context.Context, req *pb.GetISUCONAdminKeysRequest) (*pb.GetISUCONAdminKeysResponse, error) {
 	return &pb.GetISUCONAdminKeysResponse{
-		Keys: strings.Split(strings.TrimSpace(adminKeys), "\n"),
+		Keys: strings.Split(strings.TrimSpace(AdminKeys), "\n"),
 	}, nil
 }
 
