@@ -13,7 +13,7 @@ require (
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/whywaita/go-dorado-sdk v0.8.7
+	github.com/whywaita/go-dorado-sdk v0.8.8
 	github.com/whywaita/go-os-brick v0.0.8
 	github.com/whywaita/satelit-isucon v0.0.0-20200923052945-91d6c7429e55
 	github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659
