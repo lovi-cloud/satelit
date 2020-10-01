@@ -13,9 +13,11 @@ require (
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/whywaita/go-dorado-sdk v0.8.6
+	github.com/whywaita/go-dorado-sdk v0.8.8
 	github.com/whywaita/go-os-brick v0.0.8
-	github.com/whywaita/isucon-sshkey v0.0.0-20200907075222-bcd79053e075
+	github.com/whywaita/satelit-isucon v0.0.0-20200923052945-91d6c7429e55
+	github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659
+	github.com/whywaita/satelit-isucon/sshkey v0.0.0-20200923053300-cf351b450037
 	github.com/whywaita/teleskop v0.0.0-20200908054150-a5abdfc311ea
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
@@ -25,5 +27,5 @@ require (
 )
 
 replace (
-    golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
+	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 )

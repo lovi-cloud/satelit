@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/whywaita/satelit-isucon/sshkey"
 	"github.com/whywaita/satelit/pkg/api"
-
-	isucon_sshkey "github.com/whywaita/isucon-sshkey"
 	"go.uber.org/zap"
 )
 
@@ -22,13 +21,13 @@ var (
 )
 
 // NewClient create a client of isucon_sshkey and create mock server if dev.
-func NewClient(endpoint, hmacSecretKey string, logger *zap.Logger) (*isucon_sshkey.Client, error) {
+func NewClient(endpoint, hmacSecretKey string, logger *zap.Logger) (*sshkey.Client, error) {
 	if DevEndpoint == endpoint {
 		IsDev = true
 		return NewMockClient(logger)
 	}
 
-	client, err := isucon_sshkey.NewClient(endpoint, hmacSecretKey, logger)
+	client, err := sshkey.NewClient(endpoint, hmacSecretKey, logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ISUCON portal client: %w", err)
 	}
@@ -37,7 +36,7 @@ func NewClient(endpoint, hmacSecretKey string, logger *zap.Logger) (*isucon_sshk
 }
 
 // NewMockClient create mock client for dev.
-func NewMockClient(logger *zap.Logger) (*isucon_sshkey.Client, error) {
+func NewMockClient(logger *zap.Logger) (*sshkey.Client, error) {
 	logger.Debug("detect dev sshkey endpoint. running for mock server")
 
 	mux := http.NewServeMux()
@@ -49,5 +48,5 @@ func NewMockClient(logger *zap.Logger) (*isucon_sshkey.Client, error) {
 
 	ts := httptest.NewServer(mux)
 
-	return isucon_sshkey.NewClient(ts.URL, "dev", logger)
+	return sshkey.NewClient(ts.URL, "dev", logger)
 }

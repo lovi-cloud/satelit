@@ -246,6 +246,8 @@ github.com/whywaita/go-dorado-sdk v0.8.2/go.mod h1:13zbB0bmCXK4f7F3MsS2e+1mxmnF7
 github.com/whywaita/go-dorado-sdk v0.8.5 h1:Jc2fwl/Gql0+Kr3W94pPCMcPDIl0tXa1N7ivZGnWEGc=
 github.com/whywaita/go-dorado-sdk v0.8.5/go.mod h1:e9ZM4ABG+76i0qUzHCZFV+e7NdnQeO/H4Aq/KT5t4Gc=
 github.com/whywaita/go-dorado-sdk v0.8.6/go.mod h1:e9ZM4ABG+76i0qUzHCZFV+e7NdnQeO/H4Aq/KT5t4Gc=
+github.com/whywaita/go-dorado-sdk v0.8.7/go.mod h1:PjY2zSTkR29rcZ1yK1rOHMCWLruzi2dyHF2DHPLqNgc=
+github.com/whywaita/go-dorado-sdk v0.8.8/go.mod h1:PjY2zSTkR29rcZ1yK1rOHMCWLruzi2dyHF2DHPLqNgc=
 github.com/whywaita/go-os-brick v0.0.4 h1:9dC9HWIVvDqdQ5UPY9hXB+t29lSWbdyEnfSpCiFkD4c=
 github.com/whywaita/go-os-brick v0.0.4/go.mod h1:nisSV9issnE33kG0yP3t4m5Kc7baVM2Hbst0VLR913I=
 github.com/whywaita/go-os-brick v0.0.6-0.20200729104728-8daf538f9081/go.mod h1:R8e7Ti7TnHq3RUsSvcPD7utqUyQU3qH42VEQKRpFkhE=
@@ -258,6 +260,15 @@ github.com/whywaita/isucon-sshkey v0.0.0-20200907075222-bcd79053e075/go.mod h1:t
 github.com/whywaita/satelit v0.0.0-20200629011315-af9b8a815397/go.mod h1:wBAQMYTXiIAr0wMr6pJxy+P+ULtLfdEYPhJd11m/TaY=
 github.com/whywaita/satelit v0.0.0-20200811075629-01e2712998d9/go.mod h1:qI/++kjgw1Im1p2M8GU4DDfG4onQEt2qo+CMVzQ1lwA=
 github.com/whywaita/satelit v0.0.0-20200908043918-79310a8647f6/go.mod h1:j3a9O6IrSS+c+FzQRviIZ6yiRHQV+n/G7o71nQOIZrM=
+github.com/whywaita/satelit-isucon v0.0.0-20200923052945-91d6c7429e55 h1:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+github.com/whywaita/satelit-isucon v0.0.0-20200923052945-91d6c7429e55/go.mod h1:25rmRAVwywMAokHhVJlDyst4Gs/zIlryN7+tkezeuKU=
+github.com/whywaita/satelit-isucon v0.0.0-20200923053300-cf351b450037 h1:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923052945-91d6c7429e55 h1:KM/2JyoSE12yye57vo+HpkRa85f48dOZMuhtl6PvnU0=
+github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923052945-91d6c7429e55/go.mod h1:T18WpPk7I2MumhqYlpKekIpncZzCvnGTCPHWlnzoDqc=
+github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659 h1:3m0ga5zXA5h61WNtUgHTPT+l/fKfIZgtmbKsIsoPj48=
+github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659/go.mod h1:T18WpPk7I2MumhqYlpKekIpncZzCvnGTCPHWlnzoDqc=
+github.com/whywaita/satelit-isucon/sshkey v0.0.0-20200923053300-cf351b450037 h1:Xm4aBs+vEbnJ2/K6DGOz4OBDiLD5wds7j2L1LhXjnkA=
+github.com/whywaita/satelit-isucon/sshkey v0.0.0-20200923053300-cf351b450037/go.mod h1:wQX2uu9Se8Ny5Ejpn6HOnOOWp6n+7oNyaN2xwPaPXNc=
 github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa h1:vlnYupjXyYDZsy+nXFTX2yKmKr3a13lAa3V8R5I95eA=
 github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa/go.mod h1:xz/DRKMp9nVLH7biAFcmVturFKzFG8pDJqWcmB9BYUw=
 github.com/whywaita/teleskop v0.0.0-20200817070526-efb1847561df h1:ueRkatloMj+DIv0vJnnsyOEWsRT/psubi/fhZ3gZtgo=
