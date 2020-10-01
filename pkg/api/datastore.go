@@ -6,8 +6,8 @@ import (
 	"net"
 	"strings"
 
-	isucon_sshkey "github.com/whywaita/isucon-sshkey"
-	"github.com/whywaita/satelit/pkg/api/team"
+	"github.com/whywaita/satelit-isucon/qualify/team"
+	"github.com/whywaita/satelit-isucon/sshkey"
 
 	uuid "github.com/satori/go.uuid"
 
@@ -31,7 +31,7 @@ import (
 // A SatelitDatastore is definition of Satelit Datastore API Server
 type SatelitDatastore struct {
 	Datastore datastore.Datastore
-	Client    *isucon_sshkey.Client
+	Client    *sshkey.Client
 }
 
 // Run start gRPC Server
@@ -112,6 +112,13 @@ func (s *SatelitDatastore) GetHostnameByAddress(ctx context.Context, req *pb.Get
 // GetISUCONUserKeys is
 func (s *SatelitDatastore) GetISUCONUserKeys(ctx context.Context, req *pb.GetISUCONUserKeysRequest) (*pb.GetISUCONUserKeysResponse, error) {
 	teamID, err := team.GetTeamID(req.Address)
+	if err == team.ErrTeamIDNotFound {
+		// team id is not found, return blank response
+		return &pb.GetISUCONUserKeysResponse{
+			Keys: []string{},
+		}, nil
+	}
+
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "%+v", err)
 	}
