@@ -6,8 +6,8 @@ import (
 	"net"
 	"strings"
 
-	"github.com/lovi-cloud/satelit-isucon/qualify/team"
-	"github.com/lovi-cloud/satelit-isucon/sshkey"
+	"github.com/whywaita/satelit-isucon/qualify/team"
+	"github.com/whywaita/satelit-isucon/sshkey"
 
 	uuid "github.com/satori/go.uuid"
 
