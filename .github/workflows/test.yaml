@@ -6,7 +6,7 @@ on:
   pull_request: {}
 
 env:
-  GOPRIVATE: "github.com/*"
+  GOPRIVATE: "github.com/lovi-cloud/*,github.com/whywaita/*"
 
 jobs:
   test:
