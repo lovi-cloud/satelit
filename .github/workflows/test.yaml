@@ -19,15 +19,16 @@ jobs:
         - ubuntu-18.04
     steps:
       - name: setup go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
-          go-version: 1.x
+          go-version: 1.14
       - name: checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
       - name: Granting private modules access
         run: |
+          git config --global url."https://whywaita:${{ secrets.GO_MODULES_TOKEN }}@github.com/lovi-cloud".insteadOf "https://github.com/whywaita"
           git config --global url."https://whywaita:${{ secrets.GO_MODULES_TOKEN }}@github.com/lovi-cloud".insteadOf "https://github.com/lovi-cloud"
       - name: lint
         run: |
