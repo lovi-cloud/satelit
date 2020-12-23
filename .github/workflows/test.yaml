@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 1
       - name: Granting private modules access
         run: |
-          git config --global url."https://whywaita:${{ secrets.GO_MODULES_TOKEN }}@github.com/lovi-cloud".insteadOf "https://github.com/whywaita"
+          git config --global url."https://whywaita:${{ secrets.GO_MODULES_TOKEN }}@github.com/whywaita".insteadOf "https://github.com/whywaita"
           git config --global url."https://whywaita:${{ secrets.GO_MODULES_TOKEN }}@github.com/lovi-cloud".insteadOf "https://github.com/lovi-cloud"
       - name: lint
         run: |
