@@ -41,3 +41,6 @@ jobs:
       - name: test
         run: |
           make test
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ always() }}
