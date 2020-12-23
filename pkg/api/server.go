@@ -15,14 +15,14 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/grpc"
 
-	pb "github.com/whywaita/satelit/api/satelit"
-	"github.com/whywaita/satelit/internal/config"
-	"github.com/whywaita/satelit/internal/logger"
-	"github.com/whywaita/satelit/pkg/datastore"
-	"github.com/whywaita/satelit/pkg/europa"
-	"github.com/whywaita/satelit/pkg/ganymede"
-	"github.com/whywaita/satelit/pkg/ipam"
-	"github.com/whywaita/satelit/pkg/scheduler"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
+	"github.com/lovi-cloud/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/pkg/scheduler"
 )
 
 // A SatelitServer is definition of Satlite API Server

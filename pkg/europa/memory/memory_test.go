@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	datastoreMemory "github.com/whywaita/satelit/pkg/datastore/memory"
+	datastoreMemory "github.com/lovi-cloud/satelit/pkg/datastore/memory"
 
 	uuid "github.com/satori/go.uuid"
 )

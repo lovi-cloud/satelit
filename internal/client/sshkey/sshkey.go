@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/whywaita/satelit-isucon/sshkey"
-	"github.com/whywaita/satelit/pkg/api"
+	"github.com/lovi-cloud/satelit-isucon/sshkey"
+	"github.com/lovi-cloud/satelit/pkg/api"
 	"go.uber.org/zap"
 )
 

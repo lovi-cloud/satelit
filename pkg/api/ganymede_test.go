@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	uuid "github.com/satori/go.uuid"
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/go-test/deep"
-	pb "github.com/whywaita/satelit/api/satelit"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
 )
 
 func TestSatelitServer_AddVirtualMachine(t *testing.T) {

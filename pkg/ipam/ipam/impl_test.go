@@ -8,9 +8,9 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/internal/mysql/types"
-	"github.com/whywaita/satelit/pkg/datastore/memory"
-	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/pkg/datastore/memory"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
 )
 
 func TestServerCreateSubnet(t *testing.T) {

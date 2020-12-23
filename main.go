@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/whywaita/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/logger"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/whywaita/satelit/cmd"
+	"github.com/lovi-cloud/satelit/cmd"
 )
 
 var (

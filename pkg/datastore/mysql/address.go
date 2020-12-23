@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	uuid "github.com/satori/go.uuid"
-	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
 )
 
 // CreateAddress create a address

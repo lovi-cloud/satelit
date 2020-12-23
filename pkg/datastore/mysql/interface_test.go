@@ -10,9 +10,9 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	uuid "github.com/satori/go.uuid"
-	"github.com/whywaita/satelit/internal/testutils"
-	"github.com/whywaita/satelit/pkg/europa"
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/internal/testutils"
+	"github.com/lovi-cloud/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
 
 const (

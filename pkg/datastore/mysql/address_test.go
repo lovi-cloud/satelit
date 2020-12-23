@@ -8,8 +8,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/internal/testutils"
-	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/internal/testutils"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
 )
 
 func TestMySQL_CreateAddress(t *testing.T) {
