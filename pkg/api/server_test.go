@@ -8,26 +8,26 @@ import (
 	"net"
 	"testing"
 
-	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 
-	"github.com/whywaita/satelit/pkg/scheduler/scheduler"
+	"github.com/lovi-cloud/satelit/pkg/scheduler/scheduler"
 
-	"github.com/whywaita/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
 
-	dspb "github.com/whywaita/satelit/api/satelit_datastore"
+	dspb "github.com/lovi-cloud/satelit/api/satelit_datastore"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 
-	pb "github.com/whywaita/satelit/api/satelit"
-	"github.com/whywaita/satelit/internal/client/teleskop"
-	"github.com/whywaita/satelit/internal/logger"
-	"github.com/whywaita/satelit/internal/testutils"
-	datastoreMemory "github.com/whywaita/satelit/pkg/datastore/memory"
-	europaMemory "github.com/whywaita/satelit/pkg/europa/memory"
-	"github.com/whywaita/satelit/pkg/ganymede"
-	ganymedeMemory "github.com/whywaita/satelit/pkg/ganymede/memory"
-	"github.com/whywaita/satelit/pkg/ipam/ipam"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
+	"github.com/lovi-cloud/satelit/internal/client/teleskop"
+	"github.com/lovi-cloud/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/testutils"
+	datastoreMemory "github.com/lovi-cloud/satelit/pkg/datastore/memory"
+	europaMemory "github.com/lovi-cloud/satelit/pkg/europa/memory"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
+	ganymedeMemory "github.com/lovi-cloud/satelit/pkg/ganymede/memory"
+	"github.com/lovi-cloud/satelit/pkg/ipam/ipam"
 )
 
 func TestSanitizeImageSize(t *testing.T) {

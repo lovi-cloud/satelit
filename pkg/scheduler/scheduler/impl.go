@@ -7,9 +7,9 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/datastore"
-	"github.com/whywaita/satelit/pkg/ganymede"
-	"github.com/whywaita/satelit/pkg/scheduler"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/scheduler"
 )
 
 // Scheduler is implementation used datastore.

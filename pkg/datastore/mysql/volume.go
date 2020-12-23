@@ -9,7 +9,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 )
 
 // ListVolume retrieves multi volumes from MySQL IN query

@@ -6,7 +6,7 @@ services:
     volumes:
       - ./configs/satelit.yaml:/satelit.yaml
     command:
-      - /go/src/github.com/whywaita/satelit/satelit
+      - /go/src/github.com/lovi-cloud/satelit/satelit
       - -conf
       - /satelit.yaml
     environment:

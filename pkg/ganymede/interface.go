@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/whywaita/satelit/api/satelit"
-	dspb "github.com/whywaita/satelit/api/satelit_datastore"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
+	dspb "github.com/lovi-cloud/satelit/api/satelit_datastore"
 
 	uuid "github.com/satori/go.uuid"
 )

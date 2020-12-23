@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
 
 // GetHypervisor retrieve hypervisor

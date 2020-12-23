@@ -5,14 +5,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 
-	"github.com/whywaita/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/logger"
 
+	pb "github.com/lovi-cloud/satelit/api/satelit"
+	"github.com/lovi-cloud/satelit/internal/client/teleskop"
+	agentpb "github.com/lovi-cloud/teleskop/protoc/agent"
 	uuid "github.com/satori/go.uuid"
-	pb "github.com/whywaita/satelit/api/satelit"
-	"github.com/whywaita/satelit/internal/client/teleskop"
-	agentpb "github.com/whywaita/teleskop/protoc/agent"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
