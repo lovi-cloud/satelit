@@ -11,7 +11,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/internal/client/teleskop"
+	"github.com/lovi-cloud/satelit/internal/client/teleskop"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -20,12 +20,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/whywaita/satelit/api/satelit_datastore"
-	"github.com/whywaita/satelit/internal/config"
-	"github.com/whywaita/satelit/internal/logger"
-	"github.com/whywaita/satelit/internal/mysql/types"
-	"github.com/whywaita/satelit/pkg/datastore"
-	"github.com/whywaita/satelit/pkg/ganymede"
+	pb "github.com/lovi-cloud/satelit/api/satelit_datastore"
+	"github.com/lovi-cloud/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
 
 // A SatelitDatastore is definition of Satelit Datastore API Server

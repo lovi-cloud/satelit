@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/whywaita/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
 
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
-	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 )
 
 // A Memory is backend of europa by in-memory for testing.

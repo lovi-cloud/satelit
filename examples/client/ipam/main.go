@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	pb "github.com/whywaita/satelit/api/satelit"
-	"github.com/whywaita/satelit/internal/config"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
+	"github.com/lovi-cloud/satelit/internal/config"
 	"google.golang.org/grpc"
 )
 

@@ -5,10 +5,10 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/internal/mysql/types"
-	"github.com/whywaita/satelit/pkg/europa"
-	"github.com/whywaita/satelit/pkg/ganymede"
-	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
 )
 
 // A Datastore is type definition of data store.

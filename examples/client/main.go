@@ -11,7 +11,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/whywaita/satelit/api/satelit"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
 )
 
 func main() {

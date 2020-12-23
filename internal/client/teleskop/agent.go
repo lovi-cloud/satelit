@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/whywaita/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/logger"
 
-	agentpb "github.com/whywaita/teleskop/protoc/agent"
+	agentpb "github.com/lovi-cloud/teleskop/protoc/agent"
 	"google.golang.org/grpc"
 )
 

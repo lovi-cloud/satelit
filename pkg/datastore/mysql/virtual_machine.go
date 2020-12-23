@@ -5,8 +5,8 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/internal/mysql/types"
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
 
 // GetVirtualMachine return virtual machine record

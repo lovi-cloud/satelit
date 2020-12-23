@@ -10,10 +10,10 @@ import (
 	"github.com/jmoiron/sqlx"
 	// mysql driver
 	_ "github.com/go-sql-driver/mysql"
-	pb "github.com/whywaita/teleskop/protoc/agent"
+	pb "github.com/lovi-cloud/teleskop/protoc/agent"
 
-	"github.com/whywaita/satelit/internal/client/teleskop"
-	"github.com/whywaita/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/internal/client/teleskop"
+	"github.com/lovi-cloud/satelit/internal/config"
 )
 
 // A MySQL is backend of datastore by MySQL Server

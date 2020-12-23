@@ -4,9 +4,9 @@ import (
 	"context"
 	"net"
 
-	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
 
-	pb "github.com/whywaita/satelit/api/satelit"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

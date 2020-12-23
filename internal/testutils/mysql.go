@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/whywaita/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
 )
 
 const schemaDirRelativePathFormat = "%s/../mysql/%s"

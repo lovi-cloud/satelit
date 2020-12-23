@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/lovi-cloud/go-os-brick/osbrick"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 	uuid "github.com/satori/go.uuid"
-	"github.com/whywaita/go-os-brick/osbrick"
-	"github.com/whywaita/satelit/pkg/europa"
 )
 
 // CreateVolume create raw volume
