@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/whywaita/satelit/internal/testutils"
-	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/internal/testutils"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 )
 
 var testVolume = europa.Volume{

@@ -7,8 +7,8 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/datastore"
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
 
 // Memory is backend of ganymede by in-memory for testing

@@ -7,17 +7,17 @@ import (
 	"os"
 	"strconv"
 
-	agentpb "github.com/whywaita/teleskop/protoc/agent"
+	agentpb "github.com/lovi-cloud/teleskop/protoc/agent"
 
+	"github.com/lovi-cloud/go-dorado-sdk/dorado"
+	"github.com/lovi-cloud/go-os-brick/osbrick"
+	"github.com/lovi-cloud/satelit/internal/client/teleskop"
+	"github.com/lovi-cloud/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/qcow2"
+	"github.com/lovi-cloud/satelit/pkg/datastore"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 	uuid "github.com/satori/go.uuid"
-	"github.com/whywaita/go-dorado-sdk/dorado"
-	"github.com/whywaita/go-os-brick/osbrick"
-	"github.com/whywaita/satelit/internal/client/teleskop"
-	"github.com/whywaita/satelit/internal/config"
-	"github.com/whywaita/satelit/internal/logger"
-	"github.com/whywaita/satelit/internal/qcow2"
-	"github.com/whywaita/satelit/pkg/datastore"
-	"github.com/whywaita/satelit/pkg/europa"
 	"go.uber.org/zap"
 )
 

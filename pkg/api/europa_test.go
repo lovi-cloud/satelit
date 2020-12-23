@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-test/deep"
 
-	pb "github.com/whywaita/satelit/api/satelit"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
 )
 
 const gzipCompressedQcow2String = `

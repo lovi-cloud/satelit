@@ -4,7 +4,7 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
-	pb "github.com/whywaita/satelit/api/satelit"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
 )
 
 // A Volume is volume information

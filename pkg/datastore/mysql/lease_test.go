@@ -9,9 +9,9 @@ import (
 	"github.com/jmoiron/sqlx"
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/internal/mysql/types"
-	"github.com/whywaita/satelit/internal/testutils"
-	"github.com/whywaita/satelit/pkg/ipam"
+	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/internal/testutils"
+	"github.com/lovi-cloud/satelit/pkg/ipam"
 )
 
 const (

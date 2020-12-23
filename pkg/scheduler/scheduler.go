@@ -6,7 +6,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/ganymede"
+	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
 
 // Error values for scheduler

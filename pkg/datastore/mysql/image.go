@@ -5,7 +5,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 )
 
 // GetImage retrieves image object

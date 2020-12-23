@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/whywaita/satelit/internal/testutils"
+	"github.com/lovi-cloud/satelit/internal/testutils"
 )
 
 const (

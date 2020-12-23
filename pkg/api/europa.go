@@ -5,14 +5,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/whywaita/satelit/pkg/europa"
+	"github.com/lovi-cloud/satelit/pkg/europa"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/whywaita/satelit/api/satelit"
-	"github.com/whywaita/satelit/internal/logger"
-	"github.com/whywaita/satelit/internal/qcow2"
+	pb "github.com/lovi-cloud/satelit/api/satelit"
+	"github.com/lovi-cloud/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/internal/qcow2"
 )
 
 // ShowVolume call GetVolume to Europa Backend

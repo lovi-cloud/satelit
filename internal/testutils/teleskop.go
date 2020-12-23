@@ -9,7 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/grpc"
 
-	"github.com/whywaita/teleskop/protoc/agent"
+	"github.com/lovi-cloud/teleskop/protoc/agent"
 )
 
 type dummyTeleskop struct{}
