@@ -153,8 +153,10 @@ github.com/lovi-cloud/go-dorado-sdk v0.8.9 h1:ZzEFYEVWIgAcjTOT+ac197pdGbJXtigNBb
 github.com/lovi-cloud/go-dorado-sdk v0.8.9/go.mod h1:h+uzxkeC93GHZhq3B+F9289qOqPaihkWld/LHX/Zx34=
 github.com/lovi-cloud/go-os-brick v0.1.0 h1:0300IvnsvUJ4K+jhaO38OuTdm9qGvlrBK5raLnFMcGQ=
 github.com/lovi-cloud/go-os-brick v0.1.0/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
+github.com/lovi-cloud/satelit v0.0.0-20201223061605-94b173738d03/go.mod h1:HTI2WUpxBMfn5ahqh/xIy65Yc6mpKaOl4OsKTVMbSp8=
 github.com/lovi-cloud/teleskop v0.0.0-20201223021308-54bc21a5a7ea h1:TmZOItSt4qUnHr7tygt32XF5W5H3X8U1E4P0Bb+cj1o=
 github.com/lovi-cloud/teleskop v0.0.0-20201223021308-54bc21a5a7ea/go.mod h1:VNVqvJTbd52x7Y/fHxLbqcCLn8wfTP9g+Hui9vsne5k=
+github.com/lovi-cloud/teleskop v0.0.0-20210105151047-3c3ebfcc5e9d/go.mod h1:m4wycsUKA8CIOZ4KC40u6ifww+kC2CB7TT8Gg2oLbuc=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/mattn/go-colorable v0.1.4 h1:snbPLB8fVfU9iwbbo30TPtbLRzwWu6aJS6Xh4eaaviA=
@@ -264,6 +266,8 @@ github.com/whywaita/satelit v0.0.0-20200629011315-af9b8a815397/go.mod h1:wBAQMYT
 github.com/whywaita/satelit v0.0.0-20200811075629-01e2712998d9/go.mod h1:qI/++kjgw1Im1p2M8GU4DDfG4onQEt2qo+CMVzQ1lwA=
 github.com/whywaita/satelit v0.0.0-20200908043918-79310a8647f6/go.mod h1:j3a9O6IrSS+c+FzQRviIZ6yiRHQV+n/G7o71nQOIZrM=
 github.com/whywaita/satelit v0.0.0-20200910103850-3de80b06797e/go.mod h1:MzyjTRI9bO9HkbsPJQC5W8eieoTWuJBQ586LQEPYI0w=
+github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659/go.mod h1:T18WpPk7I2MumhqYlpKekIpncZzCvnGTCPHWlnzoDqc=
+github.com/whywaita/satelit-isucon/sshkey v0.0.0-20200923053300-cf351b450037/go.mod h1:wQX2uu9Se8Ny5Ejpn6HOnOOWp6n+7oNyaN2xwPaPXNc=
 github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa h1:vlnYupjXyYDZsy+nXFTX2yKmKr3a13lAa3V8R5I95eA=
 github.com/whywaita/teleskop v0.0.0-20200730093714-232caa2ef4aa/go.mod h1:xz/DRKMp9nVLH7biAFcmVturFKzFG8pDJqWcmB9BYUw=
 github.com/whywaita/teleskop v0.0.0-20200817070526-efb1847561df h1:ueRkatloMj+DIv0vJnnsyOEWsRT/psubi/fhZ3gZtgo=
