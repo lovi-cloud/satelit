@@ -154,9 +154,11 @@ github.com/lovi-cloud/go-dorado-sdk v0.8.9/go.mod h1:h+uzxkeC93GHZhq3B+F9289qOqP
 github.com/lovi-cloud/go-os-brick v0.1.0 h1:0300IvnsvUJ4K+jhaO38OuTdm9qGvlrBK5raLnFMcGQ=
 github.com/lovi-cloud/go-os-brick v0.1.0/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
 github.com/lovi-cloud/satelit v0.0.0-20201223061605-94b173738d03/go.mod h1:HTI2WUpxBMfn5ahqh/xIy65Yc6mpKaOl4OsKTVMbSp8=
+github.com/lovi-cloud/satelit v0.0.0-20210105151220-225b866f3453/go.mod h1:3qKcJ635BFoZnhmC2MgLBaX8PcR6EPeX9GIlBv6XVRg=
 github.com/lovi-cloud/teleskop v0.0.0-20201223021308-54bc21a5a7ea h1:TmZOItSt4qUnHr7tygt32XF5W5H3X8U1E4P0Bb+cj1o=
 github.com/lovi-cloud/teleskop v0.0.0-20201223021308-54bc21a5a7ea/go.mod h1:VNVqvJTbd52x7Y/fHxLbqcCLn8wfTP9g+Hui9vsne5k=
 github.com/lovi-cloud/teleskop v0.0.0-20210105151047-3c3ebfcc5e9d/go.mod h1:m4wycsUKA8CIOZ4KC40u6ifww+kC2CB7TT8Gg2oLbuc=
+github.com/lovi-cloud/teleskop v0.0.0-20210105151628-6e879106f9e2/go.mod h1:Es6/6TlwbFTSbpEyYN3C/jKPqdqZIYZem/e5w5W/+z0=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/mattn/go-colorable v0.1.4 h1:snbPLB8fVfU9iwbbo30TPtbLRzwWu6aJS6Xh4eaaviA=
