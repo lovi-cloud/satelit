@@ -10,7 +10,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lovi-cloud/go-dorado-sdk v0.8.9
 	github.com/lovi-cloud/go-os-brick v0.1.0
-	github.com/lovi-cloud/teleskop v0.0.0-20210105151937-ded363ecdf4c
+	github.com/lovi-cloud/teleskop v0.0.1
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0

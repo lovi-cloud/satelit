@@ -161,6 +161,7 @@ github.com/lovi-cloud/teleskop v0.0.0-20201223021308-54bc21a5a7ea/go.mod h1:VNVq
 github.com/lovi-cloud/teleskop v0.0.0-20210105151047-3c3ebfcc5e9d/go.mod h1:m4wycsUKA8CIOZ4KC40u6ifww+kC2CB7TT8Gg2oLbuc=
 github.com/lovi-cloud/teleskop v0.0.0-20210105151628-6e879106f9e2/go.mod h1:Es6/6TlwbFTSbpEyYN3C/jKPqdqZIYZem/e5w5W/+z0=
 github.com/lovi-cloud/teleskop v0.0.0-20210105151937-ded363ecdf4c/go.mod h1:UkLj/jIk4JMh6yqJaLz6tEFWxkM76sQ38iRChUIdNCo=
+github.com/lovi-cloud/teleskop v0.0.1/go.mod h1:UkLj/jIk4JMh6yqJaLz6tEFWxkM76sQ38iRChUIdNCo=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/mattn/go-colorable v0.1.4 h1:snbPLB8fVfU9iwbbo30TPtbLRzwWu6aJS6Xh4eaaviA=
