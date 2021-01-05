@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/lovi-cloud/go-os-brick/osbrick"
-	"github.com/lovi-cloud/satelit/internal/client/sshkey"
 	"github.com/lovi-cloud/satelit/internal/client/teleskop"
 	"github.com/lovi-cloud/satelit/internal/config"
 	"github.com/lovi-cloud/satelit/internal/logger"
@@ -81,14 +80,7 @@ func NewSatelitDatastore() (*api.SatelitDatastore, error) {
 		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
-	p := config.GetValue().Portal
-	client, err := sshkey.NewClient(p.Endpoint, p.HMACSecretKey, logger.Logger)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create ISUCON portal client: %w", err)
-	}
-
 	return &api.SatelitDatastore{
 		Datastore: ds,
-		Client:    client,
 	}, nil
 }

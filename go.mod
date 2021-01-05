@@ -14,8 +14,6 @@ require (
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659
-	github.com/whywaita/satelit-isucon/sshkey v0.0.0-20200923053300-cf351b450037
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	google.golang.org/grpc v1.31.1

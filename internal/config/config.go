@@ -55,7 +55,6 @@ type YAML struct {
 	MySQLConfig MySQLConfig `yaml:"mysql"`
 	Teleskop    Teleskop    `yaml:"teleskop"`
 	Dorado      []Dorado    `yaml:"dorado"`
-	Portal      Portal      `yaml:"portal"`
 	LogLevel    string      `yaml:"log_level"`
 }
 
