@@ -10,12 +10,10 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lovi-cloud/go-dorado-sdk v0.8.9
 	github.com/lovi-cloud/go-os-brick v0.1.0
-	github.com/lovi-cloud/teleskop v0.0.0-20201223021308-54bc21a5a7ea
+	github.com/lovi-cloud/teleskop v0.0.0-20210105151937-ded363ecdf4c
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/whywaita/satelit-isucon/qualify/team v0.0.0-20200923053817-268b6eacd659
-	github.com/whywaita/satelit-isucon/sshkey v0.0.0-20200923053300-cf351b450037
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	google.golang.org/grpc v1.31.1
