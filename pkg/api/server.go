@@ -16,8 +16,8 @@ import (
 	"google.golang.org/grpc"
 
 	pb "github.com/lovi-cloud/satelit/api/satelit"
-	"github.com/lovi-cloud/satelit/internal/config"
 	"github.com/lovi-cloud/satelit/internal/logger"
+	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore"
 	"github.com/lovi-cloud/satelit/pkg/europa"
 	"github.com/lovi-cloud/satelit/pkg/ganymede"
