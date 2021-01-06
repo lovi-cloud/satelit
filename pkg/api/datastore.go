@@ -18,9 +18,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/lovi-cloud/satelit/api/satelit_datastore"
-	"github.com/lovi-cloud/satelit/internal/config"
 	"github.com/lovi-cloud/satelit/internal/logger"
 	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore"
 	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )

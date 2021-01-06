@@ -6,9 +6,9 @@ import (
 
 	"github.com/lovi-cloud/go-os-brick/osbrick"
 	"github.com/lovi-cloud/satelit/internal/client/teleskop"
-	"github.com/lovi-cloud/satelit/internal/config"
 	"github.com/lovi-cloud/satelit/internal/logger"
 	"github.com/lovi-cloud/satelit/pkg/api"
+	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore/mysql"
 	"github.com/lovi-cloud/satelit/pkg/europa"
 	"github.com/lovi-cloud/satelit/pkg/europa/dorado"
