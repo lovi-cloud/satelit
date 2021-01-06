@@ -6,7 +6,7 @@ import (
 	"os"
 
 	pb "github.com/lovi-cloud/satelit/api/satelit"
-	"github.com/lovi-cloud/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/pkg/config"
 	"google.golang.org/grpc"
 )
 
