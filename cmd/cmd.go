@@ -11,7 +11,7 @@ import (
 	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore/mysql"
 	"github.com/lovi-cloud/satelit/pkg/europa"
-	"github.com/lovi-cloud/satelit/pkg/europa/dorado"
+	"github.com/lovi-cloud/satelit/pkg/europa/targetd"
 	"github.com/lovi-cloud/satelit/pkg/ganymede/libvirt"
 	"github.com/lovi-cloud/satelit/pkg/ipam/ipam"
 	"github.com/lovi-cloud/satelit/pkg/scheduler/scheduler"
@@ -42,14 +42,20 @@ func NewSatelit() (*api.SatelitServer, error) {
 		return nil, fmt.Errorf("failed to create mysql connection: %w", err)
 	}
 
-	dorados := map[string]europa.Europa{}
-	for _, c := range config.GetValue().Dorado {
-		doradoBackend, err := dorado.New(c, ds)
+	targetds := map[string]europa.Europa{}
+	for _, c := range config.GetValue().Targetd {
+		targetdBackend, err := targetd.New(
+			c.APIEndpoint,
+			c.Username,
+			c.Password,
+			c.PoolName,
+			c.BackendName,
+			ds,
+		)
 		if err != nil {
-			return nil, fmt.Errorf("failed to create Dorado Backend: %w", err)
+			return nil, fmt.Errorf("failed to create targetd backend: %w", err)
 		}
-
-		dorados[c.BackendName] = doradoBackend
+		targetds[c.BackendName] = targetdBackend
 	}
 
 	ipamBackend := ipam.New(ds)
@@ -64,7 +70,7 @@ func NewSatelit() (*api.SatelitServer, error) {
 	schedulerBackend := scheduler.New(ds)
 
 	return &api.SatelitServer{
-		Europa:    dorados,
+		Europa:    targetds,
 		IPAM:      ipamBackend,
 		Datastore: ds,
 		Ganymede:  libvirtBackend,
