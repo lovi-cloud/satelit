@@ -2,6 +2,7 @@ package ganymede
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	pb "github.com/lovi-cloud/satelit/api/satelit"
@@ -133,13 +134,13 @@ type HyperVisor struct {
 type NUMANode struct {
 	UUID            uuid.UUID `db:"uuid"`
 	CorePairs       []CorePair
-	PhysicalCoreMin uint32    `db:"physical_core_min"`
-	PhysicalCoreMax uint32    `db:"physical_core_max"`
-	LogicalCoreMin  uint32    `db:"logical_core_min"`
-	LogicalCoreMax  uint32    `db:"logical_core_max"`
-	HypervisorID    int       `db:"hypervisor_id"`
-	CreatedAt       time.Time `db:"created_at"`
-	UpdatedAt       time.Time `db:"updated_at"`
+	PhysicalCoreMin uint32        `db:"physical_core_min"`
+	PhysicalCoreMax uint32        `db:"physical_core_max"`
+	LogicalCoreMin  sql.NullInt32 `db:"logical_core_min"`
+	LogicalCoreMax  sql.NullInt32 `db:"logical_core_max"`
+	HypervisorID    int           `db:"hypervisor_id"`
+	CreatedAt       time.Time     `db:"created_at"`
+	UpdatedAt       time.Time     `db:"updated_at"`
 }
 
 // ToPb convert to type for proto
@@ -153,27 +154,41 @@ func (node *NUMANode) ToPb() *dspb.NumaNode {
 		Pairs:           pairs,
 		PhysicalCoreMin: node.PhysicalCoreMin,
 		PhysicalCoreMax: node.PhysicalCoreMax,
-		LogicalCoreMin:  node.LogicalCoreMin,
-		LogicalCoreMax:  node.LogicalCoreMax,
+		LogicalCoreMin:  toPbUint32(node.LogicalCoreMin),
+		LogicalCoreMax:  toPbUint32(node.LogicalCoreMax),
 	}
 }
 
 // CorePair is pair of cpu core
 type CorePair struct {
-	UUID         uuid.UUID `db:"uuid"`
-	PhysicalCore uint32    `db:"physical_core_number"`
-	LogicalCore  uint32    `db:"logical_core_number"`
-	NUMANodeID   uuid.UUID `db:"numa_node_id"`
-	CreatedAt    time.Time `db:"created_at"`
-	UpdatedAt    time.Time `db:"updated_at"`
+	UUID         uuid.UUID     `db:"uuid"`
+	PhysicalCore uint32        `db:"physical_core_number"`
+	LogicalCore  sql.NullInt32 `db:"logical_core_number"`
+	NUMANodeID   uuid.UUID     `db:"numa_node_id"`
+	CreatedAt    time.Time     `db:"created_at"`
+	UpdatedAt    time.Time     `db:"updated_at"`
 }
 
 // ToPb convert to type for proto
 func (cp *CorePair) ToPb() *dspb.CorePair {
 	return &dspb.CorePair{
 		PhysicalCore: cp.PhysicalCore,
-		LogicalCore:  cp.LogicalCore,
+		LogicalCore:  toPbUint32(cp.LogicalCore),
 	}
+}
+
+// toPbUint32 convert to *uint32 from sql.NullInt32.
+func toPbUint32(i sql.NullInt32) *uint32 {
+	var result *uint32
+
+	if i.Valid {
+		r := uint32(i.Int32)
+		result = &r
+	} else {
+		result = nil
+	}
+
+	return result
 }
 
 // CPUPinningGroup is group of cpu cores.
