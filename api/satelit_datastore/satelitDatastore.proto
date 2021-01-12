@@ -53,16 +53,16 @@ message ListBridgeResponse {
 }
 
 message CorePair {
-  uint32 physical_core = 1;
-  uint32 logical_core  = 2;
+  uint32          physical_core = 1;
+  optional uint32 logical_core  = 2;
 }
 
 message NumaNode {
   repeated CorePair pairs             = 1;
   uint32            physical_core_min = 2;
   uint32            physical_core_max = 3;
-  uint32            logical_core_min  = 4;
-  uint32            logical_core_max  = 5;
+  optional uint32   logical_core_min  = 4;
+  optional uint32   logical_core_max  = 5;
 }
 
 message RegisterTeleskopAgentRequest {
