@@ -2,6 +2,7 @@ package mysql_test
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"testing"
 	"time"
@@ -12,9 +13,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	uuid "github.com/satori/go.uuid"
 	"github.com/lovi-cloud/satelit/internal/testutils"
 	"github.com/lovi-cloud/satelit/pkg/ganymede"
+	uuid "github.com/satori/go.uuid"
 )
 
 const (
@@ -265,26 +266,38 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 						{
 							UUID:         testCorePairUUIDs[0],
 							PhysicalCore: 0,
-							LogicalCore:  5,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 5,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 						{
 							UUID:         testCorePairUUIDs[1],
 							PhysicalCore: 1,
-							LogicalCore:  6,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 6,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 						{
 							UUID:         testCorePairUUIDs[2],
 							PhysicalCore: 2,
-							LogicalCore:  7,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 7,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 						{
 							UUID:         testCorePairUUIDs[3],
 							PhysicalCore: 3,
-							LogicalCore:  8,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 8,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 					},
 				},
@@ -303,14 +316,20 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 						{
 							UUID:         testCorePairUUIDs[2],
 							PhysicalCore: 2,
-							LogicalCore:  7,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 7,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 						{
 							UUID:         testCorePairUUIDs[3],
 							PhysicalCore: 3,
-							LogicalCore:  8,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 8,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 					},
 				},
@@ -357,7 +376,7 @@ func TestMySQL_GetAvailableCorePair(t *testing.T) {
 			got = setFakeTimeNUMANodes(got)
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -377,15 +396,24 @@ func TestMySQL_GetCPUCorePair(t *testing.T) {
 				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
-					LogicalCore:  41,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+					LogicalCore: sql.NullInt32{
+						Int32: 41,
+						Valid: true,
+					},
+					NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 				},
 			},
 			PhysicalCoreMin: 0,
 			PhysicalCoreMax: 40,
-			LogicalCoreMin:  41,
-			LogicalCoreMax:  80,
-			HypervisorID:    hypervisorID,
+			LogicalCoreMin: sql.NullInt32{
+				Int32: 41,
+				Valid: true,
+			},
+			LogicalCoreMax: sql.NullInt32{
+				Int32: 80,
+				Valid: true,
+			},
+			HypervisorID: hypervisorID,
 		},
 	}
 	err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID)
@@ -403,8 +431,11 @@ func TestMySQL_GetCPUCorePair(t *testing.T) {
 			want: &ganymede.CorePair{
 				UUID:         uuid.FromStringOrNil(testCorePairUUID),
 				PhysicalCore: 0,
-				LogicalCore:  41,
-				NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+				LogicalCore: sql.NullInt32{
+					Int32: 41,
+					Valid: true,
+				},
+				NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 			},
 			err: false,
 		},
@@ -423,7 +454,7 @@ func TestMySQL_GetCPUCorePair(t *testing.T) {
 			got.UpdatedAt = time.Time{}
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }
@@ -451,15 +482,24 @@ func TestMySQL_GetPinnedCoreByPinningGroup(t *testing.T) {
 				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
-					LogicalCore:  41,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+					LogicalCore: sql.NullInt32{
+						Int32: 41,
+						Valid: true,
+					},
+					NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 				},
 			},
 			PhysicalCoreMin: 0,
 			PhysicalCoreMax: 40,
-			LogicalCoreMin:  41,
-			LogicalCoreMax:  80,
-			HypervisorID:    hypervisorID,
+			LogicalCoreMin: sql.NullInt32{
+				Int32: 41,
+				Valid: true,
+			},
+			LogicalCoreMax: sql.NullInt32{
+				Int32: 80,
+				Valid: true,
+			},
+			HypervisorID: hypervisorID,
 		},
 	}
 	if err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID); err != nil {
@@ -535,15 +575,24 @@ func TestMySQL_PutPinnedCore(t *testing.T) {
 				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
-					LogicalCore:  41,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+					LogicalCore: sql.NullInt32{
+						Int32: 41,
+						Valid: true,
+					},
+					NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 				},
 			},
 			PhysicalCoreMin: 0,
 			PhysicalCoreMax: 40,
-			LogicalCoreMin:  41,
-			LogicalCoreMax:  80,
-			HypervisorID:    hypervisorID,
+			LogicalCoreMin: sql.NullInt32{
+				Int32: 41,
+				Valid: true,
+			},
+			LogicalCoreMax: sql.NullInt32{
+				Int32: 80,
+				Valid: true,
+			},
+			HypervisorID: hypervisorID,
 		},
 	}
 	if err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID); err != nil {
@@ -616,15 +665,24 @@ func TestMySQL_DeletePinnedCore(t *testing.T) {
 				{
 					UUID:         uuid.FromStringOrNil(testCorePairUUID),
 					PhysicalCore: 0,
-					LogicalCore:  41,
-					NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+					LogicalCore: sql.NullInt32{
+						Int32: 41,
+						Valid: true,
+					},
+					NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 				},
 			},
 			PhysicalCoreMin: 0,
 			PhysicalCoreMax: 40,
-			LogicalCoreMin:  41,
-			LogicalCoreMax:  80,
-			HypervisorID:    hypervisorID,
+			LogicalCoreMin: sql.NullInt32{
+				Int32: 41,
+				Valid: true,
+			},
+			LogicalCoreMax: sql.NullInt32{
+				Int32: 80,
+				Valid: true,
+			},
+			HypervisorID: hypervisorID,
 		},
 	}
 	if err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID); err != nil {
@@ -721,11 +779,15 @@ func setFakePinnedCore(testDatastore datastore.Datastore, corePairUUIDs []uuid.U
 	var pairs []ganymede.CorePair
 	logicalOffset := len(corePairUUIDs) + 1
 	for i, cpUUID := range corePairUUIDs {
+
 		cp := ganymede.CorePair{
 			UUID:         cpUUID,
 			PhysicalCore: uint32(i),
-			LogicalCore:  uint32(i + logicalOffset),
-			NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+			LogicalCore: sql.NullInt32{
+				Int32: int32(i + logicalOffset),
+				Valid: true,
+			},
+			NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 		}
 		pairs = append(pairs, cp)
 	}
@@ -748,9 +810,15 @@ func setFakePinnedCore(testDatastore datastore.Datastore, corePairUUIDs []uuid.U
 			CorePairs:       pairs,
 			PhysicalCoreMin: 0,
 			PhysicalCoreMax: uint32(len(corePairUUIDs) - 1),
-			LogicalCoreMin:  uint32(logicalOffset),
-			LogicalCoreMax:  uint32(len(corePairUUIDs) * 2),
-			HypervisorID:    hypervisorID,
+			LogicalCoreMin: sql.NullInt32{
+				Int32: int32(logicalOffset),
+				Valid: true,
+			},
+			LogicalCoreMax: sql.NullInt32{
+				Int32: int32(len(corePairUUIDs) * 2),
+				Valid: true,
+			},
+			HypervisorID: hypervisorID,
 		},
 	}
 	if err = testDatastore.PutHypervisorNUMANode(context.Background(), nodes, hypervisorID); err != nil {
