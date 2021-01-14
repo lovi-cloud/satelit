@@ -67,11 +67,7 @@ func (t *Targetd) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB i
 		return nil, fmt.Errorf("failed to get volume (name: %s): %w", name.String(), err)
 	}
 
-	vol, err := t.toVolume(*v, false, "")
-	if err != nil {
-		return nil, fmt.Errorf("failed to get europa.Volume: %w", err)
-	}
-
+	vol := t.toVolume(*v, false, "")
 	if err := t.datastore.PutVolume(ctx, *vol); err != nil {
 		return nil, fmt.Errorf("failed to put volume to datastore (ID: %s): %w", vol.ID, err)
 	}
@@ -131,10 +127,10 @@ func (t *Targetd) GetVolume(ctx context.Context, id string) (*europa.Volume, err
 	}
 	logger.Logger.Debug(fmt.Sprintf("successfully retrieves volume from datastore: %+v", vd))
 
-	return t.toVolume(*vol, vd.Attached, vd.HostName)
+	return t.toVolume(*vol, vd.Attached, vd.HostName), nil
 }
 
-func (t *Targetd) toVolume(vol targetd.Volume, isAttached bool, hostname string) (*europa.Volume, error) {
+func (t *Targetd) toVolume(vol targetd.Volume, isAttached bool, hostname string) *europa.Volume {
 	v := &europa.Volume{}
 	v.ID = vol.Name
 
@@ -145,7 +141,7 @@ func (t *Targetd) toVolume(vol targetd.Volume, isAttached bool, hostname string)
 	v.HostName = hostname
 	v.BackendName = t.backendName
 
-	return v, nil
+	return v
 }
 
 // AttachVolumeTeleskop attach volume to hostname (running teleskop)
@@ -316,6 +312,20 @@ func (t *Targetd) UploadImage(ctx context.Context, image []byte, name, descripti
 
 // DeleteImage delete image
 func (t *Targetd) DeleteImage(ctx context.Context, id uuid.UUID) error {
+	image, err := t.datastore.GetImage(id)
+	if err != nil {
+		return fmt.Errorf("failed to get image from datastore: %w", err)
+	}
+
+	// TODO: check attached status
+
+	if err := t.DeleteVolume(ctx, image.CacheVolumeID); err != nil {
+		return fmt.Errorf("failed to delete image cache volume: %w", err)
+	}
+	if err = t.datastore.DeleteImage(id); err != nil {
+		return fmt.Errorf("failed to delete datastore: %w", err)
+	}
+
 	return nil
 }
 
