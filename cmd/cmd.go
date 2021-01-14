@@ -50,6 +50,7 @@ func NewSatelit() (*api.SatelitServer, error) {
 			c.Password,
 			c.PoolName,
 			c.BackendName,
+			c.PortalIP,
 			ds,
 		)
 		if err != nil {

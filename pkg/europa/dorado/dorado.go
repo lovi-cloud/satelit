@@ -13,7 +13,6 @@ import (
 	"github.com/lovi-cloud/go-os-brick/osbrick"
 	"github.com/lovi-cloud/satelit/internal/client/teleskop"
 	"github.com/lovi-cloud/satelit/internal/logger"
-	"github.com/lovi-cloud/satelit/internal/qcow2"
 	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore"
 	"github.com/lovi-cloud/satelit/pkg/europa"
@@ -405,7 +404,7 @@ func (d *Dorado) UploadImage(ctx context.Context, image []byte, name, descriptio
 	}
 
 	// exec qemu-img convert
-	err = qcow2.ToRaw(ctx, tmpfile.Name(), deviceName)
+	err = osbrick.QEMUToRaw(ctx, tmpfile.Name(), deviceName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert raw format: %w", err)
 	}

@@ -117,6 +117,14 @@ github.com/lovi-cloud/go-dorado-sdk v0.8.9 h1:ZzEFYEVWIgAcjTOT+ac197pdGbJXtigNBb
 github.com/lovi-cloud/go-dorado-sdk v0.8.9/go.mod h1:h+uzxkeC93GHZhq3B+F9289qOqPaihkWld/LHX/Zx34=
 github.com/lovi-cloud/go-os-brick v0.1.0 h1:0300IvnsvUJ4K+jhaO38OuTdm9qGvlrBK5raLnFMcGQ=
 github.com/lovi-cloud/go-os-brick v0.1.0/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
+github.com/lovi-cloud/go-os-brick v0.1.1-0.20210114152143-aef207b52951 h1:irSZ56hPzKZgVcNkbOO6P9JDPT+dGcJMzP1oYvAB0eI=
+github.com/lovi-cloud/go-os-brick v0.1.1-0.20210114152143-aef207b52951/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
+github.com/lovi-cloud/go-os-brick v0.1.1-0.20210114153818-00204afff9ac h1:PPasTObRY0R2XvjKxbssr0wevesz92HQGMaI1amg614=
+github.com/lovi-cloud/go-os-brick v0.1.1-0.20210114153818-00204afff9ac/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
+github.com/lovi-cloud/go-os-brick v0.1.1-0.20210114154231-77084a8caf24 h1:/ypaiSJ4mbyNW1NJ1nGgvlnPrYUswN/VfkBAO577ILI=
+github.com/lovi-cloud/go-os-brick v0.1.1-0.20210114154231-77084a8caf24/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
+github.com/lovi-cloud/go-os-brick v0.2.0 h1:lYZ9X9OfaR08EeDLVAXcR7sQrp3flf2FTB4J8trKCHo=
+github.com/lovi-cloud/go-os-brick v0.2.0/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
 github.com/lovi-cloud/go-targetd v0.0.0-20210105195521-23c076911343 h1:ksG7NRrt0cTl4SvVr9Waxi+gunajVkQj8wzdtXe7hyA=
 github.com/lovi-cloud/go-targetd v0.0.0-20210105195521-23c076911343/go.mod h1:B76fGh6YdzkhtDU8lTlF78wDBhKArMlJgMG5sJG8Rs0=
 github.com/lovi-cloud/satelit v0.0.1/go.mod h1:c/x+UxueHvoKcXOg3tRqEEz2fTlNwYgegTGdm140TuE=

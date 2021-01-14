@@ -49,6 +49,7 @@ type Targetd struct {
 	Password    string `yaml:"password"`
 	PoolName    string `yaml:"pool_name"`
 	BackendName string `yaml:"backend_name"`
+	PortalIP    string `yaml:"portal_ip"`
 }
 
 // A YAML is top element of config.yaml
