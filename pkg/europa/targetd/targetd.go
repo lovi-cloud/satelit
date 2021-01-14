@@ -322,7 +322,7 @@ func (t *Targetd) DeleteImage(ctx context.Context, id uuid.UUID) error {
 	if err := t.DeleteVolume(ctx, image.CacheVolumeID); err != nil {
 		return fmt.Errorf("failed to delete image cache volume: %w", err)
 	}
-	if err = t.datastore.DeleteImage(id); err != nil {
+	if err := t.datastore.DeleteImage(id); err != nil {
 		return fmt.Errorf("failed to delete datastore: %w", err)
 	}
 
