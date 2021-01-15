@@ -7,6 +7,9 @@ import (
 	"os"
 	"sort"
 
+	"github.com/lovi-cloud/satelit/internal/client/teleskop"
+	agentpb "github.com/lovi-cloud/teleskop/protoc/agent"
+
 	"github.com/lovi-cloud/go-os-brick/osbrick"
 
 	"github.com/lovi-cloud/go-targetd/targetd"
@@ -77,7 +80,27 @@ func (t *Targetd) CreateVolume(ctx context.Context, name uuid.UUID, capacityGB i
 
 // CreateVolumeFromImage create volume that copied image
 func (t *Targetd) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, capacityGB int, imageID uuid.UUID) (*europa.Volume, error) {
-	return nil, nil
+	image, err := t.GetImage(imageID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get image: %w", err)
+	}
+
+	if err := t.client.CopyVolume(ctx, t.pool.Name, image.CacheVolumeID, name.String()); err != nil {
+		return nil, fmt.Errorf("failed to copy volume: %w", err)
+	}
+	v, err := t.client.GetVolume(ctx, t.pool.Name, name.String())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get new volume from targetd: %w", err)
+	}
+
+	vol := t.toVolume(*v, false, "")
+	if err := t.datastore.PutVolume(ctx, *vol); err != nil {
+		return nil, fmt.Errorf("failed to put volume to datastore (ID: %s): %w", vol.ID, err)
+	}
+
+	// TODO: resize new volume
+
+	return vol, nil
 }
 
 // DeleteVolume delete volume
@@ -146,8 +169,58 @@ func (t *Targetd) toVolume(vol targetd.Volume, isAttached bool, hostname string)
 
 // AttachVolumeTeleskop attach volume to hostname (running teleskop)
 // return (host lun id, attached device name, error)
-func (t *Targetd) AttachVolumeTeleskop(ctx context.Context, id string, hostname string) (int, string, error) {
-	return 0, "", nil
+func (t *Targetd) AttachVolumeTeleskop(ctx context.Context, volName string, hostname string) (int, string, error) {
+	vol, err := t.client.GetVolume(ctx, t.pool.Name, volName)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get volume: %w", err)
+	}
+	iqn, err := t.datastore.GetIQN(ctx, hostname)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get iqn (hostname: %s): %w", hostname, err)
+	}
+
+	newHostLUNID, err := t.GetHostLUNID(ctx, vol.Name, iqn)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to retrieve host lun ID: %w", err)
+	}
+	if err := t.client.CreateExport(ctx, t.pool.Name, vol.Name, newHostLUNID, iqn); err != nil {
+		return 0, "", fmt.Errorf("failed to create export: %w", err)
+	}
+	defer func() {
+		poolName := t.pool.Name
+		volumeName := vol.Name
+		if err != nil {
+			if err := t.client.DestroyExport(ctx, poolName, volumeName, iqn); err != nil {
+				logger.Logger.Warn(fmt.Sprintf("failed to DestroyExport: %+v", err))
+			}
+		}
+	}()
+
+	req := &agentpb.ConnectBlockDeviceRequest{
+		PortalAddresses: []string{t.portalIP},
+		HostLunId:       uint32(newHostLUNID),
+	}
+	teleskopClient, err := teleskop.GetClient(hostname)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+	resp, err := teleskopClient.ConnectBlockDevice(ctx, req)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to connect block device to teleskop: %w", err)
+	}
+
+	volume, err := t.datastore.GetVolume(ctx, vol.Name)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to get volume (name: %s): %w", volName, err)
+	}
+	volume.Attached = true
+	volume.HostName = hostname
+	volume.HostLUNID = newHostLUNID
+	if err := t.datastore.PutVolume(ctx, *volume); err != nil {
+		return 0, "", fmt.Errorf("failed to update volume record (name: %s): %w", volName, err)
+	}
+
+	return newHostLUNID, resp.DeviceName, nil
 }
 
 // AttachVolumeSatelit attach volume to satelit
@@ -196,6 +269,41 @@ func (t *Targetd) AttachVolumeSatelit(ctx context.Context, volName string, hostn
 
 // DetachVolume detach volume
 func (t *Targetd) DetachVolume(ctx context.Context, volName string) error {
+	volume, err := t.datastore.GetVolume(ctx, volName)
+	if err != nil {
+		return fmt.Errorf("failed to get volume (name: %s): %w", volName, err)
+	}
+	if volume.Attached == false {
+		return fmt.Errorf("not attached (name: %s)", volName)
+	}
+
+	teleskopClient, err := teleskop.GetClient(volume.HostName)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve teleskop client: %w", err)
+	}
+	if _, err := teleskopClient.DisconnectBlockDevice(ctx, &agentpb.DisconnectBlockDeviceRequest{
+		PortalAddresses: []string{t.portalIP},
+		HostLunId:       uint32(volume.HostLUNID),
+	}); err != nil {
+		return fmt.Errorf("failed to detach from teleskop: %w", err)
+	}
+
+	resp, err := teleskopClient.GetISCSIQualifiedName(ctx, &agentpb.GetISCSIQualifiedNameRequest{})
+	if err != nil {
+		return fmt.Errorf("failed to get IQN from teleskop: %w", err)
+	}
+
+	if err := t.client.DestroyExport(ctx, t.pool.Name, volName, resp.Iqn); err != nil {
+		return fmt.Errorf("failed to destroy export: %w", err)
+	}
+
+	volume.Attached = false
+	volume.HostName = ""
+	volume.HostLUNID = 0
+	if err := t.datastore.PutVolume(ctx, *volume); err != nil {
+		return fmt.Errorf("failed to update volume record (name: %s): %w", volName, err)
+	}
+
 	return nil
 }
 
