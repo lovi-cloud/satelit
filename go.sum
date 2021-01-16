@@ -127,6 +127,8 @@ github.com/lovi-cloud/go-os-brick v0.2.0 h1:lYZ9X9OfaR08EeDLVAXcR7sQrp3flf2FTB4J
 github.com/lovi-cloud/go-os-brick v0.2.0/go.mod h1:VWy1IuCD8u5i7hMB9atpLeXsS+TPrCCMUwNaHmMp0to=
 github.com/lovi-cloud/go-targetd v0.0.0-20210105195521-23c076911343 h1:ksG7NRrt0cTl4SvVr9Waxi+gunajVkQj8wzdtXe7hyA=
 github.com/lovi-cloud/go-targetd v0.0.0-20210105195521-23c076911343/go.mod h1:B76fGh6YdzkhtDU8lTlF78wDBhKArMlJgMG5sJG8Rs0=
+github.com/lovi-cloud/go-targetd v0.0.0-20210116104356-9733d489ef0c h1:nwI/mkuex5vHDOT5VItNe9+7y8c2QYoZv68+RacDsc0=
+github.com/lovi-cloud/go-targetd v0.0.0-20210116104356-9733d489ef0c/go.mod h1:B76fGh6YdzkhtDU8lTlF78wDBhKArMlJgMG5sJG8Rs0=
 github.com/lovi-cloud/satelit v0.0.1/go.mod h1:c/x+UxueHvoKcXOg3tRqEEz2fTlNwYgegTGdm140TuE=
 github.com/lovi-cloud/teleskop v0.0.1 h1:4E4YtNsNYB+OyvMxt9EhQXqyfYBTpqDj0LEAxy25rMc=
 github.com/lovi-cloud/teleskop v0.0.1/go.mod h1:o37fL1517G9OonpicJu0G/egQkGUmvvm78WMLA78Z3w=
