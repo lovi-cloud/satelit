@@ -85,7 +85,8 @@ func (t *Targetd) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, cap
 		return nil, fmt.Errorf("failed to get image: %w", err)
 	}
 
-	if err := t.client.CopyVolume(ctx, t.pool.Name, image.CacheVolumeID, name.String()); err != nil {
+	sizeByte := capacityGB * 1024 * 1024 * 1024
+	if err := t.client.CopyVolume(ctx, t.pool.Name, image.CacheVolumeID, name.String(), sizeByte); err != nil {
 		return nil, fmt.Errorf("failed to copy volume: %w", err)
 	}
 	v, err := t.client.GetVolume(ctx, t.pool.Name, name.String())
@@ -94,11 +95,10 @@ func (t *Targetd) CreateVolumeFromImage(ctx context.Context, name uuid.UUID, cap
 	}
 
 	vol := t.toVolume(*v, false, "")
+	vol.BaseImageID = imageID
 	if err := t.datastore.PutVolume(ctx, *vol); err != nil {
 		return nil, fmt.Errorf("failed to put volume to datastore (ID: %s): %w", vol.ID, err)
 	}
-
-	// TODO: resize new volume
 
 	return vol, nil
 }

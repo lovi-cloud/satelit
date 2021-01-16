@@ -6,7 +6,6 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/go-test/deep v1.0.7
 	github.com/goccy/go-yaml v1.8.1
-	github.com/golang/protobuf v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.1
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lovi-cloud/go-dorado-sdk v0.8.9
@@ -24,4 +23,5 @@ require (
 
 replace (
 	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
+	github.com/lovi-cloud/go-targetd => github.com/lovi-cloud/go-targetd v0.0.0-20210116104356-9733d489ef0c
 )
