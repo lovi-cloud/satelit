@@ -1,3 +1,4 @@
 configs/satelit.yaml
 /satelit
+/satelit-linux-amd64
 #pkg/api/key.go
