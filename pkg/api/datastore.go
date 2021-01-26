@@ -116,9 +116,8 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 	resp := make([]*pb.ListBridgeResponse_Bridge, len(bridges))
 	for i, bridge := range bridges {
 		resp[i] = &pb.ListBridgeResponse_Bridge{
-			Name:            bridge.Name,
-			VlanId:          bridge.VLANID,
-			ParentInterface: "bond0",
+			Name:   bridge.Name,
+			VlanId: bridge.VLANID,
 		}
 		if bridge.VLANID == 0 {
 			resp[i].MetadataCidr = ""

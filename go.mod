@@ -10,8 +10,8 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lovi-cloud/go-dorado-sdk v0.8.9
 	github.com/lovi-cloud/go-os-brick v0.2.0
-	github.com/lovi-cloud/go-targetd v0.0.0-20210105195521-23c076911343
-	github.com/lovi-cloud/teleskop v0.0.1
+	github.com/lovi-cloud/go-targetd v0.0.0-20210126010841-177e59c7328d
+	github.com/lovi-cloud/teleskop v0.0.2
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
@@ -21,7 +21,4 @@ require (
 	google.golang.org/protobuf v1.25.0
 )
 
-replace (
-	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
-	github.com/lovi-cloud/go-targetd => github.com/lovi-cloud/go-targetd v0.0.0-20210116104356-9733d489ef0c
-)
+//replace golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
