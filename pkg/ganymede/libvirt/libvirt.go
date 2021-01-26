@@ -3,6 +3,7 @@ package libvirt
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"golang.org/x/sync/errgroup"
 
@@ -165,29 +166,33 @@ func (l *Libvirt) CreateBridge(ctx context.Context, name string, vlanID uint32) 
 	for _, client := range clients {
 		client := client
 		eg.Go(func() error {
-			_, err := client.AddVLANInterface(ctx, &agentpb.AddVLANInterfaceRequest{
-				VlanId:          vlanID,
-				ParentInterface: "bond0",
-			})
+			resp, err := client.GetInterfaceName(ctx, &agentpb.GetInterfaceNameRequest{})
 			if err != nil {
+				return err
+			}
+			interfaceName := trimVlanID(resp.InterfaceName)
+
+			if _, err := client.AddVLANInterface(ctx, &agentpb.AddVLANInterfaceRequest{
+				VlanId:          vlanID,
+				ParentInterface: trimVlanID(interfaceName),
+			}); err != nil {
 				return err
 			}
 
-			_, err = client.AddBridge(ctx, &agentpb.AddBridgeRequest{
+			if _, err = client.AddBridge(ctx, &agentpb.AddBridgeRequest{
 				Name:         name,
 				MetadataCidr: addr,
 				InternalOnly: false,
-			})
-			if err != nil {
+			}); err != nil {
 				return err
 			}
-			_, err = client.AddInterfaceToBridge(ctx, &agentpb.AddInterfaceToBridgeRequest{
+			if _, err = client.AddInterfaceToBridge(ctx, &agentpb.AddInterfaceToBridgeRequest{
 				Bridge:    name,
-				Interface: fmt.Sprintf("bond0.%d", vlanID),
-			})
-			if err != nil {
+				Interface: fmt.Sprintf("%s.%d", interfaceName, vlanID),
+			}); err != nil {
 				return err
 			}
+
 			return nil
 		})
 	}
@@ -205,6 +210,16 @@ func (l *Libvirt) CreateBridge(ctx context.Context, name string, vlanID uint32) 
 	}
 
 	return bridge, nil
+}
+
+func trimVlanID(interfaceName string) string {
+	if !strings.Contains(interfaceName, ".") {
+		// interfaceName has not vlan
+		return interfaceName
+	}
+
+	s := strings.Split(interfaceName, ".")
+	return s[0]
 }
 
 // CreateInternalBridge is
@@ -271,10 +286,16 @@ func (l *Libvirt) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
 	for _, client := range clients {
 		client := client
 		eg.Go(func() error {
+			resp, err := client.GetInterfaceName(ctx, &agentpb.GetInterfaceNameRequest{})
+			if err != nil {
+				return err
+			}
+			interfaceName := trimVlanID(resp.InterfaceName)
+
 			if bridge.VLANID != 0 {
 				_, err := client.DeleteInterfaceFromBridge(ctx, &agentpb.DeleteInterfaceFromBridgeRequest{
 					Bridge:    bridge.Name,
-					Interface: fmt.Sprintf("bond0.%d", bridge.VLANID),
+					Interface: fmt.Sprintf("%s.%d", interfaceName, bridge.VLANID),
 				})
 				if err != nil {
 					return err
@@ -282,7 +303,7 @@ func (l *Libvirt) DeleteBridge(ctx context.Context, bridgeID uuid.UUID) error {
 
 				_, err = client.DeleteVLANInterface(ctx, &agentpb.DeleteVLANInterfaceRequest{
 					VlanId:          bridge.VLANID,
-					ParentInterface: "bond0",
+					ParentInterface: interfaceName,
 				})
 				if err != nil {
 					return err

@@ -43,11 +43,11 @@ message ListBridgeRequest {}
 
 message ListBridgeResponse {
   message Bridge {
-    string name             = 1;
-    uint32 vlan_id          = 2;
-    string parent_interface = 3;
-    string metadata_cidr    = 4;
-    bool   internal_only    = 5;
+    string name    = 1;
+    uint32 vlan_id = 2;
+    //    string parent_interface = 3;
+    string metadata_cidr = 4;
+    bool   internal_only = 5;
   }
   repeated Bridge bridges = 1;
 }

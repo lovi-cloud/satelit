@@ -51,6 +51,10 @@ func (d dummyTeleskop) AddSecurityGroup(ctx context.Context, req *agent.AddSecur
 	return &agent.AddSecurityGroupResponse{}, nil
 }
 
+func (d dummyTeleskop) GetInterfaceName(ctx context.Context, req *agent.GetInterfaceNameRequest) (*agent.GetInterfaceNameResponse, error) {
+	return &agent.GetInterfaceNameResponse{}, nil
+}
+
 func (d dummyTeleskop) AddBridge(ctx context.Context, req *agent.AddBridgeRequest) (*agent.AddBridgeResponse, error) {
 	return &agent.AddBridgeResponse{}, nil
 }
