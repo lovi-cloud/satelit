@@ -30,9 +30,13 @@ func run() error {
 	}
 	client := pb.NewSatelitClient(conn)
 
-	if err := SampleUploadImage(ctx, client); err != nil {
-		return err
-	}
+	//if err := SampleVolumeOperation(ctx, client); err != nil {
+	//	return err
+	//}
+
+	//if err := SampleUploadImage(ctx, client); err != nil {
+	//	return err
+	//}
 
 	//fmt.Println("GetImages")
 	//resp, err := client.ListImage(ctx, &pb.ListImageRequest{})
@@ -42,6 +46,42 @@ func run() error {
 	//for _, i := range resp.Images {
 	//	fmt.Printf("%+v\n", i)
 	//}
+	//
+	if err := SampleStartVirtualMachine(ctx, client, "00000000-0000-0000-0000-000000000000"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SampleVolumeOperation is sample of Volume Add / Delete
+func SampleVolumeOperation(ctx context.Context, client pb.SatelitClient) error {
+	fmt.Println("AddVolume")
+	addVolumeResp, err := client.AddVolume(ctx, &pb.AddVolumeRequest{
+		Name:             "00000000-0000-0000-0000-000000000000",
+		CapacityGigabyte: 20,
+		BackendName:      "europa001",
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Println(addVolumeResp.Volume)
+
+	fmt.Println("GetVolume")
+	getVolumeResp, err := client.ListVolume(ctx, &pb.ListVolumeRequest{})
+	if err != nil {
+		return err
+	}
+	for _, v := range getVolumeResp.Volumes {
+		fmt.Printf("%+v\n", v)
+	}
+
+	fmt.Println("DeleteVolume")
+	if _, err := client.DeleteVolume(ctx, &pb.DeleteVolumeRequest{
+		Id: addVolumeResp.Volume.Id,
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -50,12 +90,13 @@ func run() error {
 func SampleStartVirtualMachine(ctx context.Context, client pb.SatelitClient, imageUUID string) error {
 	fmt.Println("AddVirtualMachine")
 	resp1, err := client.AddVirtualMachine(ctx, &pb.AddVirtualMachineRequest{
-		Name:           "cirros-boot-test",
-		Vcpus:          1,
-		MemoryKib:      2 * 1024 * 1024,
-		RootVolumeGb:   32,
-		SourceImageId:  imageUUID,
-		HypervisorName: "hv001",
+		Name:              os.Args[1],
+		Vcpus:             1,
+		MemoryKib:         2 * 1024 * 1024,
+		RootVolumeGb:      32,
+		SourceImageId:     imageUUID,
+		HypervisorName:    "hv0001",
+		EuropaBackendName: "europa001",
 	})
 	if err != nil {
 		return err
