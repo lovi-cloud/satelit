@@ -20,5 +20,3 @@ require (
 	google.golang.org/grpc v1.31.1
 	google.golang.org/protobuf v1.25.0
 )
-
-//replace golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
