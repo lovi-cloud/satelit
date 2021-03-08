@@ -1,23 +1,42 @@
+#######
+# satelit.yaml.sample is sample of satelit.yaml
+#######
+
+# config of listen ports
 api:
   listen: "0.0.0.0:9262"
+datastore:
+  listen: "0.0.0.0:9263"
 
+# list of hypervisor that installed teleskop.
+# satelit will register hosts in boot sequence.
 teleskop:
   endpoints:
-    host1: "your_teleskop_server_ip:5000"
+    host1: "your_teleskop_host1_ip:5000"
+    host2: "your_teleskop_host2_ip:5000"
 
+# config of MySQL Server as the backend of datastore
 mysql:
-  dsn: "root@tcp(db:3306)/satelit"
+  dsn: "root:password@tcp(db:3306)/satelit"
   max_idle_conn: 80
   conn_max_lifetime_second: 60
 
+# config of targetd as the backend of europa
 targetd:
-  - api_endpoint: "http://targetd_ip:18700"
+  - api_endpoint: "http://targetd1_ip:18700"
     username: "foo"
     password: "bar"
     pool_name: "tank/targetd"
-    backend_name: "targetd"
-    portal_ip: "targetd_ip"
+    backend_name: "targetd1"
+    portal_ip: "targetd1_ip"
+  - api_endpoint: "http://targetd2_ip:18700"
+    username: "foo"
+    password: "bar"
+    pool_name: "tank/targetd"
+    backend_name: "targetd2"
+    portal_ip: "targetd2_ip"
 
+# config using dorado as the backend of europa
 # dorado:
 #   - username: "dorado_username"
 #     password: "dorado_password"
@@ -32,4 +51,5 @@ targetd:
 #     hypermetrodomain_name: "hypermetrodomain_name"
 #     backend_name: "dorado001"
 
+# config of the log level
 log_level: "debug"
