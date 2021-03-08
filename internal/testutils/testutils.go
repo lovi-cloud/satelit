@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/ory/dockertest/v3"
-	"github.com/lovi-cloud/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore"
 	"github.com/lovi-cloud/satelit/pkg/datastore/mysql"
+	"github.com/ory/dockertest/v3"
 )
 
 const (

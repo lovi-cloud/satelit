@@ -13,7 +13,7 @@ import (
 	pb "github.com/lovi-cloud/teleskop/protoc/agent"
 
 	"github.com/lovi-cloud/satelit/internal/client/teleskop"
-	"github.com/lovi-cloud/satelit/internal/config"
+	"github.com/lovi-cloud/satelit/pkg/config"
 )
 
 // A MySQL is backend of datastore by MySQL Server

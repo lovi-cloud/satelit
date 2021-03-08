@@ -10,17 +10,26 @@ mysql:
   max_idle_conn: 80
   conn_max_lifetime_second: 60
 
-dorado:
-  username: "dorado_username"
-  password: "dorado_password"
-  local_ip:
-    - "http://dorado_local_rest_ip_1"
-    - "http://dorado_local_rest_ip_2"
-  remote_ip:
-    - "http://dorado_remote_rest_ip_1"
-    - "http://dorado_remote_rest_ip_2"
-  portgroup_name: "portgroup_name"
-  storagepool_name: "storagepool_name"
-  hypermetrodomain_name: "hypermetrodomain_name"
+targetd:
+  - api_endpoint: "http://targetd_ip:18700"
+    username: "foo"
+    password: "bar"
+    pool_name: "tank/targetd"
+    backend_name: "targetd"
+    portal_ip: "targetd_ip"
+
+# dorado:
+#   - username: "dorado_username"
+#     password: "dorado_password"
+#     local_ip:
+#       - "http://dorado_local_rest_ip_1"
+#       - "http://dorado_local_rest_ip_2"
+#     remote_ip:
+#       - "http://dorado_remote_rest_ip_1"
+#       - "http://dorado_remote_rest_ip_2"
+#     portgroup_name: "portgroup_name"
+#     storagepool_name: "storagepool_name"
+#     hypermetrodomain_name: "hypermetrodomain_name"
+#     backend_name: "dorado001"
 
 log_level: "debug"

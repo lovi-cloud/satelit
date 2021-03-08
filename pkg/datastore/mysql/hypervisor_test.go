@@ -2,6 +2,7 @@ package mysql_test
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"testing"
 	"time"
@@ -170,15 +171,24 @@ func TestMySQL_PutHypervisorNUMANode(t *testing.T) {
 						ganymede.CorePair{
 							UUID:         uuid.FromStringOrNil(testCorePairUUID),
 							PhysicalCore: 0,
-							LogicalCore:  41,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 41,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 					},
 					PhysicalCoreMin: 0,
 					PhysicalCoreMax: 40,
-					LogicalCoreMin:  41,
-					LogicalCoreMax:  80,
-					HypervisorID:    hypervisorID,
+					LogicalCoreMin: sql.NullInt32{
+						Int32: 41,
+						Valid: true,
+					},
+					LogicalCoreMax: sql.NullInt32{
+						Int32: 80,
+						Valid: true,
+					},
+					HypervisorID: hypervisorID,
 				},
 			},
 			want: []ganymede.NUMANode{
@@ -188,15 +198,24 @@ func TestMySQL_PutHypervisorNUMANode(t *testing.T) {
 						ganymede.CorePair{
 							UUID:         uuid.FromStringOrNil(testCorePairUUID),
 							PhysicalCore: 0,
-							LogicalCore:  41,
-							NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
+							LogicalCore: sql.NullInt32{
+								Int32: 41,
+								Valid: true,
+							},
+							NUMANodeID: uuid.FromStringOrNil(testNUMANodeUUID),
 						},
 					},
 					PhysicalCoreMin: 0,
 					PhysicalCoreMax: 40,
-					LogicalCoreMin:  41,
-					LogicalCoreMax:  80,
-					HypervisorID:    hypervisorID,
+					LogicalCoreMin: sql.NullInt32{
+						Int32: 41,
+						Valid: true,
+					},
+					LogicalCoreMax: sql.NullInt32{
+						Int32: 80,
+						Valid: true,
+					},
+					HypervisorID: hypervisorID,
 				},
 			},
 			err: false,
@@ -222,7 +241,7 @@ func TestMySQL_PutHypervisorNUMANode(t *testing.T) {
 			got[0].UpdatedAt = time.Time{}
 		}
 		if diff := deep.Equal(test.want, got); len(diff) != 0 {
-			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
+			t.Fatalf("want %+v, but %+v, diff %q:", test.want, got, diff)
 		}
 	}
 }

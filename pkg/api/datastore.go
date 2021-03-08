@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
 	"strings"
@@ -18,9 +19,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/lovi-cloud/satelit/api/satelit_datastore"
-	"github.com/lovi-cloud/satelit/internal/config"
 	"github.com/lovi-cloud/satelit/internal/logger"
 	"github.com/lovi-cloud/satelit/internal/mysql/types"
+	"github.com/lovi-cloud/satelit/pkg/config"
 	"github.com/lovi-cloud/satelit/pkg/datastore"
 	"github.com/lovi-cloud/satelit/pkg/ganymede"
 )
@@ -115,9 +116,8 @@ func (s *SatelitDatastore) ListBridge(ctx context.Context, req *pb.ListBridgeReq
 	resp := make([]*pb.ListBridgeResponse_Bridge, len(bridges))
 	for i, bridge := range bridges {
 		resp[i] = &pb.ListBridgeResponse_Bridge{
-			Name:            bridge.Name,
-			VlanId:          bridge.VLANID,
-			ParentInterface: "bond0",
+			Name:   bridge.Name,
+			VlanId: bridge.VLANID,
 		}
 		if bridge.VLANID == 0 {
 			resp[i].MetadataCidr = ""
@@ -146,14 +146,30 @@ func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.Re
 		return nil, status.Errorf(codes.InvalidArgument, "failed to register teleskop agent: %+v", err)
 	}
 
+	hypervisorID, err := s.Datastore.PutHypervisor(ctx, req.Iqn, req.Hostname)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to write hypervisor to datastore: %+v", err)
+	}
+
+	if err := s.Datastore.PutHypervisorNUMANode(ctx, toGanymedeNUMANode(req.Nodes), hypervisorID); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to write hypervisor cores to datastore: %+v", err)
+	}
+
+	return &pb.RegisterTeleskopAgentResponse{}, nil
+}
+
+// toGanymedeNUMANode convert []ganymede.NUMANode from []*pb.NumaNode
+// NUMA Nodes can input one or two.
+// request that has two NUMA nodes has Logical core.
+func toGanymedeNUMANode(pbNUMANode []*pb.NumaNode) []ganymede.NUMANode {
 	var nodes []ganymede.NUMANode
-	for _, n := range req.Nodes {
+	for _, n := range pbNUMANode {
 		var pairs []ganymede.CorePair
 		for _, p := range n.Pairs {
 			pair := ganymede.CorePair{
 				UUID:         uuid.NewV4(),
 				PhysicalCore: p.PhysicalCore,
-				LogicalCore:  p.LogicalCore,
+				LogicalCore:  toSQLNullInt32(p.LogicalCore),
 			}
 			pairs = append(pairs, pair)
 		}
@@ -163,22 +179,26 @@ func (s *SatelitDatastore) RegisterTeleskopAgent(ctx context.Context, req *pb.Re
 			CorePairs:       pairs,
 			PhysicalCoreMin: n.PhysicalCoreMin,
 			PhysicalCoreMax: n.PhysicalCoreMax,
-			LogicalCoreMin:  n.LogicalCoreMin,
-			LogicalCoreMax:  n.LogicalCoreMax,
+			LogicalCoreMin:  toSQLNullInt32(n.LogicalCoreMin),
+			LogicalCoreMax:  toSQLNullInt32(n.LogicalCoreMax),
 		}
 		nodes = append(nodes, node)
 	}
 
-	hypervisorID, err := s.Datastore.PutHypervisor(ctx, req.Iqn, req.Hostname)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to write hypervisor to datastore: %+v", err)
+	return nodes
+}
+
+func toSQLNullInt32(i *uint32) sql.NullInt32 {
+	if i == nil {
+		return sql.NullInt32{
+			Valid: false,
+		}
 	}
 
-	if err := s.Datastore.PutHypervisorNUMANode(ctx, nodes, hypervisorID); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to write hypervisor cores to datastore: %+v", err)
+	return sql.NullInt32{
+		Int32: int32(*i),
+		Valid: true,
 	}
-
-	return &pb.RegisterTeleskopAgentResponse{}, nil
 }
 
 // GetCPUCoreByPinningGroup retrieve pinned cpu pair.
@@ -197,7 +217,7 @@ func (s *SatelitDatastore) GetCPUCoreByPinningGroup(ctx context.Context, req *pb
 	for _, pinned := range pinneds {
 		pair, err := s.Datastore.GetCPUCorePair(ctx, pinned.CorePairID)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "failed to get pinned cpu corepairs: %+v", err)
+			return nil, status.Errorf(codes.Internal, "failed to get pinned cpu core pairs: %+v", err)
 		}
 		pairs = append(pairs, pair.ToPb())
 	}

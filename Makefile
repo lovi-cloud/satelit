@@ -18,7 +18,7 @@ build-linux: ## Build for Linux
 build-proto: ## Build proto file
 	mkdir -p ./api/satelit
 	protoc -I ./api/satelit --go_out=plugins=grpc:./api/satelit ./api/satelit/*.proto
-	protoc -I ./api/satelit_datastore --go_out=plugins=grpc:./api/satelit_datastore ./api/satelit_datastore/*.proto
+	protoc -I ./api/satelit_datastore --experimental_allow_proto3_optional --go_out=plugins=grpc:./api/satelit_datastore ./api/satelit_datastore/*.proto
 
 test: ## Exec test
 	go test -v ./...

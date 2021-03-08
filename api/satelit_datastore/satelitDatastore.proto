@@ -43,26 +43,26 @@ message ListBridgeRequest {}
 
 message ListBridgeResponse {
   message Bridge {
-    string name             = 1;
-    uint32 vlan_id          = 2;
-    string parent_interface = 3;
-    string metadata_cidr    = 4;
-    bool   internal_only    = 5;
+    string name    = 1;
+    uint32 vlan_id = 2;
+    //    string parent_interface = 3;
+    string metadata_cidr = 4;
+    bool   internal_only = 5;
   }
   repeated Bridge bridges = 1;
 }
 
 message CorePair {
-  uint32 physical_core = 1;
-  uint32 logical_core  = 2;
+  uint32          physical_core = 1;
+  optional uint32 logical_core  = 2;
 }
 
 message NumaNode {
   repeated CorePair pairs             = 1;
   uint32            physical_core_min = 2;
   uint32            physical_core_max = 3;
-  uint32            logical_core_min  = 4;
-  uint32            logical_core_max  = 5;
+  optional uint32   logical_core_min  = 4;
+  optional uint32   logical_core_max  = 5;
 }
 
 message RegisterTeleskopAgentRequest {

@@ -1,10 +1,11 @@
 package api
 
 import (
+	"database/sql"
 	"testing"
 
-	uuid "github.com/satori/go.uuid"
 	"github.com/lovi-cloud/satelit/pkg/ganymede"
+	uuid "github.com/satori/go.uuid"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -1226,10 +1227,17 @@ func getDummyNodes() []ganymede.NUMANode {
 
 	var cps []ganymede.CorePair
 	for i, u := range testCorePairUUIDs {
+
+		l := int32(len(testCorePairUUIDs) + i)
+		ll := sql.NullInt32{
+			Int32: l,
+			Valid: true,
+		}
+
 		cp := ganymede.CorePair{
 			UUID:         u,
 			PhysicalCore: uint32(i),
-			LogicalCore:  uint32(len(testCorePairUUIDs) + i),
+			LogicalCore:  ll,
 			NUMANodeID:   uuid.FromStringOrNil(testNUMANodeUUID),
 		}
 		cps = append(cps, cp)
@@ -1241,8 +1249,14 @@ func getDummyNodes() []ganymede.NUMANode {
 			CorePairs:       cps,
 			PhysicalCoreMin: 0,
 			PhysicalCoreMax: 3,
-			LogicalCoreMin:  4,
-			LogicalCoreMax:  8,
+			LogicalCoreMin: sql.NullInt32{
+				Int32: 4,
+				Valid: true,
+			},
+			LogicalCoreMax: sql.NullInt32{
+				Int32: 8,
+				Valid: true,
+			},
 		},
 	}
 
