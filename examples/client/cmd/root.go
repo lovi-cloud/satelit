@@ -20,7 +20,7 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&satelitAddress, "address", "", "", "address of satelit")
+	rootCmd.PersistentFlags().StringVarP(&satelitAddress, "address", "", "", "address of satelit, <host>:9262")
 	if err := rootCmd.MarkPersistentFlagRequired("address"); err != nil {
 		panic(err)
 	}
