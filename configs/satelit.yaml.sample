@@ -18,7 +18,6 @@ targetd:
     backend_name: "targetd"
     portal_ip: "targetd_ip"
 
-
 # dorado:
 #   - username: "dorado_username"
 #     password: "dorado_password"
