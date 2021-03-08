@@ -14,6 +14,7 @@ var (
 	satelitAddress string
 )
 
+// Execute execute command in root
 func Execute() error {
 	return rootCmd.Execute()
 }
