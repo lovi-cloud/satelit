@@ -2,7 +2,7 @@
 
 ![logo](./docs/image/satelit_logo.png)
 
-satelit is a control plane for [lovi-cloud](https://github.com/lovi-cloud) AND Framework of internal cloud.
+satelit is A control plane for [lovi-cloud](https://github.com/lovi-cloud) and Framework of internal cloud.
 
 The name "satelit" is derived from a Bosnian word that means "Satellite".
 
@@ -15,8 +15,8 @@ The name "satelit" is derived from a Bosnian word that means "Satellite".
 
 ### As Internal Cloud
 
-Please see [INSTALL_cloud.md](https://github.com/lovi-cloud/docs/INSTALL_cloud.md).
+Please see [INSTALL_cloud.md](https://github.com/lovi-cloud/docs/blob/master/INSTALL_cloud.md).
 
 ### As Framework
 
-Please see [framework.md](https://github.com/lovi-cloud/docs/framework.md).
+Please see [framework.md](https://github.com/lovi-cloud/docs/blob/master/framework.md).
