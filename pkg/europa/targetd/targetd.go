@@ -31,7 +31,7 @@ type Targetd struct {
 	portalIP    string
 }
 
-// New is create instance of targetd.Client
+// New create instance of targetd.Client
 func New(apiURL, username, password, poolName, backendName, portalIP string, ds datastore.Datastore) (*Targetd, error) {
 	client, err := targetd.New(
 		apiURL,
